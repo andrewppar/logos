@@ -1,0 +1,5 @@
+DROP TABLE IF EXISTS formula   ;
+DROP TABLE IF EXISTS assumption;
+DROP TABLE IF EXISTS goal      ;
+DROP TABLE IF EXISTS premise   ;
+DROP TABLE IF EXISTS proof     ;

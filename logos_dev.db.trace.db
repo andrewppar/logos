@@ -1,0 +1,1850 @@
+2021-09-09 08:05:27 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "SCHEMA_MIGRATIONS" not found; SQL statement:
+SELECT 1 FROM schema_migrations [42102-200]
+2021-09-09 08:05:27 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "
+
+CREATE TABLE PREMISE
+(ID INTEGER PRIMARY KEY AUTO_INCREMENT,
+FORMULA_ID INTEGER;[*]
+PROOF_ID INTEGER);
+
+CREATE TABLE PROOF
+(ID INTEGER PRIMARY KEY AUTO_INCREMENT); 
+
+"; expected "(, FOR, UNSIGNED, INVISIBLE, VISIBLE, NOT, NULL, AS, DEFAULT, GENERATED, ON, NOT, NULL, AUTO_INCREMENT, BIGSERIAL, SERIAL, IDENTITY, NULL_TO_DEFAULT, SEQUENCE, SELECTIVITY, COMMENT, CONSTRAINT, PRIMARY, UNIQUE, NOT, NULL, COMMENT, CHECK, REFERENCES, ,, )"; SQL statement:
+
+
+CREATE TABLE premise
+(id INTEGER PRIMARY KEY AUTO_INCREMENT,
+formula_id INTEGER;
+proof_id INTEGER);
+
+CREATE TABLE proof
+(id INTEGER PRIMARY KEY AUTO_INCREMENT); 
+
+ [42001-200]
+2021-09-09 08:05:27 jdbc[3]: exception
+org.h2.jdbc.JdbcBatchUpdateException: Syntax error in SQL statement "
+
+CREATE TABLE PREMISE
+(ID INTEGER PRIMARY KEY AUTO_INCREMENT,
+FORMULA_ID INTEGER;[*]
+PROOF_ID INTEGER);
+
+CREATE TABLE PROOF
+(ID INTEGER PRIMARY KEY AUTO_INCREMENT); 
+
+"; expected "(, FOR, UNSIGNED, INVISIBLE, VISIBLE, NOT, NULL, AS, DEFAULT, GENERATED, ON, NOT, NULL, AUTO_INCREMENT, BIGSERIAL, SERIAL, IDENTITY, NULL_TO_DEFAULT, SEQUENCE, SELECTIVITY, COMMENT, CONSTRAINT, PRIMARY, UNIQUE, NOT, NULL, COMMENT, CHECK, REFERENCES, ,, )"; SQL statement:
+
+
+CREATE TABLE premise
+(id INTEGER PRIMARY KEY AUTO_INCREMENT,
+formula_id INTEGER;
+proof_id INTEGER);
+
+CREATE TABLE proof
+(id INTEGER PRIMARY KEY AUTO_INCREMENT); 
+
+ [42001-200]
+	at org.h2.jdbc.JdbcStatement.executeBatch(JdbcStatement.java:781)
+	at clojure.java.jdbc$execute_batch.invokeStatic(jdbc.clj:598)
+	at clojure.java.jdbc$execute_batch.invoke(jdbc.clj:591)
+	at clojure.java.jdbc$db_do_commands$fn__15517.invoke(jdbc.clj:958)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:860)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:789)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at clojure.java.jdbc$db_do_commands.invokeStatic(jdbc.clj:957)
+	at clojure.java.jdbc$db_do_commands.invoke(jdbc.clj:942)
+	at clojure.java.jdbc$db_do_commands.invokeStatic(jdbc.clj:951)
+	at clojure.java.jdbc$db_do_commands.invoke(jdbc.clj:942)
+	at migratus.migration.sql$execute_command$fn__20342.invoke(sql.clj:63)
+	at migratus.migration.sql$execute_command.invokeStatic(sql.clj:62)
+	at migratus.migration.sql$execute_command.invoke(sql.clj:59)
+	at migratus.migration.sql$run_sql_STAR_.invokeStatic(sql.clj:80)
+	at migratus.migration.sql$run_sql_STAR_.invoke(sql.clj:76)
+	at migratus.migration.sql$run_sql$fn__20360.invoke(sql.clj:88)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:860)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:789)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at migratus.migration.sql$run_sql.invokeStatic(sql.clj:86)
+	at migratus.migration.sql$run_sql.invoke(sql.clj:82)
+	at migratus.migration.sql.SqlMigration.up(sql.clj:105)
+	at migratus.database$migrate_up_STAR_.invokeStatic(database.clj:62)
+	at migratus.database$migrate_up_STAR_.invoke(database.clj:56)
+	at migratus.database.Database$fn__20668.invoke(database.clj:262)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:807)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:789)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at migratus.database.Database.migrate_up(database.clj:261)
+	at migratus.core$up_STAR_.invokeStatic(core.clj:79)
+	at migratus.core$up_STAR_.invoke(core.clj:77)
+	at migratus.core$migrate_up_STAR_.invokeStatic(core.clj:90)
+	at migratus.core$migrate_up_STAR_.invoke(core.clj:81)
+	at migratus.core$migrate_STAR_.invokeStatic(core.clj:103)
+	at migratus.core$migrate_STAR_.invoke(core.clj:99)
+	at clojure.core$partial$fn__5857.invoke(core.clj:2629)
+	at migratus.core$run.invokeStatic(core.clj:53)
+	at migratus.core$run.invoke(core.clj:49)
+	at migratus.core$migrate.invokeStatic(core.clj:110)
+	at migratus.core$migrate.invoke(core.clj:105)
+	at luminus_migrations.core$fn__20819.invokeStatic(core.clj:44)
+	at luminus_migrations.core$fn__20819.invoke(core.clj:41)
+	at luminus_migrations.core$migrate.invokeStatic(core.clj:98)
+	at luminus_migrations.core$migrate.invoke(core.clj:84)
+	at logos.core$_main.invokeStatic(core.clj:74)
+	at logos.core$_main.doInvoke(core.clj:59)
+	at clojure.lang.RestFn.invoke(RestFn.java:408)
+	at clojure.lang.Var.invoke(Var.java:384)
+	at user$eval21401.invokeStatic(form-init9806798870198363988.clj:1)
+	at user$eval21401.invoke(form-init9806798870198363988.clj:1)
+	at clojure.lang.Compiler.eval(Compiler.java:7181)
+	at clojure.lang.Compiler.eval(Compiler.java:7171)
+	at clojure.lang.Compiler.load(Compiler.java:7640)
+	at clojure.lang.Compiler.loadFile(Compiler.java:7578)
+	at clojure.main$load_script.invokeStatic(main.clj:475)
+	at clojure.main$init_opt.invokeStatic(main.clj:477)
+	at clojure.main$init_opt.invoke(main.clj:477)
+	at clojure.main$initialize.invokeStatic(main.clj:508)
+	at clojure.main$null_opt.invokeStatic(main.clj:542)
+	at clojure.main$null_opt.invoke(main.clj:539)
+	at clojure.main$main.invokeStatic(main.clj:664)
+	at clojure.main$main.doInvoke(main.clj:616)
+	at clojure.lang.RestFn.applyTo(RestFn.java:137)
+	at clojure.lang.Var.applyTo(Var.java:705)
+	at clojure.main.main(main.java:40)
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "
+
+CREATE TABLE PREMISE
+(ID INTEGER PRIMARY KEY AUTO_INCREMENT,
+FORMULA_ID INTEGER;[*]
+PROOF_ID INTEGER);
+
+CREATE TABLE PROOF
+(ID INTEGER PRIMARY KEY AUTO_INCREMENT); 
+
+"; expected "(, FOR, UNSIGNED, INVISIBLE, VISIBLE, NOT, NULL, AS, DEFAULT, GENERATED, ON, NOT, NULL, AUTO_INCREMENT, BIGSERIAL, SERIAL, IDENTITY, NULL_TO_DEFAULT, SEQUENCE, SELECTIVITY, COMMENT, CONSTRAINT, PRIMARY, UNIQUE, NOT, NULL, COMMENT, CHECK, REFERENCES, ,, )"; SQL statement:
+
+
+CREATE TABLE premise
+(id INTEGER PRIMARY KEY AUTO_INCREMENT,
+formula_id INTEGER;
+proof_id INTEGER);
+
+CREATE TABLE proof
+(id INTEGER PRIMARY KEY AUTO_INCREMENT); 
+
+ [42001-200]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:453)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:429)
+	at org.h2.message.DbException.getSyntaxError(DbException.java:243)
+	at org.h2.command.Parser.getSyntaxError(Parser.java:1053)
+	at org.h2.command.Parser.read(Parser.java:4995)
+	at org.h2.command.Parser.readIfMore(Parser.java:1462)
+	at org.h2.command.Parser.parseCreateTable(Parser.java:8380)
+	at org.h2.command.Parser.parseCreate(Parser.java:6276)
+	at org.h2.command.Parser.parsePrepared(Parser.java:903)
+	at org.h2.command.Parser.parse(Parser.java:843)
+	at org.h2.command.Parser.parse(Parser.java:819)
+	at org.h2.command.Parser.prepareCommand(Parser.java:738)
+	at org.h2.engine.Session.prepareLocal(Session.java:657)
+	at org.h2.command.CommandList.executeRemaining(CommandList.java:54)
+	at org.h2.command.CommandList.update(CommandList.java:67)
+	at org.h2.command.CommandList.executeRemaining(CommandList.java:59)
+	at org.h2.command.CommandList.update(CommandList.java:67)
+	at org.h2.command.Command.executeUpdate(Command.java:251)
+	at org.h2.jdbc.JdbcStatement.executeUpdateInternal(JdbcStatement.java:168)
+	at org.h2.jdbc.JdbcStatement.executeBatch(JdbcStatement.java:768)
+	at clojure.java.jdbc$execute_batch.invokeStatic(jdbc.clj:598)
+	at clojure.java.jdbc$execute_batch.invoke(jdbc.clj:591)
+	at clojure.java.jdbc$db_do_commands$fn__15517.invoke(jdbc.clj:958)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:860)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:789)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at clojure.java.jdbc$db_do_commands.invokeStatic(jdbc.clj:957)
+	at clojure.java.jdbc$db_do_commands.invoke(jdbc.clj:942)
+	at clojure.java.jdbc$db_do_commands.invokeStatic(jdbc.clj:951)
+	at clojure.java.jdbc$db_do_commands.invoke(jdbc.clj:942)
+	at migratus.migration.sql$execute_command$fn__20342.invoke(sql.clj:63)
+	at migratus.migration.sql$execute_command.invokeStatic(sql.clj:62)
+	at migratus.migration.sql$execute_command.invoke(sql.clj:59)
+	at migratus.migration.sql$run_sql_STAR_.invokeStatic(sql.clj:80)
+	at migratus.migration.sql$run_sql_STAR_.invoke(sql.clj:76)
+	at migratus.migration.sql$run_sql$fn__20360.invoke(sql.clj:88)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:860)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:789)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at migratus.migration.sql$run_sql.invokeStatic(sql.clj:86)
+	at migratus.migration.sql$run_sql.invoke(sql.clj:82)
+	at migratus.migration.sql.SqlMigration.up(sql.clj:105)
+	at migratus.database$migrate_up_STAR_.invokeStatic(database.clj:62)
+	at migratus.database$migrate_up_STAR_.invoke(database.clj:56)
+	at migratus.database.Database$fn__20668.invoke(database.clj:262)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:807)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:789)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at migratus.database.Database.migrate_up(database.clj:261)
+	at migratus.core$up_STAR_.invokeStatic(core.clj:79)
+	at migratus.core$up_STAR_.invoke(core.clj:77)
+	at migratus.core$migrate_up_STAR_.invokeStatic(core.clj:90)
+	at migratus.core$migrate_up_STAR_.invoke(core.clj:81)
+	at migratus.core$migrate_STAR_.invokeStatic(core.clj:103)
+	at migratus.core$migrate_STAR_.invoke(core.clj:99)
+	at clojure.core$partial$fn__5857.invoke(core.clj:2629)
+	at migratus.core$run.invokeStatic(core.clj:53)
+	at migratus.core$run.invoke(core.clj:49)
+	at migratus.core$migrate.invokeStatic(core.clj:110)
+	at migratus.core$migrate.invoke(core.clj:105)
+	at luminus_migrations.core$fn__20819.invokeStatic(core.clj:44)
+	at luminus_migrations.core$fn__20819.invoke(core.clj:41)
+	at luminus_migrations.core$migrate.invokeStatic(core.clj:98)
+	at luminus_migrations.core$migrate.invoke(core.clj:84)
+	at logos.core$_main.invokeStatic(core.clj:74)
+	at logos.core$_main.doInvoke(core.clj:59)
+	at clojure.lang.RestFn.invoke(RestFn.java:408)
+	at clojure.lang.Var.invoke(Var.java:384)
+	at user$eval21401.invokeStatic(form-init9806798870198363988.clj:1)
+	at user$eval21401.invoke(form-init9806798870198363988.clj:1)
+	at clojure.lang.Compiler.eval(Compiler.java:7181)
+	at clojure.lang.Compiler.eval(Compiler.java:7171)
+	at clojure.lang.Compiler.load(Compiler.java:7640)
+	at clojure.lang.Compiler.loadFile(Compiler.java:7578)
+	at clojure.main$load_script.invokeStatic(main.clj:475)
+	at clojure.main$init_opt.invokeStatic(main.clj:477)
+	at clojure.main$init_opt.invoke(main.clj:477)
+	at clojure.main$initialize.invokeStatic(main.clj:508)
+	at clojure.main$null_opt.invokeStatic(main.clj:542)
+	at clojure.main$null_opt.invoke(main.clj:539)
+	at clojure.main$main.invokeStatic(main.clj:664)
+	at clojure.main$main.doInvoke(main.clj:616)
+	at clojure.lang.RestFn.applyTo(RestFn.java:137)
+	at clojure.lang.Var.applyTo(Var.java:705)
+	at clojure.main.main(main.java:40)
+2021-09-09 08:05:27 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "ASUUMPTION" not found; SQL statement:
+DROP TABLE formula   ; [42102-200]
+2021-09-09 08:05:27 jdbc[3]: exception
+org.h2.jdbc.JdbcBatchUpdateException: Table "ASUUMPTION" not found; SQL statement:
+DROP TABLE formula   ; [42102-200]
+	at org.h2.jdbc.JdbcStatement.executeBatch(JdbcStatement.java:781)
+	at clojure.java.jdbc$execute_batch.invokeStatic(jdbc.clj:598)
+	at clojure.java.jdbc$execute_batch.invoke(jdbc.clj:591)
+	at clojure.java.jdbc$db_do_commands$fn__15517.invoke(jdbc.clj:958)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:860)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:789)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at clojure.java.jdbc$db_do_commands.invokeStatic(jdbc.clj:957)
+	at clojure.java.jdbc$db_do_commands.invoke(jdbc.clj:942)
+	at clojure.java.jdbc$db_do_commands.invokeStatic(jdbc.clj:951)
+	at clojure.java.jdbc$db_do_commands.invoke(jdbc.clj:942)
+	at migratus.migration.sql$execute_command$fn__20342.invoke(sql.clj:63)
+	at migratus.migration.sql$execute_command.invokeStatic(sql.clj:62)
+	at migratus.migration.sql$execute_command.invoke(sql.clj:59)
+	at migratus.migration.sql$run_sql_STAR_.invokeStatic(sql.clj:80)
+	at migratus.migration.sql$run_sql_STAR_.invoke(sql.clj:76)
+	at migratus.migration.sql$run_sql$fn__20360.invoke(sql.clj:88)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:860)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:789)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at migratus.migration.sql$run_sql.invokeStatic(sql.clj:86)
+	at migratus.migration.sql$run_sql.invoke(sql.clj:82)
+	at migratus.migration.sql.SqlMigration.down(sql.clj:109)
+	at migratus.database$migrate_up_STAR_$fn__20598.invoke(database.clj:71)
+	at migratus.database$migrate_up_STAR_.invokeStatic(database.clj:70)
+	at migratus.database$migrate_up_STAR_.invoke(database.clj:56)
+	at migratus.database.Database$fn__20668.invoke(database.clj:262)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:807)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:789)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at migratus.database.Database.migrate_up(database.clj:261)
+	at migratus.core$up_STAR_.invokeStatic(core.clj:79)
+	at migratus.core$up_STAR_.invoke(core.clj:77)
+	at migratus.core$migrate_up_STAR_.invokeStatic(core.clj:90)
+	at migratus.core$migrate_up_STAR_.invoke(core.clj:81)
+	at migratus.core$migrate_STAR_.invokeStatic(core.clj:103)
+	at migratus.core$migrate_STAR_.invoke(core.clj:99)
+	at clojure.core$partial$fn__5857.invoke(core.clj:2629)
+	at migratus.core$run.invokeStatic(core.clj:53)
+	at migratus.core$run.invoke(core.clj:49)
+	at migratus.core$migrate.invokeStatic(core.clj:110)
+	at migratus.core$migrate.invoke(core.clj:105)
+	at luminus_migrations.core$fn__20819.invokeStatic(core.clj:44)
+	at luminus_migrations.core$fn__20819.invoke(core.clj:41)
+	at luminus_migrations.core$migrate.invokeStatic(core.clj:98)
+	at luminus_migrations.core$migrate.invoke(core.clj:84)
+	at logos.core$_main.invokeStatic(core.clj:74)
+	at logos.core$_main.doInvoke(core.clj:59)
+	at clojure.lang.RestFn.invoke(RestFn.java:408)
+	at clojure.lang.Var.invoke(Var.java:384)
+	at user$eval21401.invokeStatic(form-init9806798870198363988.clj:1)
+	at user$eval21401.invoke(form-init9806798870198363988.clj:1)
+	at clojure.lang.Compiler.eval(Compiler.java:7181)
+	at clojure.lang.Compiler.eval(Compiler.java:7171)
+	at clojure.lang.Compiler.load(Compiler.java:7640)
+	at clojure.lang.Compiler.loadFile(Compiler.java:7578)
+	at clojure.main$load_script.invokeStatic(main.clj:475)
+	at clojure.main$init_opt.invokeStatic(main.clj:477)
+	at clojure.main$init_opt.invoke(main.clj:477)
+	at clojure.main$initialize.invokeStatic(main.clj:508)
+	at clojure.main$null_opt.invokeStatic(main.clj:542)
+	at clojure.main$null_opt.invoke(main.clj:539)
+	at clojure.main$main.invokeStatic(main.clj:664)
+	at clojure.main$main.doInvoke(main.clj:616)
+	at clojure.lang.RestFn.applyTo(RestFn.java:137)
+	at clojure.lang.Var.applyTo(Var.java:705)
+	at clojure.main.main(main.java:40)
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "ASUUMPTION" not found; SQL statement:
+DROP TABLE formula   ; [42102-200]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:453)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:429)
+	at org.h2.message.DbException.get(DbException.java:205)
+	at org.h2.message.DbException.get(DbException.java:181)
+	at org.h2.command.ddl.DropTable.prepareDrop(DropTable.java:65)
+	at org.h2.command.ddl.DropTable.update(DropTable.java:124)
+	at org.h2.command.CommandList.executeRemaining(CommandList.java:50)
+	at org.h2.command.CommandList.update(CommandList.java:67)
+	at org.h2.command.Command.executeUpdate(Command.java:251)
+	at org.h2.jdbc.JdbcStatement.executeUpdateInternal(JdbcStatement.java:168)
+	at org.h2.jdbc.JdbcStatement.executeBatch(JdbcStatement.java:768)
+	at clojure.java.jdbc$execute_batch.invokeStatic(jdbc.clj:598)
+	at clojure.java.jdbc$execute_batch.invoke(jdbc.clj:591)
+	at clojure.java.jdbc$db_do_commands$fn__15517.invoke(jdbc.clj:958)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:860)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:789)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at clojure.java.jdbc$db_do_commands.invokeStatic(jdbc.clj:957)
+	at clojure.java.jdbc$db_do_commands.invoke(jdbc.clj:942)
+	at clojure.java.jdbc$db_do_commands.invokeStatic(jdbc.clj:951)
+	at clojure.java.jdbc$db_do_commands.invoke(jdbc.clj:942)
+	at migratus.migration.sql$execute_command$fn__20342.invoke(sql.clj:63)
+	at migratus.migration.sql$execute_command.invokeStatic(sql.clj:62)
+	at migratus.migration.sql$execute_command.invoke(sql.clj:59)
+	at migratus.migration.sql$run_sql_STAR_.invokeStatic(sql.clj:80)
+	at migratus.migration.sql$run_sql_STAR_.invoke(sql.clj:76)
+	at migratus.migration.sql$run_sql$fn__20360.invoke(sql.clj:88)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:860)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:789)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at migratus.migration.sql$run_sql.invokeStatic(sql.clj:86)
+	at migratus.migration.sql$run_sql.invoke(sql.clj:82)
+	at migratus.migration.sql.SqlMigration.down(sql.clj:109)
+	at migratus.database$migrate_up_STAR_$fn__20598.invoke(database.clj:71)
+	at migratus.database$migrate_up_STAR_.invokeStatic(database.clj:70)
+	at migratus.database$migrate_up_STAR_.invoke(database.clj:56)
+	at migratus.database.Database$fn__20668.invoke(database.clj:262)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:807)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:789)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at migratus.database.Database.migrate_up(database.clj:261)
+	at migratus.core$up_STAR_.invokeStatic(core.clj:79)
+	at migratus.core$up_STAR_.invoke(core.clj:77)
+	at migratus.core$migrate_up_STAR_.invokeStatic(core.clj:90)
+	at migratus.core$migrate_up_STAR_.invoke(core.clj:81)
+	at migratus.core$migrate_STAR_.invokeStatic(core.clj:103)
+	at migratus.core$migrate_STAR_.invoke(core.clj:99)
+	at clojure.core$partial$fn__5857.invoke(core.clj:2629)
+	at migratus.core$run.invokeStatic(core.clj:53)
+	at migratus.core$run.invoke(core.clj:49)
+	at migratus.core$migrate.invokeStatic(core.clj:110)
+	at migratus.core$migrate.invoke(core.clj:105)
+	at luminus_migrations.core$fn__20819.invokeStatic(core.clj:44)
+	at luminus_migrations.core$fn__20819.invoke(core.clj:41)
+	at luminus_migrations.core$migrate.invokeStatic(core.clj:98)
+	at luminus_migrations.core$migrate.invoke(core.clj:84)
+	at logos.core$_main.invokeStatic(core.clj:74)
+	at logos.core$_main.doInvoke(core.clj:59)
+	at clojure.lang.RestFn.invoke(RestFn.java:408)
+	at clojure.lang.Var.invoke(Var.java:384)
+	at user$eval21401.invokeStatic(form-init9806798870198363988.clj:1)
+	at user$eval21401.invoke(form-init9806798870198363988.clj:1)
+	at clojure.lang.Compiler.eval(Compiler.java:7181)
+	at clojure.lang.Compiler.eval(Compiler.java:7171)
+	at clojure.lang.Compiler.load(Compiler.java:7640)
+	at clojure.lang.Compiler.loadFile(Compiler.java:7578)
+	at clojure.main$load_script.invokeStatic(main.clj:475)
+	at clojure.main$init_opt.invokeStatic(main.clj:477)
+	at clojure.main$init_opt.invoke(main.clj:477)
+	at clojure.main$initialize.invokeStatic(main.clj:508)
+	at clojure.main$null_opt.invokeStatic(main.clj:542)
+	at clojure.main$null_opt.invoke(main.clj:539)
+	at clojure.main$main.invokeStatic(main.clj:664)
+	at clojure.main$main.doInvoke(main.clj:616)
+	at clojure.lang.RestFn.applyTo(RestFn.java:137)
+	at clojure.lang.Var.applyTo(Var.java:705)
+	at clojure.main.main(main.java:40)
+2021-09-09 08:15:48 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "FORMULA" not found; SQL statement:
+INSERT INTO formula
+(formula)
+VALUES (?) [42102-200]
+2021-09-09 19:49:58 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "ASSUMPTION" already exists; SQL statement:
+CREATE TABLE formula
+(id INTEGER PRIMARY KEY AUTO_INCREMENT,
+formula VARCHAR(500)) ; [42101-200]
+2021-09-09 19:49:58 jdbc[3]: exception
+org.h2.jdbc.JdbcBatchUpdateException: Table "ASSUMPTION" already exists; SQL statement:
+CREATE TABLE formula
+(id INTEGER PRIMARY KEY AUTO_INCREMENT,
+formula VARCHAR(500)) ; [42101-200]
+	at org.h2.jdbc.JdbcStatement.executeBatch(JdbcStatement.java:781)
+	at clojure.java.jdbc$execute_batch.invokeStatic(jdbc.clj:598)
+	at clojure.java.jdbc$execute_batch.invoke(jdbc.clj:591)
+	at clojure.java.jdbc$db_do_commands$fn__15517.invoke(jdbc.clj:958)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:860)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:789)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at clojure.java.jdbc$db_do_commands.invokeStatic(jdbc.clj:957)
+	at clojure.java.jdbc$db_do_commands.invoke(jdbc.clj:942)
+	at clojure.java.jdbc$db_do_commands.invokeStatic(jdbc.clj:951)
+	at clojure.java.jdbc$db_do_commands.invoke(jdbc.clj:942)
+	at migratus.migration.sql$execute_command$fn__20342.invoke(sql.clj:63)
+	at migratus.migration.sql$execute_command.invokeStatic(sql.clj:62)
+	at migratus.migration.sql$execute_command.invoke(sql.clj:59)
+	at migratus.migration.sql$run_sql_STAR_.invokeStatic(sql.clj:80)
+	at migratus.migration.sql$run_sql_STAR_.invoke(sql.clj:76)
+	at migratus.migration.sql$run_sql$fn__20360.invoke(sql.clj:88)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:860)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:789)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at migratus.migration.sql$run_sql.invokeStatic(sql.clj:86)
+	at migratus.migration.sql$run_sql.invoke(sql.clj:82)
+	at migratus.migration.sql.SqlMigration.up(sql.clj:105)
+	at migratus.database$migrate_up_STAR_.invokeStatic(database.clj:62)
+	at migratus.database$migrate_up_STAR_.invoke(database.clj:56)
+	at migratus.database.Database$fn__20668.invoke(database.clj:262)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:807)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:789)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at migratus.database.Database.migrate_up(database.clj:261)
+	at migratus.core$up_STAR_.invokeStatic(core.clj:79)
+	at migratus.core$up_STAR_.invoke(core.clj:77)
+	at migratus.core$migrate_up_STAR_.invokeStatic(core.clj:90)
+	at migratus.core$migrate_up_STAR_.invoke(core.clj:81)
+	at migratus.core$migrate_STAR_.invokeStatic(core.clj:103)
+	at migratus.core$migrate_STAR_.invoke(core.clj:99)
+	at clojure.core$partial$fn__5857.invoke(core.clj:2629)
+	at migratus.core$run.invokeStatic(core.clj:53)
+	at migratus.core$run.invoke(core.clj:49)
+	at migratus.core$migrate.invokeStatic(core.clj:110)
+	at migratus.core$migrate.invoke(core.clj:105)
+	at luminus_migrations.core$fn__20819.invokeStatic(core.clj:44)
+	at luminus_migrations.core$fn__20819.invoke(core.clj:41)
+	at luminus_migrations.core$migrate.invokeStatic(core.clj:98)
+	at luminus_migrations.core$migrate.invoke(core.clj:84)
+	at logos.core$_main.invokeStatic(core.clj:74)
+	at logos.core$_main.doInvoke(core.clj:59)
+	at clojure.lang.RestFn.invoke(RestFn.java:408)
+	at clojure.lang.Var.invoke(Var.java:384)
+	at user$eval21401.invokeStatic(form-init4372575716247874487.clj:1)
+	at user$eval21401.invoke(form-init4372575716247874487.clj:1)
+	at clojure.lang.Compiler.eval(Compiler.java:7181)
+	at clojure.lang.Compiler.eval(Compiler.java:7171)
+	at clojure.lang.Compiler.load(Compiler.java:7640)
+	at clojure.lang.Compiler.loadFile(Compiler.java:7578)
+	at clojure.main$load_script.invokeStatic(main.clj:475)
+	at clojure.main$init_opt.invokeStatic(main.clj:477)
+	at clojure.main$init_opt.invoke(main.clj:477)
+	at clojure.main$initialize.invokeStatic(main.clj:508)
+	at clojure.main$null_opt.invokeStatic(main.clj:542)
+	at clojure.main$null_opt.invoke(main.clj:539)
+	at clojure.main$main.invokeStatic(main.clj:664)
+	at clojure.main$main.doInvoke(main.clj:616)
+	at clojure.lang.RestFn.applyTo(RestFn.java:137)
+	at clojure.lang.Var.applyTo(Var.java:705)
+	at clojure.main.main(main.java:40)
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "ASSUMPTION" already exists; SQL statement:
+CREATE TABLE formula
+(id INTEGER PRIMARY KEY AUTO_INCREMENT,
+formula VARCHAR(500)) ; [42101-200]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:453)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:429)
+	at org.h2.message.DbException.get(DbException.java:205)
+	at org.h2.message.DbException.get(DbException.java:181)
+	at org.h2.command.ddl.CreateTable.update(CreateTable.java:89)
+	at org.h2.command.CommandList.executeRemaining(CommandList.java:50)
+	at org.h2.command.CommandList.update(CommandList.java:67)
+	at org.h2.command.Command.executeUpdate(Command.java:251)
+	at org.h2.jdbc.JdbcStatement.executeUpdateInternal(JdbcStatement.java:168)
+	at org.h2.jdbc.JdbcStatement.executeBatch(JdbcStatement.java:768)
+	at clojure.java.jdbc$execute_batch.invokeStatic(jdbc.clj:598)
+	at clojure.java.jdbc$execute_batch.invoke(jdbc.clj:591)
+	at clojure.java.jdbc$db_do_commands$fn__15517.invoke(jdbc.clj:958)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:860)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:789)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at clojure.java.jdbc$db_do_commands.invokeStatic(jdbc.clj:957)
+	at clojure.java.jdbc$db_do_commands.invoke(jdbc.clj:942)
+	at clojure.java.jdbc$db_do_commands.invokeStatic(jdbc.clj:951)
+	at clojure.java.jdbc$db_do_commands.invoke(jdbc.clj:942)
+	at migratus.migration.sql$execute_command$fn__20342.invoke(sql.clj:63)
+	at migratus.migration.sql$execute_command.invokeStatic(sql.clj:62)
+	at migratus.migration.sql$execute_command.invoke(sql.clj:59)
+	at migratus.migration.sql$run_sql_STAR_.invokeStatic(sql.clj:80)
+	at migratus.migration.sql$run_sql_STAR_.invoke(sql.clj:76)
+	at migratus.migration.sql$run_sql$fn__20360.invoke(sql.clj:88)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:860)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:789)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at migratus.migration.sql$run_sql.invokeStatic(sql.clj:86)
+	at migratus.migration.sql$run_sql.invoke(sql.clj:82)
+	at migratus.migration.sql.SqlMigration.up(sql.clj:105)
+	at migratus.database$migrate_up_STAR_.invokeStatic(database.clj:62)
+	at migratus.database$migrate_up_STAR_.invoke(database.clj:56)
+	at migratus.database.Database$fn__20668.invoke(database.clj:262)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:807)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:789)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at migratus.database.Database.migrate_up(database.clj:261)
+	at migratus.core$up_STAR_.invokeStatic(core.clj:79)
+	at migratus.core$up_STAR_.invoke(core.clj:77)
+	at migratus.core$migrate_up_STAR_.invokeStatic(core.clj:90)
+	at migratus.core$migrate_up_STAR_.invoke(core.clj:81)
+	at migratus.core$migrate_STAR_.invokeStatic(core.clj:103)
+	at migratus.core$migrate_STAR_.invoke(core.clj:99)
+	at clojure.core$partial$fn__5857.invoke(core.clj:2629)
+	at migratus.core$run.invokeStatic(core.clj:53)
+	at migratus.core$run.invoke(core.clj:49)
+	at migratus.core$migrate.invokeStatic(core.clj:110)
+	at migratus.core$migrate.invoke(core.clj:105)
+	at luminus_migrations.core$fn__20819.invokeStatic(core.clj:44)
+	at luminus_migrations.core$fn__20819.invoke(core.clj:41)
+	at luminus_migrations.core$migrate.invokeStatic(core.clj:98)
+	at luminus_migrations.core$migrate.invoke(core.clj:84)
+	at logos.core$_main.invokeStatic(core.clj:74)
+	at logos.core$_main.doInvoke(core.clj:59)
+	at clojure.lang.RestFn.invoke(RestFn.java:408)
+	at clojure.lang.Var.invoke(Var.java:384)
+	at user$eval21401.invokeStatic(form-init4372575716247874487.clj:1)
+	at user$eval21401.invoke(form-init4372575716247874487.clj:1)
+	at clojure.lang.Compiler.eval(Compiler.java:7181)
+	at clojure.lang.Compiler.eval(Compiler.java:7171)
+	at clojure.lang.Compiler.load(Compiler.java:7640)
+	at clojure.lang.Compiler.loadFile(Compiler.java:7578)
+	at clojure.main$load_script.invokeStatic(main.clj:475)
+	at clojure.main$init_opt.invokeStatic(main.clj:477)
+	at clojure.main$init_opt.invoke(main.clj:477)
+	at clojure.main$initialize.invokeStatic(main.clj:508)
+	at clojure.main$null_opt.invokeStatic(main.clj:542)
+	at clojure.main$null_opt.invoke(main.clj:539)
+	at clojure.main$main.invokeStatic(main.clj:664)
+	at clojure.main$main.doInvoke(main.clj:616)
+	at clojure.lang.RestFn.applyTo(RestFn.java:137)
+	at clojure.lang.Var.applyTo(Var.java:705)
+	at clojure.main.main(main.java:40)
+2021-09-09 19:49:58 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "ASUUMPTION" not found; SQL statement:
+DROP TABLE formula   ; [42102-200]
+2021-09-09 19:49:58 jdbc[3]: exception
+org.h2.jdbc.JdbcBatchUpdateException: Table "ASUUMPTION" not found; SQL statement:
+DROP TABLE formula   ; [42102-200]
+	at org.h2.jdbc.JdbcStatement.executeBatch(JdbcStatement.java:781)
+	at clojure.java.jdbc$execute_batch.invokeStatic(jdbc.clj:598)
+	at clojure.java.jdbc$execute_batch.invoke(jdbc.clj:591)
+	at clojure.java.jdbc$db_do_commands$fn__15517.invoke(jdbc.clj:958)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:860)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:789)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at clojure.java.jdbc$db_do_commands.invokeStatic(jdbc.clj:957)
+	at clojure.java.jdbc$db_do_commands.invoke(jdbc.clj:942)
+	at clojure.java.jdbc$db_do_commands.invokeStatic(jdbc.clj:951)
+	at clojure.java.jdbc$db_do_commands.invoke(jdbc.clj:942)
+	at migratus.migration.sql$execute_command$fn__20342.invoke(sql.clj:63)
+	at migratus.migration.sql$execute_command.invokeStatic(sql.clj:62)
+	at migratus.migration.sql$execute_command.invoke(sql.clj:59)
+	at migratus.migration.sql$run_sql_STAR_.invokeStatic(sql.clj:80)
+	at migratus.migration.sql$run_sql_STAR_.invoke(sql.clj:76)
+	at migratus.migration.sql$run_sql$fn__20360.invoke(sql.clj:88)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:860)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:789)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at migratus.migration.sql$run_sql.invokeStatic(sql.clj:86)
+	at migratus.migration.sql$run_sql.invoke(sql.clj:82)
+	at migratus.migration.sql.SqlMigration.down(sql.clj:109)
+	at migratus.database$migrate_up_STAR_$fn__20598.invoke(database.clj:71)
+	at migratus.database$migrate_up_STAR_.invokeStatic(database.clj:70)
+	at migratus.database$migrate_up_STAR_.invoke(database.clj:56)
+	at migratus.database.Database$fn__20668.invoke(database.clj:262)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:807)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:789)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at migratus.database.Database.migrate_up(database.clj:261)
+	at migratus.core$up_STAR_.invokeStatic(core.clj:79)
+	at migratus.core$up_STAR_.invoke(core.clj:77)
+	at migratus.core$migrate_up_STAR_.invokeStatic(core.clj:90)
+	at migratus.core$migrate_up_STAR_.invoke(core.clj:81)
+	at migratus.core$migrate_STAR_.invokeStatic(core.clj:103)
+	at migratus.core$migrate_STAR_.invoke(core.clj:99)
+	at clojure.core$partial$fn__5857.invoke(core.clj:2629)
+	at migratus.core$run.invokeStatic(core.clj:53)
+	at migratus.core$run.invoke(core.clj:49)
+	at migratus.core$migrate.invokeStatic(core.clj:110)
+	at migratus.core$migrate.invoke(core.clj:105)
+	at luminus_migrations.core$fn__20819.invokeStatic(core.clj:44)
+	at luminus_migrations.core$fn__20819.invoke(core.clj:41)
+	at luminus_migrations.core$migrate.invokeStatic(core.clj:98)
+	at luminus_migrations.core$migrate.invoke(core.clj:84)
+	at logos.core$_main.invokeStatic(core.clj:74)
+	at logos.core$_main.doInvoke(core.clj:59)
+	at clojure.lang.RestFn.invoke(RestFn.java:408)
+	at clojure.lang.Var.invoke(Var.java:384)
+	at user$eval21401.invokeStatic(form-init4372575716247874487.clj:1)
+	at user$eval21401.invoke(form-init4372575716247874487.clj:1)
+	at clojure.lang.Compiler.eval(Compiler.java:7181)
+	at clojure.lang.Compiler.eval(Compiler.java:7171)
+	at clojure.lang.Compiler.load(Compiler.java:7640)
+	at clojure.lang.Compiler.loadFile(Compiler.java:7578)
+	at clojure.main$load_script.invokeStatic(main.clj:475)
+	at clojure.main$init_opt.invokeStatic(main.clj:477)
+	at clojure.main$init_opt.invoke(main.clj:477)
+	at clojure.main$initialize.invokeStatic(main.clj:508)
+	at clojure.main$null_opt.invokeStatic(main.clj:542)
+	at clojure.main$null_opt.invoke(main.clj:539)
+	at clojure.main$main.invokeStatic(main.clj:664)
+	at clojure.main$main.doInvoke(main.clj:616)
+	at clojure.lang.RestFn.applyTo(RestFn.java:137)
+	at clojure.lang.Var.applyTo(Var.java:705)
+	at clojure.main.main(main.java:40)
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "ASUUMPTION" not found; SQL statement:
+DROP TABLE formula   ; [42102-200]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:453)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:429)
+	at org.h2.message.DbException.get(DbException.java:205)
+	at org.h2.message.DbException.get(DbException.java:181)
+	at org.h2.command.ddl.DropTable.prepareDrop(DropTable.java:65)
+	at org.h2.command.ddl.DropTable.update(DropTable.java:124)
+	at org.h2.command.CommandList.executeRemaining(CommandList.java:50)
+	at org.h2.command.CommandList.update(CommandList.java:67)
+	at org.h2.command.Command.executeUpdate(Command.java:251)
+	at org.h2.jdbc.JdbcStatement.executeUpdateInternal(JdbcStatement.java:168)
+	at org.h2.jdbc.JdbcStatement.executeBatch(JdbcStatement.java:768)
+	at clojure.java.jdbc$execute_batch.invokeStatic(jdbc.clj:598)
+	at clojure.java.jdbc$execute_batch.invoke(jdbc.clj:591)
+	at clojure.java.jdbc$db_do_commands$fn__15517.invoke(jdbc.clj:958)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:860)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:789)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at clojure.java.jdbc$db_do_commands.invokeStatic(jdbc.clj:957)
+	at clojure.java.jdbc$db_do_commands.invoke(jdbc.clj:942)
+	at clojure.java.jdbc$db_do_commands.invokeStatic(jdbc.clj:951)
+	at clojure.java.jdbc$db_do_commands.invoke(jdbc.clj:942)
+	at migratus.migration.sql$execute_command$fn__20342.invoke(sql.clj:63)
+	at migratus.migration.sql$execute_command.invokeStatic(sql.clj:62)
+	at migratus.migration.sql$execute_command.invoke(sql.clj:59)
+	at migratus.migration.sql$run_sql_STAR_.invokeStatic(sql.clj:80)
+	at migratus.migration.sql$run_sql_STAR_.invoke(sql.clj:76)
+	at migratus.migration.sql$run_sql$fn__20360.invoke(sql.clj:88)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:860)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:789)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at migratus.migration.sql$run_sql.invokeStatic(sql.clj:86)
+	at migratus.migration.sql$run_sql.invoke(sql.clj:82)
+	at migratus.migration.sql.SqlMigration.down(sql.clj:109)
+	at migratus.database$migrate_up_STAR_$fn__20598.invoke(database.clj:71)
+	at migratus.database$migrate_up_STAR_.invokeStatic(database.clj:70)
+	at migratus.database$migrate_up_STAR_.invoke(database.clj:56)
+	at migratus.database.Database$fn__20668.invoke(database.clj:262)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:807)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:789)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at migratus.database.Database.migrate_up(database.clj:261)
+	at migratus.core$up_STAR_.invokeStatic(core.clj:79)
+	at migratus.core$up_STAR_.invoke(core.clj:77)
+	at migratus.core$migrate_up_STAR_.invokeStatic(core.clj:90)
+	at migratus.core$migrate_up_STAR_.invoke(core.clj:81)
+	at migratus.core$migrate_STAR_.invokeStatic(core.clj:103)
+	at migratus.core$migrate_STAR_.invoke(core.clj:99)
+	at clojure.core$partial$fn__5857.invoke(core.clj:2629)
+	at migratus.core$run.invokeStatic(core.clj:53)
+	at migratus.core$run.invoke(core.clj:49)
+	at migratus.core$migrate.invokeStatic(core.clj:110)
+	at migratus.core$migrate.invoke(core.clj:105)
+	at luminus_migrations.core$fn__20819.invokeStatic(core.clj:44)
+	at luminus_migrations.core$fn__20819.invoke(core.clj:41)
+	at luminus_migrations.core$migrate.invokeStatic(core.clj:98)
+	at luminus_migrations.core$migrate.invoke(core.clj:84)
+	at logos.core$_main.invokeStatic(core.clj:74)
+	at logos.core$_main.doInvoke(core.clj:59)
+	at clojure.lang.RestFn.invoke(RestFn.java:408)
+	at clojure.lang.Var.invoke(Var.java:384)
+	at user$eval21401.invokeStatic(form-init4372575716247874487.clj:1)
+	at user$eval21401.invoke(form-init4372575716247874487.clj:1)
+	at clojure.lang.Compiler.eval(Compiler.java:7181)
+	at clojure.lang.Compiler.eval(Compiler.java:7171)
+	at clojure.lang.Compiler.load(Compiler.java:7640)
+	at clojure.lang.Compiler.loadFile(Compiler.java:7578)
+	at clojure.main$load_script.invokeStatic(main.clj:475)
+	at clojure.main$init_opt.invokeStatic(main.clj:477)
+	at clojure.main$init_opt.invoke(main.clj:477)
+	at clojure.main$initialize.invokeStatic(main.clj:508)
+	at clojure.main$null_opt.invokeStatic(main.clj:542)
+	at clojure.main$null_opt.invoke(main.clj:539)
+	at clojure.main$main.invokeStatic(main.clj:664)
+	at clojure.main$main.doInvoke(main.clj:616)
+	at clojure.lang.RestFn.applyTo(RestFn.java:137)
+	at clojure.lang.Var.applyTo(Var.java:705)
+	at clojure.main.main(main.java:40)
+2021-09-09 19:52:48 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "ASSUMPTION" already exists; SQL statement:
+CREATE TABLE formula
+(id INTEGER PRIMARY KEY AUTO_INCREMENT,
+formula VARCHAR(500)) ; [42101-200]
+2021-09-09 19:52:48 jdbc[3]: exception
+org.h2.jdbc.JdbcBatchUpdateException: Table "ASSUMPTION" already exists; SQL statement:
+CREATE TABLE formula
+(id INTEGER PRIMARY KEY AUTO_INCREMENT,
+formula VARCHAR(500)) ; [42101-200]
+	at org.h2.jdbc.JdbcStatement.executeBatch(JdbcStatement.java:781)
+	at clojure.java.jdbc$execute_batch.invokeStatic(jdbc.clj:598)
+	at clojure.java.jdbc$execute_batch.invoke(jdbc.clj:591)
+	at clojure.java.jdbc$db_do_commands$fn__15517.invoke(jdbc.clj:958)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:860)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:789)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at clojure.java.jdbc$db_do_commands.invokeStatic(jdbc.clj:957)
+	at clojure.java.jdbc$db_do_commands.invoke(jdbc.clj:942)
+	at clojure.java.jdbc$db_do_commands.invokeStatic(jdbc.clj:951)
+	at clojure.java.jdbc$db_do_commands.invoke(jdbc.clj:942)
+	at migratus.migration.sql$execute_command$fn__20342.invoke(sql.clj:63)
+	at migratus.migration.sql$execute_command.invokeStatic(sql.clj:62)
+	at migratus.migration.sql$execute_command.invoke(sql.clj:59)
+	at migratus.migration.sql$run_sql_STAR_.invokeStatic(sql.clj:80)
+	at migratus.migration.sql$run_sql_STAR_.invoke(sql.clj:76)
+	at migratus.migration.sql$run_sql$fn__20360.invoke(sql.clj:88)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:860)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:789)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at migratus.migration.sql$run_sql.invokeStatic(sql.clj:86)
+	at migratus.migration.sql$run_sql.invoke(sql.clj:82)
+	at migratus.migration.sql.SqlMigration.up(sql.clj:105)
+	at migratus.database$migrate_up_STAR_.invokeStatic(database.clj:62)
+	at migratus.database$migrate_up_STAR_.invoke(database.clj:56)
+	at migratus.database.Database$fn__20668.invoke(database.clj:262)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:807)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:789)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at migratus.database.Database.migrate_up(database.clj:261)
+	at migratus.core$up_STAR_.invokeStatic(core.clj:79)
+	at migratus.core$up_STAR_.invoke(core.clj:77)
+	at migratus.core$migrate_up_STAR_.invokeStatic(core.clj:90)
+	at migratus.core$migrate_up_STAR_.invoke(core.clj:81)
+	at migratus.core$migrate_STAR_.invokeStatic(core.clj:103)
+	at migratus.core$migrate_STAR_.invoke(core.clj:99)
+	at clojure.core$partial$fn__5857.invoke(core.clj:2629)
+	at migratus.core$run.invokeStatic(core.clj:53)
+	at migratus.core$run.invoke(core.clj:49)
+	at migratus.core$migrate.invokeStatic(core.clj:110)
+	at migratus.core$migrate.invoke(core.clj:105)
+	at luminus_migrations.core$fn__20819.invokeStatic(core.clj:44)
+	at luminus_migrations.core$fn__20819.invoke(core.clj:41)
+	at luminus_migrations.core$migrate.invokeStatic(core.clj:98)
+	at luminus_migrations.core$migrate.invoke(core.clj:84)
+	at logos.core$_main.invokeStatic(core.clj:74)
+	at logos.core$_main.doInvoke(core.clj:59)
+	at clojure.lang.RestFn.invoke(RestFn.java:408)
+	at clojure.lang.Var.invoke(Var.java:384)
+	at user$eval21401.invokeStatic(form-init15702345974217890336.clj:1)
+	at user$eval21401.invoke(form-init15702345974217890336.clj:1)
+	at clojure.lang.Compiler.eval(Compiler.java:7181)
+	at clojure.lang.Compiler.eval(Compiler.java:7171)
+	at clojure.lang.Compiler.load(Compiler.java:7640)
+	at clojure.lang.Compiler.loadFile(Compiler.java:7578)
+	at clojure.main$load_script.invokeStatic(main.clj:475)
+	at clojure.main$init_opt.invokeStatic(main.clj:477)
+	at clojure.main$init_opt.invoke(main.clj:477)
+	at clojure.main$initialize.invokeStatic(main.clj:508)
+	at clojure.main$null_opt.invokeStatic(main.clj:542)
+	at clojure.main$null_opt.invoke(main.clj:539)
+	at clojure.main$main.invokeStatic(main.clj:664)
+	at clojure.main$main.doInvoke(main.clj:616)
+	at clojure.lang.RestFn.applyTo(RestFn.java:137)
+	at clojure.lang.Var.applyTo(Var.java:705)
+	at clojure.main.main(main.java:40)
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "ASSUMPTION" already exists; SQL statement:
+CREATE TABLE formula
+(id INTEGER PRIMARY KEY AUTO_INCREMENT,
+formula VARCHAR(500)) ; [42101-200]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:453)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:429)
+	at org.h2.message.DbException.get(DbException.java:205)
+	at org.h2.message.DbException.get(DbException.java:181)
+	at org.h2.command.ddl.CreateTable.update(CreateTable.java:89)
+	at org.h2.command.CommandList.executeRemaining(CommandList.java:50)
+	at org.h2.command.CommandList.update(CommandList.java:67)
+	at org.h2.command.Command.executeUpdate(Command.java:251)
+	at org.h2.jdbc.JdbcStatement.executeUpdateInternal(JdbcStatement.java:168)
+	at org.h2.jdbc.JdbcStatement.executeBatch(JdbcStatement.java:768)
+	at clojure.java.jdbc$execute_batch.invokeStatic(jdbc.clj:598)
+	at clojure.java.jdbc$execute_batch.invoke(jdbc.clj:591)
+	at clojure.java.jdbc$db_do_commands$fn__15517.invoke(jdbc.clj:958)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:860)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:789)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at clojure.java.jdbc$db_do_commands.invokeStatic(jdbc.clj:957)
+	at clojure.java.jdbc$db_do_commands.invoke(jdbc.clj:942)
+	at clojure.java.jdbc$db_do_commands.invokeStatic(jdbc.clj:951)
+	at clojure.java.jdbc$db_do_commands.invoke(jdbc.clj:942)
+	at migratus.migration.sql$execute_command$fn__20342.invoke(sql.clj:63)
+	at migratus.migration.sql$execute_command.invokeStatic(sql.clj:62)
+	at migratus.migration.sql$execute_command.invoke(sql.clj:59)
+	at migratus.migration.sql$run_sql_STAR_.invokeStatic(sql.clj:80)
+	at migratus.migration.sql$run_sql_STAR_.invoke(sql.clj:76)
+	at migratus.migration.sql$run_sql$fn__20360.invoke(sql.clj:88)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:860)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:789)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at migratus.migration.sql$run_sql.invokeStatic(sql.clj:86)
+	at migratus.migration.sql$run_sql.invoke(sql.clj:82)
+	at migratus.migration.sql.SqlMigration.up(sql.clj:105)
+	at migratus.database$migrate_up_STAR_.invokeStatic(database.clj:62)
+	at migratus.database$migrate_up_STAR_.invoke(database.clj:56)
+	at migratus.database.Database$fn__20668.invoke(database.clj:262)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:807)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:789)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at migratus.database.Database.migrate_up(database.clj:261)
+	at migratus.core$up_STAR_.invokeStatic(core.clj:79)
+	at migratus.core$up_STAR_.invoke(core.clj:77)
+	at migratus.core$migrate_up_STAR_.invokeStatic(core.clj:90)
+	at migratus.core$migrate_up_STAR_.invoke(core.clj:81)
+	at migratus.core$migrate_STAR_.invokeStatic(core.clj:103)
+	at migratus.core$migrate_STAR_.invoke(core.clj:99)
+	at clojure.core$partial$fn__5857.invoke(core.clj:2629)
+	at migratus.core$run.invokeStatic(core.clj:53)
+	at migratus.core$run.invoke(core.clj:49)
+	at migratus.core$migrate.invokeStatic(core.clj:110)
+	at migratus.core$migrate.invoke(core.clj:105)
+	at luminus_migrations.core$fn__20819.invokeStatic(core.clj:44)
+	at luminus_migrations.core$fn__20819.invoke(core.clj:41)
+	at luminus_migrations.core$migrate.invokeStatic(core.clj:98)
+	at luminus_migrations.core$migrate.invoke(core.clj:84)
+	at logos.core$_main.invokeStatic(core.clj:74)
+	at logos.core$_main.doInvoke(core.clj:59)
+	at clojure.lang.RestFn.invoke(RestFn.java:408)
+	at clojure.lang.Var.invoke(Var.java:384)
+	at user$eval21401.invokeStatic(form-init15702345974217890336.clj:1)
+	at user$eval21401.invoke(form-init15702345974217890336.clj:1)
+	at clojure.lang.Compiler.eval(Compiler.java:7181)
+	at clojure.lang.Compiler.eval(Compiler.java:7171)
+	at clojure.lang.Compiler.load(Compiler.java:7640)
+	at clojure.lang.Compiler.loadFile(Compiler.java:7578)
+	at clojure.main$load_script.invokeStatic(main.clj:475)
+	at clojure.main$init_opt.invokeStatic(main.clj:477)
+	at clojure.main$init_opt.invoke(main.clj:477)
+	at clojure.main$initialize.invokeStatic(main.clj:508)
+	at clojure.main$null_opt.invokeStatic(main.clj:542)
+	at clojure.main$null_opt.invoke(main.clj:539)
+	at clojure.main$main.invokeStatic(main.clj:664)
+	at clojure.main$main.doInvoke(main.clj:616)
+	at clojure.lang.RestFn.applyTo(RestFn.java:137)
+	at clojure.lang.Var.applyTo(Var.java:705)
+	at clojure.main.main(main.java:40)
+2021-09-09 19:52:48 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "PREMISE" not found; SQL statement:
+DROP TABLE formula   ; [42102-200]
+2021-09-09 19:52:48 jdbc[3]: exception
+org.h2.jdbc.JdbcBatchUpdateException: Table "PREMISE" not found; SQL statement:
+DROP TABLE formula   ; [42102-200]
+	at org.h2.jdbc.JdbcStatement.executeBatch(JdbcStatement.java:781)
+	at clojure.java.jdbc$execute_batch.invokeStatic(jdbc.clj:598)
+	at clojure.java.jdbc$execute_batch.invoke(jdbc.clj:591)
+	at clojure.java.jdbc$db_do_commands$fn__15517.invoke(jdbc.clj:958)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:860)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:789)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at clojure.java.jdbc$db_do_commands.invokeStatic(jdbc.clj:957)
+	at clojure.java.jdbc$db_do_commands.invoke(jdbc.clj:942)
+	at clojure.java.jdbc$db_do_commands.invokeStatic(jdbc.clj:951)
+	at clojure.java.jdbc$db_do_commands.invoke(jdbc.clj:942)
+	at migratus.migration.sql$execute_command$fn__20342.invoke(sql.clj:63)
+	at migratus.migration.sql$execute_command.invokeStatic(sql.clj:62)
+	at migratus.migration.sql$execute_command.invoke(sql.clj:59)
+	at migratus.migration.sql$run_sql_STAR_.invokeStatic(sql.clj:80)
+	at migratus.migration.sql$run_sql_STAR_.invoke(sql.clj:76)
+	at migratus.migration.sql$run_sql$fn__20360.invoke(sql.clj:88)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:860)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:789)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at migratus.migration.sql$run_sql.invokeStatic(sql.clj:86)
+	at migratus.migration.sql$run_sql.invoke(sql.clj:82)
+	at migratus.migration.sql.SqlMigration.down(sql.clj:109)
+	at migratus.database$migrate_up_STAR_$fn__20598.invoke(database.clj:71)
+	at migratus.database$migrate_up_STAR_.invokeStatic(database.clj:70)
+	at migratus.database$migrate_up_STAR_.invoke(database.clj:56)
+	at migratus.database.Database$fn__20668.invoke(database.clj:262)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:807)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:789)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at migratus.database.Database.migrate_up(database.clj:261)
+	at migratus.core$up_STAR_.invokeStatic(core.clj:79)
+	at migratus.core$up_STAR_.invoke(core.clj:77)
+	at migratus.core$migrate_up_STAR_.invokeStatic(core.clj:90)
+	at migratus.core$migrate_up_STAR_.invoke(core.clj:81)
+	at migratus.core$migrate_STAR_.invokeStatic(core.clj:103)
+	at migratus.core$migrate_STAR_.invoke(core.clj:99)
+	at clojure.core$partial$fn__5857.invoke(core.clj:2629)
+	at migratus.core$run.invokeStatic(core.clj:53)
+	at migratus.core$run.invoke(core.clj:49)
+	at migratus.core$migrate.invokeStatic(core.clj:110)
+	at migratus.core$migrate.invoke(core.clj:105)
+	at luminus_migrations.core$fn__20819.invokeStatic(core.clj:44)
+	at luminus_migrations.core$fn__20819.invoke(core.clj:41)
+	at luminus_migrations.core$migrate.invokeStatic(core.clj:98)
+	at luminus_migrations.core$migrate.invoke(core.clj:84)
+	at logos.core$_main.invokeStatic(core.clj:74)
+	at logos.core$_main.doInvoke(core.clj:59)
+	at clojure.lang.RestFn.invoke(RestFn.java:408)
+	at clojure.lang.Var.invoke(Var.java:384)
+	at user$eval21401.invokeStatic(form-init15702345974217890336.clj:1)
+	at user$eval21401.invoke(form-init15702345974217890336.clj:1)
+	at clojure.lang.Compiler.eval(Compiler.java:7181)
+	at clojure.lang.Compiler.eval(Compiler.java:7171)
+	at clojure.lang.Compiler.load(Compiler.java:7640)
+	at clojure.lang.Compiler.loadFile(Compiler.java:7578)
+	at clojure.main$load_script.invokeStatic(main.clj:475)
+	at clojure.main$init_opt.invokeStatic(main.clj:477)
+	at clojure.main$init_opt.invoke(main.clj:477)
+	at clojure.main$initialize.invokeStatic(main.clj:508)
+	at clojure.main$null_opt.invokeStatic(main.clj:542)
+	at clojure.main$null_opt.invoke(main.clj:539)
+	at clojure.main$main.invokeStatic(main.clj:664)
+	at clojure.main$main.doInvoke(main.clj:616)
+	at clojure.lang.RestFn.applyTo(RestFn.java:137)
+	at clojure.lang.Var.applyTo(Var.java:705)
+	at clojure.main.main(main.java:40)
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "PREMISE" not found; SQL statement:
+DROP TABLE formula   ; [42102-200]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:453)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:429)
+	at org.h2.message.DbException.get(DbException.java:205)
+	at org.h2.message.DbException.get(DbException.java:181)
+	at org.h2.command.ddl.DropTable.prepareDrop(DropTable.java:65)
+	at org.h2.command.ddl.DropTable.update(DropTable.java:124)
+	at org.h2.command.CommandList.executeRemaining(CommandList.java:50)
+	at org.h2.command.CommandList.update(CommandList.java:67)
+	at org.h2.command.CommandList.executeRemaining(CommandList.java:59)
+	at org.h2.command.CommandList.update(CommandList.java:67)
+	at org.h2.command.Command.executeUpdate(Command.java:251)
+	at org.h2.jdbc.JdbcStatement.executeUpdateInternal(JdbcStatement.java:168)
+	at org.h2.jdbc.JdbcStatement.executeBatch(JdbcStatement.java:768)
+	at clojure.java.jdbc$execute_batch.invokeStatic(jdbc.clj:598)
+	at clojure.java.jdbc$execute_batch.invoke(jdbc.clj:591)
+	at clojure.java.jdbc$db_do_commands$fn__15517.invoke(jdbc.clj:958)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:860)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:789)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at clojure.java.jdbc$db_do_commands.invokeStatic(jdbc.clj:957)
+	at clojure.java.jdbc$db_do_commands.invoke(jdbc.clj:942)
+	at clojure.java.jdbc$db_do_commands.invokeStatic(jdbc.clj:951)
+	at clojure.java.jdbc$db_do_commands.invoke(jdbc.clj:942)
+	at migratus.migration.sql$execute_command$fn__20342.invoke(sql.clj:63)
+	at migratus.migration.sql$execute_command.invokeStatic(sql.clj:62)
+	at migratus.migration.sql$execute_command.invoke(sql.clj:59)
+	at migratus.migration.sql$run_sql_STAR_.invokeStatic(sql.clj:80)
+	at migratus.migration.sql$run_sql_STAR_.invoke(sql.clj:76)
+	at migratus.migration.sql$run_sql$fn__20360.invoke(sql.clj:88)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:860)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:789)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at migratus.migration.sql$run_sql.invokeStatic(sql.clj:86)
+	at migratus.migration.sql$run_sql.invoke(sql.clj:82)
+	at migratus.migration.sql.SqlMigration.down(sql.clj:109)
+	at migratus.database$migrate_up_STAR_$fn__20598.invoke(database.clj:71)
+	at migratus.database$migrate_up_STAR_.invokeStatic(database.clj:70)
+	at migratus.database$migrate_up_STAR_.invoke(database.clj:56)
+	at migratus.database.Database$fn__20668.invoke(database.clj:262)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:807)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:789)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at migratus.database.Database.migrate_up(database.clj:261)
+	at migratus.core$up_STAR_.invokeStatic(core.clj:79)
+	at migratus.core$up_STAR_.invoke(core.clj:77)
+	at migratus.core$migrate_up_STAR_.invokeStatic(core.clj:90)
+	at migratus.core$migrate_up_STAR_.invoke(core.clj:81)
+	at migratus.core$migrate_STAR_.invokeStatic(core.clj:103)
+	at migratus.core$migrate_STAR_.invoke(core.clj:99)
+	at clojure.core$partial$fn__5857.invoke(core.clj:2629)
+	at migratus.core$run.invokeStatic(core.clj:53)
+	at migratus.core$run.invoke(core.clj:49)
+	at migratus.core$migrate.invokeStatic(core.clj:110)
+	at migratus.core$migrate.invoke(core.clj:105)
+	at luminus_migrations.core$fn__20819.invokeStatic(core.clj:44)
+	at luminus_migrations.core$fn__20819.invoke(core.clj:41)
+	at luminus_migrations.core$migrate.invokeStatic(core.clj:98)
+	at luminus_migrations.core$migrate.invoke(core.clj:84)
+	at logos.core$_main.invokeStatic(core.clj:74)
+	at logos.core$_main.doInvoke(core.clj:59)
+	at clojure.lang.RestFn.invoke(RestFn.java:408)
+	at clojure.lang.Var.invoke(Var.java:384)
+	at user$eval21401.invokeStatic(form-init15702345974217890336.clj:1)
+	at user$eval21401.invoke(form-init15702345974217890336.clj:1)
+	at clojure.lang.Compiler.eval(Compiler.java:7181)
+	at clojure.lang.Compiler.eval(Compiler.java:7171)
+	at clojure.lang.Compiler.load(Compiler.java:7640)
+	at clojure.lang.Compiler.loadFile(Compiler.java:7578)
+	at clojure.main$load_script.invokeStatic(main.clj:475)
+	at clojure.main$init_opt.invokeStatic(main.clj:477)
+	at clojure.main$init_opt.invoke(main.clj:477)
+	at clojure.main$initialize.invokeStatic(main.clj:508)
+	at clojure.main$null_opt.invokeStatic(main.clj:542)
+	at clojure.main$null_opt.invoke(main.clj:539)
+	at clojure.main$main.invokeStatic(main.clj:664)
+	at clojure.main$main.doInvoke(main.clj:616)
+	at clojure.lang.RestFn.applyTo(RestFn.java:137)
+	at clojure.lang.Var.applyTo(Var.java:705)
+	at clojure.main.main(main.java:40)
+2021-09-09 20:06:47 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "CREATE TABLE IF EXISTS[*] FORMULA
+(ID INTEGER PRIMARY KEY AUTO_INCREMENT,
+FORMULA VARCHAR(500)) ;
+
+CREATE TABLE IF EXISTS ASSUMPTION
+(ID INTEGER PRIMARY KEY AUTO_INCREMENT,
+FORMULA_ID INTEGER ,
+GOAL_ID INTEGER);
+
+CREATE TABLE IF EXISTS GOAL
+(ID INTEGER PRIMARY KEY AUTO_INCREMENT,
+GOAL_FORMULA_ID INTEGER,
+PROOF_ID INTEGER);
+
+CREATE TABLE IF EXISTS PREMISE
+(ID INTEGER PRIMARY KEY AUTO_INCREMENT,
+FORMULA_ID INTEGER, 
+PROOF_ID INTEGER);
+
+CREATE TABLE IF EXISTS PROOF
+(ID INTEGER PRIMARY KEY AUTO_INCREMENT); 
+
+"; expected "NOT"; SQL statement:
+CREATE TABLE IF EXISTS formula
+(id INTEGER PRIMARY KEY AUTO_INCREMENT,
+formula VARCHAR(500)) ;
+
+CREATE TABLE IF EXISTS assumption
+(id INTEGER PRIMARY KEY AUTO_INCREMENT,
+formula_id INTEGER ,
+goal_id INTEGER);
+
+CREATE TABLE IF EXISTS goal
+(id INTEGER PRIMARY KEY AUTO_INCREMENT,
+goal_formula_id INTEGER,
+proof_id INTEGER);
+
+CREATE TABLE IF EXISTS premise
+(id INTEGER PRIMARY KEY AUTO_INCREMENT,
+formula_id INTEGER, 
+proof_id INTEGER);
+
+CREATE TABLE IF EXISTS proof
+(id INTEGER PRIMARY KEY AUTO_INCREMENT); 
+
+ [42001-200]
+2021-09-09 20:06:47 jdbc[3]: exception
+org.h2.jdbc.JdbcBatchUpdateException: Syntax error in SQL statement "CREATE TABLE IF EXISTS[*] FORMULA
+(ID INTEGER PRIMARY KEY AUTO_INCREMENT,
+FORMULA VARCHAR(500)) ;
+
+CREATE TABLE IF EXISTS ASSUMPTION
+(ID INTEGER PRIMARY KEY AUTO_INCREMENT,
+FORMULA_ID INTEGER ,
+GOAL_ID INTEGER);
+
+CREATE TABLE IF EXISTS GOAL
+(ID INTEGER PRIMARY KEY AUTO_INCREMENT,
+GOAL_FORMULA_ID INTEGER,
+PROOF_ID INTEGER);
+
+CREATE TABLE IF EXISTS PREMISE
+(ID INTEGER PRIMARY KEY AUTO_INCREMENT,
+FORMULA_ID INTEGER, 
+PROOF_ID INTEGER);
+
+CREATE TABLE IF EXISTS PROOF
+(ID INTEGER PRIMARY KEY AUTO_INCREMENT); 
+
+"; expected "NOT"; SQL statement:
+CREATE TABLE IF EXISTS formula
+(id INTEGER PRIMARY KEY AUTO_INCREMENT,
+formula VARCHAR(500)) ;
+
+CREATE TABLE IF EXISTS assumption
+(id INTEGER PRIMARY KEY AUTO_INCREMENT,
+formula_id INTEGER ,
+goal_id INTEGER);
+
+CREATE TABLE IF EXISTS goal
+(id INTEGER PRIMARY KEY AUTO_INCREMENT,
+goal_formula_id INTEGER,
+proof_id INTEGER);
+
+CREATE TABLE IF EXISTS premise
+(id INTEGER PRIMARY KEY AUTO_INCREMENT,
+formula_id INTEGER, 
+proof_id INTEGER);
+
+CREATE TABLE IF EXISTS proof
+(id INTEGER PRIMARY KEY AUTO_INCREMENT); 
+
+ [42001-200]
+	at org.h2.jdbc.JdbcStatement.executeBatch(JdbcStatement.java:781)
+	at clojure.java.jdbc$execute_batch.invokeStatic(jdbc.clj:598)
+	at clojure.java.jdbc$execute_batch.invoke(jdbc.clj:591)
+	at clojure.java.jdbc$db_do_commands$fn__15517.invoke(jdbc.clj:958)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:860)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:789)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at clojure.java.jdbc$db_do_commands.invokeStatic(jdbc.clj:957)
+	at clojure.java.jdbc$db_do_commands.invoke(jdbc.clj:942)
+	at clojure.java.jdbc$db_do_commands.invokeStatic(jdbc.clj:951)
+	at clojure.java.jdbc$db_do_commands.invoke(jdbc.clj:942)
+	at migratus.migration.sql$execute_command$fn__20342.invoke(sql.clj:63)
+	at migratus.migration.sql$execute_command.invokeStatic(sql.clj:62)
+	at migratus.migration.sql$execute_command.invoke(sql.clj:59)
+	at migratus.migration.sql$run_sql_STAR_.invokeStatic(sql.clj:80)
+	at migratus.migration.sql$run_sql_STAR_.invoke(sql.clj:76)
+	at migratus.migration.sql$run_sql$fn__20360.invoke(sql.clj:88)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:860)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:789)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at migratus.migration.sql$run_sql.invokeStatic(sql.clj:86)
+	at migratus.migration.sql$run_sql.invoke(sql.clj:82)
+	at migratus.migration.sql.SqlMigration.up(sql.clj:105)
+	at migratus.database$migrate_up_STAR_.invokeStatic(database.clj:62)
+	at migratus.database$migrate_up_STAR_.invoke(database.clj:56)
+	at migratus.database.Database$fn__20668.invoke(database.clj:262)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:807)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:789)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at migratus.database.Database.migrate_up(database.clj:261)
+	at migratus.core$up_STAR_.invokeStatic(core.clj:79)
+	at migratus.core$up_STAR_.invoke(core.clj:77)
+	at migratus.core$migrate_up_STAR_.invokeStatic(core.clj:90)
+	at migratus.core$migrate_up_STAR_.invoke(core.clj:81)
+	at migratus.core$migrate_STAR_.invokeStatic(core.clj:103)
+	at migratus.core$migrate_STAR_.invoke(core.clj:99)
+	at clojure.core$partial$fn__5857.invoke(core.clj:2629)
+	at migratus.core$run.invokeStatic(core.clj:53)
+	at migratus.core$run.invoke(core.clj:49)
+	at migratus.core$migrate.invokeStatic(core.clj:110)
+	at migratus.core$migrate.invoke(core.clj:105)
+	at luminus_migrations.core$fn__20819.invokeStatic(core.clj:44)
+	at luminus_migrations.core$fn__20819.invoke(core.clj:41)
+	at luminus_migrations.core$migrate.invokeStatic(core.clj:98)
+	at luminus_migrations.core$migrate.invoke(core.clj:84)
+	at logos.core$_main.invokeStatic(core.clj:74)
+	at logos.core$_main.doInvoke(core.clj:59)
+	at clojure.lang.RestFn.invoke(RestFn.java:408)
+	at clojure.lang.Var.invoke(Var.java:384)
+	at user$eval21401.invokeStatic(form-init7316571982571908608.clj:1)
+	at user$eval21401.invoke(form-init7316571982571908608.clj:1)
+	at clojure.lang.Compiler.eval(Compiler.java:7181)
+	at clojure.lang.Compiler.eval(Compiler.java:7171)
+	at clojure.lang.Compiler.load(Compiler.java:7640)
+	at clojure.lang.Compiler.loadFile(Compiler.java:7578)
+	at clojure.main$load_script.invokeStatic(main.clj:475)
+	at clojure.main$init_opt.invokeStatic(main.clj:477)
+	at clojure.main$init_opt.invoke(main.clj:477)
+	at clojure.main$initialize.invokeStatic(main.clj:508)
+	at clojure.main$null_opt.invokeStatic(main.clj:542)
+	at clojure.main$null_opt.invoke(main.clj:539)
+	at clojure.main$main.invokeStatic(main.clj:664)
+	at clojure.main$main.doInvoke(main.clj:616)
+	at clojure.lang.RestFn.applyTo(RestFn.java:137)
+	at clojure.lang.Var.applyTo(Var.java:705)
+	at clojure.main.main(main.java:40)
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "CREATE TABLE IF EXISTS[*] FORMULA
+(ID INTEGER PRIMARY KEY AUTO_INCREMENT,
+FORMULA VARCHAR(500)) ;
+
+CREATE TABLE IF EXISTS ASSUMPTION
+(ID INTEGER PRIMARY KEY AUTO_INCREMENT,
+FORMULA_ID INTEGER ,
+GOAL_ID INTEGER);
+
+CREATE TABLE IF EXISTS GOAL
+(ID INTEGER PRIMARY KEY AUTO_INCREMENT,
+GOAL_FORMULA_ID INTEGER,
+PROOF_ID INTEGER);
+
+CREATE TABLE IF EXISTS PREMISE
+(ID INTEGER PRIMARY KEY AUTO_INCREMENT,
+FORMULA_ID INTEGER, 
+PROOF_ID INTEGER);
+
+CREATE TABLE IF EXISTS PROOF
+(ID INTEGER PRIMARY KEY AUTO_INCREMENT); 
+
+"; expected "NOT"; SQL statement:
+CREATE TABLE IF EXISTS formula
+(id INTEGER PRIMARY KEY AUTO_INCREMENT,
+formula VARCHAR(500)) ;
+
+CREATE TABLE IF EXISTS assumption
+(id INTEGER PRIMARY KEY AUTO_INCREMENT,
+formula_id INTEGER ,
+goal_id INTEGER);
+
+CREATE TABLE IF EXISTS goal
+(id INTEGER PRIMARY KEY AUTO_INCREMENT,
+goal_formula_id INTEGER,
+proof_id INTEGER);
+
+CREATE TABLE IF EXISTS premise
+(id INTEGER PRIMARY KEY AUTO_INCREMENT,
+formula_id INTEGER, 
+proof_id INTEGER);
+
+CREATE TABLE IF EXISTS proof
+(id INTEGER PRIMARY KEY AUTO_INCREMENT); 
+
+ [42001-200]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:453)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:429)
+	at org.h2.message.DbException.getSyntaxError(DbException.java:243)
+	at org.h2.command.Parser.getSyntaxError(Parser.java:1053)
+	at org.h2.command.Parser.read(Parser.java:4995)
+	at org.h2.command.Parser.readIfNotExists(Parser.java:6528)
+	at org.h2.command.Parser.parseCreateTable(Parser.java:8360)
+	at org.h2.command.Parser.parseCreate(Parser.java:6276)
+	at org.h2.command.Parser.parsePrepared(Parser.java:903)
+	at org.h2.command.Parser.parse(Parser.java:843)
+	at org.h2.command.Parser.parse(Parser.java:819)
+	at org.h2.command.Parser.prepareCommand(Parser.java:738)
+	at org.h2.engine.Session.prepareLocal(Session.java:657)
+	at org.h2.engine.Session.prepareCommand(Session.java:595)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1235)
+	at org.h2.jdbc.JdbcStatement.executeUpdateInternal(JdbcStatement.java:164)
+	at org.h2.jdbc.JdbcStatement.executeBatch(JdbcStatement.java:768)
+	at clojure.java.jdbc$execute_batch.invokeStatic(jdbc.clj:598)
+	at clojure.java.jdbc$execute_batch.invoke(jdbc.clj:591)
+	at clojure.java.jdbc$db_do_commands$fn__15517.invoke(jdbc.clj:958)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:860)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:789)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at clojure.java.jdbc$db_do_commands.invokeStatic(jdbc.clj:957)
+	at clojure.java.jdbc$db_do_commands.invoke(jdbc.clj:942)
+	at clojure.java.jdbc$db_do_commands.invokeStatic(jdbc.clj:951)
+	at clojure.java.jdbc$db_do_commands.invoke(jdbc.clj:942)
+	at migratus.migration.sql$execute_command$fn__20342.invoke(sql.clj:63)
+	at migratus.migration.sql$execute_command.invokeStatic(sql.clj:62)
+	at migratus.migration.sql$execute_command.invoke(sql.clj:59)
+	at migratus.migration.sql$run_sql_STAR_.invokeStatic(sql.clj:80)
+	at migratus.migration.sql$run_sql_STAR_.invoke(sql.clj:76)
+	at migratus.migration.sql$run_sql$fn__20360.invoke(sql.clj:88)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:860)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:789)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at migratus.migration.sql$run_sql.invokeStatic(sql.clj:86)
+	at migratus.migration.sql$run_sql.invoke(sql.clj:82)
+	at migratus.migration.sql.SqlMigration.up(sql.clj:105)
+	at migratus.database$migrate_up_STAR_.invokeStatic(database.clj:62)
+	at migratus.database$migrate_up_STAR_.invoke(database.clj:56)
+	at migratus.database.Database$fn__20668.invoke(database.clj:262)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:807)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:789)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at migratus.database.Database.migrate_up(database.clj:261)
+	at migratus.core$up_STAR_.invokeStatic(core.clj:79)
+	at migratus.core$up_STAR_.invoke(core.clj:77)
+	at migratus.core$migrate_up_STAR_.invokeStatic(core.clj:90)
+	at migratus.core$migrate_up_STAR_.invoke(core.clj:81)
+	at migratus.core$migrate_STAR_.invokeStatic(core.clj:103)
+	at migratus.core$migrate_STAR_.invoke(core.clj:99)
+	at clojure.core$partial$fn__5857.invoke(core.clj:2629)
+	at migratus.core$run.invokeStatic(core.clj:53)
+	at migratus.core$run.invoke(core.clj:49)
+	at migratus.core$migrate.invokeStatic(core.clj:110)
+	at migratus.core$migrate.invoke(core.clj:105)
+	at luminus_migrations.core$fn__20819.invokeStatic(core.clj:44)
+	at luminus_migrations.core$fn__20819.invoke(core.clj:41)
+	at luminus_migrations.core$migrate.invokeStatic(core.clj:98)
+	at luminus_migrations.core$migrate.invoke(core.clj:84)
+	at logos.core$_main.invokeStatic(core.clj:74)
+	at logos.core$_main.doInvoke(core.clj:59)
+	at clojure.lang.RestFn.invoke(RestFn.java:408)
+	at clojure.lang.Var.invoke(Var.java:384)
+	at user$eval21401.invokeStatic(form-init7316571982571908608.clj:1)
+	at user$eval21401.invoke(form-init7316571982571908608.clj:1)
+	at clojure.lang.Compiler.eval(Compiler.java:7181)
+	at clojure.lang.Compiler.eval(Compiler.java:7171)
+	at clojure.lang.Compiler.load(Compiler.java:7640)
+	at clojure.lang.Compiler.loadFile(Compiler.java:7578)
+	at clojure.main$load_script.invokeStatic(main.clj:475)
+	at clojure.main$init_opt.invokeStatic(main.clj:477)
+	at clojure.main$init_opt.invoke(main.clj:477)
+	at clojure.main$initialize.invokeStatic(main.clj:508)
+	at clojure.main$null_opt.invokeStatic(main.clj:542)
+	at clojure.main$null_opt.invoke(main.clj:539)
+	at clojure.main$main.invokeStatic(main.clj:664)
+	at clojure.main$main.doInvoke(main.clj:616)
+	at clojure.lang.RestFn.applyTo(RestFn.java:137)
+	at clojure.lang.Var.applyTo(Var.java:705)
+	at clojure.main.main(main.java:40)
+2021-09-09 20:06:47 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "FORMULA" not found; SQL statement:
+DROP TABLE formula   ; [42102-200]
+2021-09-09 20:06:47 jdbc[3]: exception
+org.h2.jdbc.JdbcBatchUpdateException: Table "FORMULA" not found; SQL statement:
+DROP TABLE formula   ; [42102-200]
+	at org.h2.jdbc.JdbcStatement.executeBatch(JdbcStatement.java:781)
+	at clojure.java.jdbc$execute_batch.invokeStatic(jdbc.clj:598)
+	at clojure.java.jdbc$execute_batch.invoke(jdbc.clj:591)
+	at clojure.java.jdbc$db_do_commands$fn__15517.invoke(jdbc.clj:958)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:860)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:789)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at clojure.java.jdbc$db_do_commands.invokeStatic(jdbc.clj:957)
+	at clojure.java.jdbc$db_do_commands.invoke(jdbc.clj:942)
+	at clojure.java.jdbc$db_do_commands.invokeStatic(jdbc.clj:951)
+	at clojure.java.jdbc$db_do_commands.invoke(jdbc.clj:942)
+	at migratus.migration.sql$execute_command$fn__20342.invoke(sql.clj:63)
+	at migratus.migration.sql$execute_command.invokeStatic(sql.clj:62)
+	at migratus.migration.sql$execute_command.invoke(sql.clj:59)
+	at migratus.migration.sql$run_sql_STAR_.invokeStatic(sql.clj:80)
+	at migratus.migration.sql$run_sql_STAR_.invoke(sql.clj:76)
+	at migratus.migration.sql$run_sql$fn__20360.invoke(sql.clj:88)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:860)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:789)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at migratus.migration.sql$run_sql.invokeStatic(sql.clj:86)
+	at migratus.migration.sql$run_sql.invoke(sql.clj:82)
+	at migratus.migration.sql.SqlMigration.down(sql.clj:109)
+	at migratus.database$migrate_up_STAR_$fn__20598.invoke(database.clj:71)
+	at migratus.database$migrate_up_STAR_.invokeStatic(database.clj:70)
+	at migratus.database$migrate_up_STAR_.invoke(database.clj:56)
+	at migratus.database.Database$fn__20668.invoke(database.clj:262)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:807)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:789)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at migratus.database.Database.migrate_up(database.clj:261)
+	at migratus.core$up_STAR_.invokeStatic(core.clj:79)
+	at migratus.core$up_STAR_.invoke(core.clj:77)
+	at migratus.core$migrate_up_STAR_.invokeStatic(core.clj:90)
+	at migratus.core$migrate_up_STAR_.invoke(core.clj:81)
+	at migratus.core$migrate_STAR_.invokeStatic(core.clj:103)
+	at migratus.core$migrate_STAR_.invoke(core.clj:99)
+	at clojure.core$partial$fn__5857.invoke(core.clj:2629)
+	at migratus.core$run.invokeStatic(core.clj:53)
+	at migratus.core$run.invoke(core.clj:49)
+	at migratus.core$migrate.invokeStatic(core.clj:110)
+	at migratus.core$migrate.invoke(core.clj:105)
+	at luminus_migrations.core$fn__20819.invokeStatic(core.clj:44)
+	at luminus_migrations.core$fn__20819.invoke(core.clj:41)
+	at luminus_migrations.core$migrate.invokeStatic(core.clj:98)
+	at luminus_migrations.core$migrate.invoke(core.clj:84)
+	at logos.core$_main.invokeStatic(core.clj:74)
+	at logos.core$_main.doInvoke(core.clj:59)
+	at clojure.lang.RestFn.invoke(RestFn.java:408)
+	at clojure.lang.Var.invoke(Var.java:384)
+	at user$eval21401.invokeStatic(form-init7316571982571908608.clj:1)
+	at user$eval21401.invoke(form-init7316571982571908608.clj:1)
+	at clojure.lang.Compiler.eval(Compiler.java:7181)
+	at clojure.lang.Compiler.eval(Compiler.java:7171)
+	at clojure.lang.Compiler.load(Compiler.java:7640)
+	at clojure.lang.Compiler.loadFile(Compiler.java:7578)
+	at clojure.main$load_script.invokeStatic(main.clj:475)
+	at clojure.main$init_opt.invokeStatic(main.clj:477)
+	at clojure.main$init_opt.invoke(main.clj:477)
+	at clojure.main$initialize.invokeStatic(main.clj:508)
+	at clojure.main$null_opt.invokeStatic(main.clj:542)
+	at clojure.main$null_opt.invoke(main.clj:539)
+	at clojure.main$main.invokeStatic(main.clj:664)
+	at clojure.main$main.doInvoke(main.clj:616)
+	at clojure.lang.RestFn.applyTo(RestFn.java:137)
+	at clojure.lang.Var.applyTo(Var.java:705)
+	at clojure.main.main(main.java:40)
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "FORMULA" not found; SQL statement:
+DROP TABLE formula   ; [42102-200]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:453)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:429)
+	at org.h2.message.DbException.get(DbException.java:205)
+	at org.h2.message.DbException.get(DbException.java:181)
+	at org.h2.command.ddl.DropTable.prepareDrop(DropTable.java:65)
+	at org.h2.command.ddl.DropTable.update(DropTable.java:124)
+	at org.h2.command.CommandContainer.update(CommandContainer.java:198)
+	at org.h2.command.Command.executeUpdate(Command.java:251)
+	at org.h2.command.CommandList.update(CommandList.java:66)
+	at org.h2.command.Command.executeUpdate(Command.java:251)
+	at org.h2.jdbc.JdbcStatement.executeUpdateInternal(JdbcStatement.java:168)
+	at org.h2.jdbc.JdbcStatement.executeBatch(JdbcStatement.java:768)
+	at clojure.java.jdbc$execute_batch.invokeStatic(jdbc.clj:598)
+	at clojure.java.jdbc$execute_batch.invoke(jdbc.clj:591)
+	at clojure.java.jdbc$db_do_commands$fn__15517.invoke(jdbc.clj:958)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:860)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:789)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at clojure.java.jdbc$db_do_commands.invokeStatic(jdbc.clj:957)
+	at clojure.java.jdbc$db_do_commands.invoke(jdbc.clj:942)
+	at clojure.java.jdbc$db_do_commands.invokeStatic(jdbc.clj:951)
+	at clojure.java.jdbc$db_do_commands.invoke(jdbc.clj:942)
+	at migratus.migration.sql$execute_command$fn__20342.invoke(sql.clj:63)
+	at migratus.migration.sql$execute_command.invokeStatic(sql.clj:62)
+	at migratus.migration.sql$execute_command.invoke(sql.clj:59)
+	at migratus.migration.sql$run_sql_STAR_.invokeStatic(sql.clj:80)
+	at migratus.migration.sql$run_sql_STAR_.invoke(sql.clj:76)
+	at migratus.migration.sql$run_sql$fn__20360.invoke(sql.clj:88)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:860)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:789)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at migratus.migration.sql$run_sql.invokeStatic(sql.clj:86)
+	at migratus.migration.sql$run_sql.invoke(sql.clj:82)
+	at migratus.migration.sql.SqlMigration.down(sql.clj:109)
+	at migratus.database$migrate_up_STAR_$fn__20598.invoke(database.clj:71)
+	at migratus.database$migrate_up_STAR_.invokeStatic(database.clj:70)
+	at migratus.database$migrate_up_STAR_.invoke(database.clj:56)
+	at migratus.database.Database$fn__20668.invoke(database.clj:262)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:807)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:789)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at migratus.database.Database.migrate_up(database.clj:261)
+	at migratus.core$up_STAR_.invokeStatic(core.clj:79)
+	at migratus.core$up_STAR_.invoke(core.clj:77)
+	at migratus.core$migrate_up_STAR_.invokeStatic(core.clj:90)
+	at migratus.core$migrate_up_STAR_.invoke(core.clj:81)
+	at migratus.core$migrate_STAR_.invokeStatic(core.clj:103)
+	at migratus.core$migrate_STAR_.invoke(core.clj:99)
+	at clojure.core$partial$fn__5857.invoke(core.clj:2629)
+	at migratus.core$run.invokeStatic(core.clj:53)
+	at migratus.core$run.invoke(core.clj:49)
+	at migratus.core$migrate.invokeStatic(core.clj:110)
+	at migratus.core$migrate.invoke(core.clj:105)
+	at luminus_migrations.core$fn__20819.invokeStatic(core.clj:44)
+	at luminus_migrations.core$fn__20819.invoke(core.clj:41)
+	at luminus_migrations.core$migrate.invokeStatic(core.clj:98)
+	at luminus_migrations.core$migrate.invoke(core.clj:84)
+	at logos.core$_main.invokeStatic(core.clj:74)
+	at logos.core$_main.doInvoke(core.clj:59)
+	at clojure.lang.RestFn.invoke(RestFn.java:408)
+	at clojure.lang.Var.invoke(Var.java:384)
+	at user$eval21401.invokeStatic(form-init7316571982571908608.clj:1)
+	at user$eval21401.invoke(form-init7316571982571908608.clj:1)
+	at clojure.lang.Compiler.eval(Compiler.java:7181)
+	at clojure.lang.Compiler.eval(Compiler.java:7171)
+	at clojure.lang.Compiler.load(Compiler.java:7640)
+	at clojure.lang.Compiler.loadFile(Compiler.java:7578)
+	at clojure.main$load_script.invokeStatic(main.clj:475)
+	at clojure.main$init_opt.invokeStatic(main.clj:477)
+	at clojure.main$init_opt.invoke(main.clj:477)
+	at clojure.main$initialize.invokeStatic(main.clj:508)
+	at clojure.main$null_opt.invokeStatic(main.clj:542)
+	at clojure.main$null_opt.invoke(main.clj:539)
+	at clojure.main$main.invokeStatic(main.clj:664)
+	at clojure.main$main.doInvoke(main.clj:616)
+	at clojure.lang.RestFn.applyTo(RestFn.java:137)
+	at clojure.lang.Var.applyTo(Var.java:705)
+	at clojure.main.main(main.java:40)
+2021-09-09 20:09:23 database: flush
+org.h2.message.DbException: General error: "java.lang.IllegalStateException: The file is locked: nio:/Users/andrew/Documents/clojure/logos/logos_dev.db.mv.db [1.4.200/7]" [50000-200]
+	at org.h2.message.DbException.get(DbException.java:194)
+	at org.h2.message.DbException.convert(DbException.java:347)
+	at org.h2.mvstore.db.MVTableEngine$1.uncaughtException(MVTableEngine.java:93)
+	at org.h2.mvstore.MVStore.handleException(MVStore.java:2877)
+	at org.h2.mvstore.MVStore.panic(MVStore.java:481)
+	at org.h2.mvstore.MVStore.<init>(MVStore.java:402)
+	at org.h2.mvstore.MVStore$Builder.open(MVStore.java:3579)
+	at org.h2.mvstore.db.MVTableEngine$Store.open(MVTableEngine.java:170)
+	at org.h2.mvstore.db.MVTableEngine.init(MVTableEngine.java:103)
+	at org.h2.engine.Database.getPageStore(Database.java:2659)
+	at org.h2.engine.Database.open(Database.java:675)
+	at org.h2.engine.Database.openDatabase(Database.java:307)
+	at org.h2.engine.Database.<init>(Database.java:301)
+	at org.h2.engine.Engine.openSession(Engine.java:74)
+	at org.h2.engine.Engine.openSession(Engine.java:192)
+	at org.h2.engine.Engine.createSessionAndValidate(Engine.java:171)
+	at org.h2.engine.Engine.createSession(Engine.java:166)
+	at org.h2.engine.Engine.createSession(Engine.java:29)
+	at org.h2.engine.SessionRemote.connectEmbeddedOrServer(SessionRemote.java:340)
+	at org.h2.jdbc.JdbcConnection.<init>(JdbcConnection.java:173)
+	at org.h2.jdbc.JdbcConnection.<init>(JdbcConnection.java:152)
+	at org.h2.Driver.connect(Driver.java:69)
+	at java.sql/java.sql.DriverManager.getConnection(DriverManager.java:677)
+	at java.sql/java.sql.DriverManager.getConnection(DriverManager.java:251)
+	at clojure.java.jdbc$get_connection.invokeStatic(jdbc.clj:382)
+	at clojure.java.jdbc$get_connection.invoke(jdbc.clj:274)
+	at clojure.java.jdbc$get_connection.invokeStatic(jdbc.clj:343)
+	at clojure.java.jdbc$get_connection.invoke(jdbc.clj:274)
+	at migratus.database$connect_STAR_$fn__20619.invoke(database.clj:122)
+	at migratus.database$connect_STAR_.invokeStatic(database.clj:121)
+	at migratus.database$connect_STAR_.invoke(database.clj:114)
+	at migratus.database.Database.connect(database.clj:270)
+	at migratus.core$run.invokeStatic(core.clj:52)
+	at migratus.core$run.invoke(core.clj:49)
+	at migratus.core$migrate.invokeStatic(core.clj:110)
+	at migratus.core$migrate.invoke(core.clj:105)
+	at luminus_migrations.core$fn__20819.invokeStatic(core.clj:44)
+	at luminus_migrations.core$fn__20819.invoke(core.clj:41)
+	at luminus_migrations.core$migrate.invokeStatic(core.clj:98)
+	at luminus_migrations.core$migrate.invoke(core.clj:84)
+	at logos.core$_main.invokeStatic(core.clj:74)
+	at logos.core$_main.doInvoke(core.clj:59)
+	at clojure.lang.RestFn.invoke(RestFn.java:408)
+	at clojure.lang.Var.invoke(Var.java:384)
+	at user$eval21401.invokeStatic(form-init5249035615363952186.clj:1)
+	at user$eval21401.invoke(form-init5249035615363952186.clj:1)
+	at clojure.lang.Compiler.eval(Compiler.java:7181)
+	at clojure.lang.Compiler.eval(Compiler.java:7171)
+	at clojure.lang.Compiler.load(Compiler.java:7640)
+	at clojure.lang.Compiler.loadFile(Compiler.java:7578)
+	at clojure.main$load_script.invokeStatic(main.clj:475)
+	at clojure.main$init_opt.invokeStatic(main.clj:477)
+	at clojure.main$init_opt.invoke(main.clj:477)
+	at clojure.main$initialize.invokeStatic(main.clj:508)
+	at clojure.main$null_opt.invokeStatic(main.clj:542)
+	at clojure.main$null_opt.invoke(main.clj:539)
+	at clojure.main$main.invokeStatic(main.clj:664)
+	at clojure.main$main.doInvoke(main.clj:616)
+	at clojure.lang.RestFn.applyTo(RestFn.java:137)
+	at clojure.lang.Var.applyTo(Var.java:705)
+	at clojure.main.main(main.java:40)
+Caused by: org.h2.jdbc.JdbcSQLNonTransientException: General error: "java.lang.IllegalStateException: The file is locked: nio:/Users/andrew/Documents/clojure/logos/logos_dev.db.mv.db [1.4.200/7]" [50000-200]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:505)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:429)
+	... 61 more
+Caused by: java.lang.IllegalStateException: The file is locked: nio:/Users/andrew/Documents/clojure/logos/logos_dev.db.mv.db [1.4.200/7]
+	at org.h2.mvstore.DataUtils.newIllegalStateException(DataUtils.java:950)
+	at org.h2.mvstore.FileStore.open(FileStore.java:172)
+	at org.h2.mvstore.MVStore.<init>(MVStore.java:381)
+	... 55 more
+2021-09-09 20:10:07 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "CREATE TABLE IF EXISTS[*] FORMULA
+(ID INTEGER PRIMARY KEY AUTO_INCREMENT,
+FORMULA VARCHAR(500)) ;
+
+CREATE TABLE IF EXISTS ASSUMPTION
+(ID INTEGER PRIMARY KEY AUTO_INCREMENT,
+FORMULA_ID INTEGER ,
+GOAL_ID INTEGER);
+
+CREATE TABLE IF EXISTS GOAL
+(ID INTEGER PRIMARY KEY AUTO_INCREMENT,
+GOAL_FORMULA_ID INTEGER,
+PROOF_ID INTEGER);
+
+CREATE TABLE IF EXISTS PREMISE
+(ID INTEGER PRIMARY KEY AUTO_INCREMENT,
+FORMULA_ID INTEGER, 
+PROOF_ID INTEGER);
+
+CREATE TABLE IF EXISTS PROOF
+(ID INTEGER PRIMARY KEY AUTO_INCREMENT); 
+
+"; expected "NOT"; SQL statement:
+CREATE TABLE IF EXISTS formula
+(id INTEGER PRIMARY KEY AUTO_INCREMENT,
+formula VARCHAR(500)) ;
+
+CREATE TABLE IF EXISTS assumption
+(id INTEGER PRIMARY KEY AUTO_INCREMENT,
+formula_id INTEGER ,
+goal_id INTEGER);
+
+CREATE TABLE IF EXISTS goal
+(id INTEGER PRIMARY KEY AUTO_INCREMENT,
+goal_formula_id INTEGER,
+proof_id INTEGER);
+
+CREATE TABLE IF EXISTS premise
+(id INTEGER PRIMARY KEY AUTO_INCREMENT,
+formula_id INTEGER, 
+proof_id INTEGER);
+
+CREATE TABLE IF EXISTS proof
+(id INTEGER PRIMARY KEY AUTO_INCREMENT); 
+
+ [42001-200]
+2021-09-09 20:10:07 jdbc[3]: exception
+org.h2.jdbc.JdbcBatchUpdateException: Syntax error in SQL statement "CREATE TABLE IF EXISTS[*] FORMULA
+(ID INTEGER PRIMARY KEY AUTO_INCREMENT,
+FORMULA VARCHAR(500)) ;
+
+CREATE TABLE IF EXISTS ASSUMPTION
+(ID INTEGER PRIMARY KEY AUTO_INCREMENT,
+FORMULA_ID INTEGER ,
+GOAL_ID INTEGER);
+
+CREATE TABLE IF EXISTS GOAL
+(ID INTEGER PRIMARY KEY AUTO_INCREMENT,
+GOAL_FORMULA_ID INTEGER,
+PROOF_ID INTEGER);
+
+CREATE TABLE IF EXISTS PREMISE
+(ID INTEGER PRIMARY KEY AUTO_INCREMENT,
+FORMULA_ID INTEGER, 
+PROOF_ID INTEGER);
+
+CREATE TABLE IF EXISTS PROOF
+(ID INTEGER PRIMARY KEY AUTO_INCREMENT); 
+
+"; expected "NOT"; SQL statement:
+CREATE TABLE IF EXISTS formula
+(id INTEGER PRIMARY KEY AUTO_INCREMENT,
+formula VARCHAR(500)) ;
+
+CREATE TABLE IF EXISTS assumption
+(id INTEGER PRIMARY KEY AUTO_INCREMENT,
+formula_id INTEGER ,
+goal_id INTEGER);
+
+CREATE TABLE IF EXISTS goal
+(id INTEGER PRIMARY KEY AUTO_INCREMENT,
+goal_formula_id INTEGER,
+proof_id INTEGER);
+
+CREATE TABLE IF EXISTS premise
+(id INTEGER PRIMARY KEY AUTO_INCREMENT,
+formula_id INTEGER, 
+proof_id INTEGER);
+
+CREATE TABLE IF EXISTS proof
+(id INTEGER PRIMARY KEY AUTO_INCREMENT); 
+
+ [42001-200]
+	at org.h2.jdbc.JdbcStatement.executeBatch(JdbcStatement.java:781)
+	at clojure.java.jdbc$execute_batch.invokeStatic(jdbc.clj:598)
+	at clojure.java.jdbc$execute_batch.invoke(jdbc.clj:591)
+	at clojure.java.jdbc$db_do_commands$fn__15517.invoke(jdbc.clj:958)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:860)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:789)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at clojure.java.jdbc$db_do_commands.invokeStatic(jdbc.clj:957)
+	at clojure.java.jdbc$db_do_commands.invoke(jdbc.clj:942)
+	at clojure.java.jdbc$db_do_commands.invokeStatic(jdbc.clj:951)
+	at clojure.java.jdbc$db_do_commands.invoke(jdbc.clj:942)
+	at migratus.migration.sql$execute_command$fn__20342.invoke(sql.clj:63)
+	at migratus.migration.sql$execute_command.invokeStatic(sql.clj:62)
+	at migratus.migration.sql$execute_command.invoke(sql.clj:59)
+	at migratus.migration.sql$run_sql_STAR_.invokeStatic(sql.clj:80)
+	at migratus.migration.sql$run_sql_STAR_.invoke(sql.clj:76)
+	at migratus.migration.sql$run_sql$fn__20360.invoke(sql.clj:88)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:860)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:789)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at migratus.migration.sql$run_sql.invokeStatic(sql.clj:86)
+	at migratus.migration.sql$run_sql.invoke(sql.clj:82)
+	at migratus.migration.sql.SqlMigration.up(sql.clj:105)
+	at migratus.database$migrate_up_STAR_.invokeStatic(database.clj:62)
+	at migratus.database$migrate_up_STAR_.invoke(database.clj:56)
+	at migratus.database.Database$fn__20668.invoke(database.clj:262)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:807)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:789)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at migratus.database.Database.migrate_up(database.clj:261)
+	at migratus.core$up_STAR_.invokeStatic(core.clj:79)
+	at migratus.core$up_STAR_.invoke(core.clj:77)
+	at migratus.core$migrate_up_STAR_.invokeStatic(core.clj:90)
+	at migratus.core$migrate_up_STAR_.invoke(core.clj:81)
+	at migratus.core$migrate_STAR_.invokeStatic(core.clj:103)
+	at migratus.core$migrate_STAR_.invoke(core.clj:99)
+	at clojure.core$partial$fn__5857.invoke(core.clj:2629)
+	at migratus.core$run.invokeStatic(core.clj:53)
+	at migratus.core$run.invoke(core.clj:49)
+	at migratus.core$migrate.invokeStatic(core.clj:110)
+	at migratus.core$migrate.invoke(core.clj:105)
+	at luminus_migrations.core$fn__20819.invokeStatic(core.clj:44)
+	at luminus_migrations.core$fn__20819.invoke(core.clj:41)
+	at luminus_migrations.core$migrate.invokeStatic(core.clj:98)
+	at luminus_migrations.core$migrate.invoke(core.clj:84)
+	at logos.core$_main.invokeStatic(core.clj:74)
+	at logos.core$_main.doInvoke(core.clj:59)
+	at clojure.lang.RestFn.invoke(RestFn.java:408)
+	at clojure.lang.Var.invoke(Var.java:384)
+	at user$eval21401.invokeStatic(form-init3986659750615980535.clj:1)
+	at user$eval21401.invoke(form-init3986659750615980535.clj:1)
+	at clojure.lang.Compiler.eval(Compiler.java:7181)
+	at clojure.lang.Compiler.eval(Compiler.java:7171)
+	at clojure.lang.Compiler.load(Compiler.java:7640)
+	at clojure.lang.Compiler.loadFile(Compiler.java:7578)
+	at clojure.main$load_script.invokeStatic(main.clj:475)
+	at clojure.main$init_opt.invokeStatic(main.clj:477)
+	at clojure.main$init_opt.invoke(main.clj:477)
+	at clojure.main$initialize.invokeStatic(main.clj:508)
+	at clojure.main$null_opt.invokeStatic(main.clj:542)
+	at clojure.main$null_opt.invoke(main.clj:539)
+	at clojure.main$main.invokeStatic(main.clj:664)
+	at clojure.main$main.doInvoke(main.clj:616)
+	at clojure.lang.RestFn.applyTo(RestFn.java:137)
+	at clojure.lang.Var.applyTo(Var.java:705)
+	at clojure.main.main(main.java:40)
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "CREATE TABLE IF EXISTS[*] FORMULA
+(ID INTEGER PRIMARY KEY AUTO_INCREMENT,
+FORMULA VARCHAR(500)) ;
+
+CREATE TABLE IF EXISTS ASSUMPTION
+(ID INTEGER PRIMARY KEY AUTO_INCREMENT,
+FORMULA_ID INTEGER ,
+GOAL_ID INTEGER);
+
+CREATE TABLE IF EXISTS GOAL
+(ID INTEGER PRIMARY KEY AUTO_INCREMENT,
+GOAL_FORMULA_ID INTEGER,
+PROOF_ID INTEGER);
+
+CREATE TABLE IF EXISTS PREMISE
+(ID INTEGER PRIMARY KEY AUTO_INCREMENT,
+FORMULA_ID INTEGER, 
+PROOF_ID INTEGER);
+
+CREATE TABLE IF EXISTS PROOF
+(ID INTEGER PRIMARY KEY AUTO_INCREMENT); 
+
+"; expected "NOT"; SQL statement:
+CREATE TABLE IF EXISTS formula
+(id INTEGER PRIMARY KEY AUTO_INCREMENT,
+formula VARCHAR(500)) ;
+
+CREATE TABLE IF EXISTS assumption
+(id INTEGER PRIMARY KEY AUTO_INCREMENT,
+formula_id INTEGER ,
+goal_id INTEGER);
+
+CREATE TABLE IF EXISTS goal
+(id INTEGER PRIMARY KEY AUTO_INCREMENT,
+goal_formula_id INTEGER,
+proof_id INTEGER);
+
+CREATE TABLE IF EXISTS premise
+(id INTEGER PRIMARY KEY AUTO_INCREMENT,
+formula_id INTEGER, 
+proof_id INTEGER);
+
+CREATE TABLE IF EXISTS proof
+(id INTEGER PRIMARY KEY AUTO_INCREMENT); 
+
+ [42001-200]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:453)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:429)
+	at org.h2.message.DbException.getSyntaxError(DbException.java:243)
+	at org.h2.command.Parser.getSyntaxError(Parser.java:1053)
+	at org.h2.command.Parser.read(Parser.java:4995)
+	at org.h2.command.Parser.readIfNotExists(Parser.java:6528)
+	at org.h2.command.Parser.parseCreateTable(Parser.java:8360)
+	at org.h2.command.Parser.parseCreate(Parser.java:6276)
+	at org.h2.command.Parser.parsePrepared(Parser.java:903)
+	at org.h2.command.Parser.parse(Parser.java:843)
+	at org.h2.command.Parser.parse(Parser.java:819)
+	at org.h2.command.Parser.prepareCommand(Parser.java:738)
+	at org.h2.engine.Session.prepareLocal(Session.java:657)
+	at org.h2.engine.Session.prepareCommand(Session.java:595)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1235)
+	at org.h2.jdbc.JdbcStatement.executeUpdateInternal(JdbcStatement.java:164)
+	at org.h2.jdbc.JdbcStatement.executeBatch(JdbcStatement.java:768)
+	at clojure.java.jdbc$execute_batch.invokeStatic(jdbc.clj:598)
+	at clojure.java.jdbc$execute_batch.invoke(jdbc.clj:591)
+	at clojure.java.jdbc$db_do_commands$fn__15517.invoke(jdbc.clj:958)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:860)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:789)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at clojure.java.jdbc$db_do_commands.invokeStatic(jdbc.clj:957)
+	at clojure.java.jdbc$db_do_commands.invoke(jdbc.clj:942)
+	at clojure.java.jdbc$db_do_commands.invokeStatic(jdbc.clj:951)
+	at clojure.java.jdbc$db_do_commands.invoke(jdbc.clj:942)
+	at migratus.migration.sql$execute_command$fn__20342.invoke(sql.clj:63)
+	at migratus.migration.sql$execute_command.invokeStatic(sql.clj:62)
+	at migratus.migration.sql$execute_command.invoke(sql.clj:59)
+	at migratus.migration.sql$run_sql_STAR_.invokeStatic(sql.clj:80)
+	at migratus.migration.sql$run_sql_STAR_.invoke(sql.clj:76)
+	at migratus.migration.sql$run_sql$fn__20360.invoke(sql.clj:88)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:860)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:789)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at migratus.migration.sql$run_sql.invokeStatic(sql.clj:86)
+	at migratus.migration.sql$run_sql.invoke(sql.clj:82)
+	at migratus.migration.sql.SqlMigration.up(sql.clj:105)
+	at migratus.database$migrate_up_STAR_.invokeStatic(database.clj:62)
+	at migratus.database$migrate_up_STAR_.invoke(database.clj:56)
+	at migratus.database.Database$fn__20668.invoke(database.clj:262)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:807)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at clojure.java.jdbc$db_transaction_STAR_.invokeStatic(jdbc.clj:789)
+	at clojure.java.jdbc$db_transaction_STAR_.invoke(jdbc.clj:776)
+	at migratus.database.Database.migrate_up(database.clj:261)
+	at migratus.core$up_STAR_.invokeStatic(core.clj:79)
+	at migratus.core$up_STAR_.invoke(core.clj:77)
+	at migratus.core$migrate_up_STAR_.invokeStatic(core.clj:90)
+	at migratus.core$migrate_up_STAR_.invoke(core.clj:81)
+	at migratus.core$migrate_STAR_.invokeStatic(core.clj:103)
+	at migratus.core$migrate_STAR_.invoke(core.clj:99)
+	at clojure.core$partial$fn__5857.invoke(core.clj:2629)
+	at migratus.core$run.invokeStatic(core.clj:53)
+	at migratus.core$run.invoke(core.clj:49)
+	at migratus.core$migrate.invokeStatic(core.clj:110)
+	at migratus.core$migrate.invoke(core.clj:105)
+	at luminus_migrations.core$fn__20819.invokeStatic(core.clj:44)
+	at luminus_migrations.core$fn__20819.invoke(core.clj:41)
+	at luminus_migrations.core$migrate.invokeStatic(core.clj:98)
+	at luminus_migrations.core$migrate.invoke(core.clj:84)
+	at logos.core$_main.invokeStatic(core.clj:74)
+	at logos.core$_main.doInvoke(core.clj:59)
+	at clojure.lang.RestFn.invoke(RestFn.java:408)
+	at clojure.lang.Var.invoke(Var.java:384)
+	at user$eval21401.invokeStatic(form-init3986659750615980535.clj:1)
+	at user$eval21401.invoke(form-init3986659750615980535.clj:1)
+	at clojure.lang.Compiler.eval(Compiler.java:7181)
+	at clojure.lang.Compiler.eval(Compiler.java:7171)
+	at clojure.lang.Compiler.load(Compiler.java:7640)
+	at clojure.lang.Compiler.loadFile(Compiler.java:7578)
+	at clojure.main$load_script.invokeStatic(main.clj:475)
+	at clojure.main$init_opt.invokeStatic(main.clj:477)
+	at clojure.main$init_opt.invoke(main.clj:477)
+	at clojure.main$initialize.invokeStatic(main.clj:508)
+	at clojure.main$null_opt.invokeStatic(main.clj:542)
+	at clojure.main$null_opt.invoke(main.clj:539)
+	at clojure.main$main.invokeStatic(main.clj:664)
+	at clojure.main$main.doInvoke(main.clj:616)
+	at clojure.lang.RestFn.applyTo(RestFn.java:137)
+	at clojure.lang.Var.applyTo(Var.java:705)
+	at clojure.main.main(main.java:40)
