@@ -11,8 +11,8 @@ test-config.edn
 profiles.clj
 /.env
 .nrepl-port
-
+Procfile
+Capstanfile
+.lsp*
 /node_modules
 /log
-
-
