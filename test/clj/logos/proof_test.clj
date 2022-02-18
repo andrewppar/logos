@@ -1,145 +1,322 @@
 (ns logos.proof-test
-  (:require [clojure.test :refer [deftest is]]
-            [logos.proof :as proof]
+  (:require [clojure.test :refer [deftest are]]
+            [logos.proof :as proof
+             :refer [add-edges-to-edge-index]]
             [logos.formula :as formula]))
 
+;;;;;;;;;;;;;;;;;;;;
+;;; Useful Constants
 
-(deftest test-new-proof
-  (let [f (formula/conj "p" "q")]
-    (is (= (proof/new-proof [f] "p" [])
-           {:premises [{:index 0
-                        :formula f}]
-            :status :open
-            :goal "p"
-            :subproofs []}))))
+(def p       (formula/atom "@P"))
+(def q       (formula/atom "@Q"))
+(def r       (formula/atom "@R"))
+(def p->q    (formula/implies p q))
+(def p->q->p (formula/implies
+              p (formula/implies q p)))
 
-(deftest test-conditional-proof-one
-  (let [p (formula/atom "@P" "null")
-        q (formula/atom "@Q" "null")
-        f (formula/implies p q)
-        start-proof (proof/new-proof [] f [])]
-    (println (formula/implication? f))
-    (is (= (proof/conditional-proof start-proof)
-           {:premises []
-            :goal f
-            :status :open
-            :subproofs [{:premises
-                         [{:formula p
-                           :index 0}]
-                         :status :open
-                         :goal q
-                         :subproofs []}]}))))
+(def assertion-hypothesis-proof
+  {::proof/current-problem 1
+         ::proof/premises {0 {::proof/formula p
+                              ::proof/justification ::proof/assertion}
+                           1 {::proof/formula q
+                              ::proof/justification ::proof/hypothesis}}
+         ::proof/problems {0 {::proof/premises [0]
+                              ::proof/goal     r
+                              ::proof/id 0
+                              ::proof/status ::proof/open}
+                           1 {::proof/premises [1]
+                              ::proof/goal     p
+                              ::proof/id 1
+                              ::proof/status ::proof/open}}
+         ::proof/edges {0 {::proof/to [1]}
+                        1 {::proof/from [0]}}})
 
-(deftest test-conditional-proof-two
-  (let [p (formula/atom "@P" "null")
-        q (formula/atom "@Q" "null")
-        r (formula/atom "@R" "null")
-        f (formula/implies p q)
-        start-proof (proof/new-proof [r] f [])]
-    (is (= {:premises [{:formula r
-                        :index 1}
-                       ]
-            :goal f
-            :status :open
-            :subproofs [
-                        {:premises
-                         [{:formula p
-                           :index 0}]
-                         :status :open
-                         :goal q
-                         :subproofs []}
-                        ]
-            }
-           (proof/conditional-proof start-proof)))))
+(deftest test-add-edges-to-edge-index
+  (are [original edges result]
+      (= (add-edges-to-edge-index
+          original edges) result)
+    {} [[1 2]] {1 {::proof/to [2]}
+                2 {::proof/from [1]}}
+    {} [[1 2]
+        [1 3]] {1 {::proof/to [2 3]}
+                2 {::proof/from [1]}
+                3 {::proof/from [1]}}
+    {} [[1 2]
+        [2 3]] {1 {::proof/to [2]}
+                2 {::proof/to [3]
+                   ::proof/from [1]}
+                3 {::proof/from [2]}}
+    {1 {::proof/to [2]}
+     2 {::proof/from [1]}}
+    [[2 1]] {1 {::proof/to [2]
+                ::proof/from [2]}
+             2 {::proof/from [1]
+                ::proof/to [1]}}))
 
-(deftest test-conditional-proof-three
-  (let [p (formula/atom "@P" "null")
-        q (formula/atom "@Q" "null")
-        r (formula/atom "@R" "null")
-        f (formula/implies p q)
-        pandr (formula/conj p r)
-        proof (proof/new-proof
-               [r] q [(proof/new-proof [q] f [])
-                      (proof/new-proof [pandr] q [])])]
-    (is (= (proof/conditional-proof proof)
-           {:premises [{:formula r
-                        :index 3}]
-            :status :open
-            :goal q
-            :subproofs [{:premises [{:formula q
-                                     :index 1}]
-                         :status :open
-                         :goal f
-                         :subproofs [{:premises [{:formula p
-                                                  :index 0}]
-                                      :status :open
-                                      :goal q
-                                      :subproofs []}]}
-                        {:premises [{:formula pandr
-                                     :index 2}]
-                         :status :open
-                         :goal q
-                         :subproofs []}]}))))
+(deftest test-conditional-proofs
+  (are [start-proof result-proof]
+      (= (proof/conditional-proof start-proof)
+         result-proof)
+    ;; Case 1
+      {::proof/current-problem 0
+       ::proof/premises        {}
+       ::proof/problems        {0 {::proof/premises []
+                                   ::proof/goal   p->q
+                                   ::proof/id        0
+                                   ::proof/status
+                                   ::proof/open}}
+       ::proof/edges           {}}
+      {::proof/current-problem 1
+       ::proof/premises        {0 {::proof/formula p
+                                   ::proof/justification
+                                   ::proof/hypothesis}}
+       ::proof/problems       {0 {::proof/premises []
+                                  ::proof/goal   p->q
+                                  ::proof/id        0
+                                  ::proof/status
+                                  ::proof/open}
+                               1 {::proof/premises [0]
+                                  ::proof/goal q
+                                  ::proof/id 1
+                                  ::proof/status
+                                  ::proof/open}}
+       ::proof/edges {0 {::proof/to [1]}
+                      1 {::proof/from [0]}}}
+      ;;: Case 2
+      {::proof/current-problem 1
+       ::proof/premises        {0 {::proof/formula p
+                                   ::proof/justification
+                                   ::proof/assertion}}
+       ::proof/problems        {0 {::proof/premises [0]
+                                   ::proof/goal      q
+                                   ::proof/id        0
+                                   ::proof/status
+                                   ::proof/open}
+                                1 {::proof/premises []
+                                   ::proof/goal     p->q
+                                   ::proof/id        1
+                                   ::proof/status
+                                   ::proof/open}}
+       ::proof/edges           {0 {::proof/to [1]}
+                                1 {::proof/from [0]}}}
+      {::proof/current-problem 2
+       ::proof/premises        {0 {::proof/formula p
+                                   ::proof/justification
+                                   ::proof/assertion}
+                                1 {::proof/formula p
+                                   ::proof/justification
+                                   ::proof/hypothesis}}
+       ::proof/problems        {0 {::proof/premises [0]
+                                   ::proof/goal      q
+                                   ::proof/id        0
+                                   ::proof/status
+                                   ::proof/open}
+                                1 {::proof/premises []
+                                   ::proof/goal     p->q
+                                   ::proof/id        1
+                                   ::proof/status
+                                   ::proof/open}
+                                2 {::proof/premises [1]
+                                   ::proof/goal      q
+                                   ::proof/id        2
+                                   ::proof/status
+                                   ::proof/open}
+                                }
+       ::proof/edges           {0 {::proof/to [1]}
+                                1 {::proof/from [0]
+                                   ::proof/to   [2]}
+                                2 {::proof/from [1]}}}
+;;; Case 3
+      {::proof/current-problem 0
+       ::proof/premises        {0 {::proof/formula p
+                                   ::proof/justification
+                                   ::proof/assertion}}
+       ::proof/problems        {0 {::proof/premises [0]
+                                   ::proof/goal      q
+                                   ::proof/id        0
+                                   ::proof/status
+                                   ::proof/open}
+                                1 {::proof/premises []
+                                   ::proof/goal     p->q
+                                   ::proof/id        1
+                                   ::proof/status
+                                   ::proof/open}}
+       ::proof/edges           {0 {::proof/to [1]}
+                                1 {::proof/from [0]}}}
+      {::proof/current-problem 0
+       ::proof/premises        {0 {::proof/formula p
+                                   ::proof/justification
+                                   ::proof/assertion}}
+       ::proof/problems        {0 {::proof/premises [0]
+                                   ::proof/goal      q
+                                   ::proof/id        0
+                                   ::proof/status
+                                   ::proof/open}
+                                1 {::proof/premises []
+                                   ::proof/goal     p->q
+                                   ::proof/id        1
+                                   ::proof/status
+                                   ::proof/open}}
+       ::proof/edges           {0 {::proof/to [1]}
+                                1 {::proof/from [0]}}}
+      ))
 
-(deftest test-conditional-proof-four
-  (let [a   (formula/atom "@p" '?x)
-        ia  (formula/atom "@p" "b")
-        p   (formula/forall
-           '[?x] (formula/implies a a))
-        pf  (proof/new-proof [] p [])
-        universal (proof/universal-proof pf)
-        conditional (proof/conditional-proof universal)]
-    (is (= conditional
-           (proof/new-proof
-            [] p [(proof/new-proof
-                   [] (formula/implies ia ia)
-                   [(proof/new-proof [ia] ia [])])])))))
+(deftest test-backward-gather-relevant-problem-idxs
+  (let [p (formula/atom "@P")
+        proof     {::proof/current-problem 2
+                   ::proof/premises {}
+                   ::proof/problems {0 {::proof/premises []
+                                        ::proof/goal p
+                                        ::proof/id 0
+                                        ::proof/status ::proof/open}
+                                     1 {::proof/premises []
+                                        ::proof/goal p
+                                        ::proof/id 0
+                                        ::proof/status ::proof/open}
+                                     2 {::proof/premises []
+                                        ::proof/goal p
+                                        ::proof/id 0
+                                        ::proof/status ::proof/open}}
+                   ::proof/edges {0 {::proof/to [1]}
+                                  1 {::proof/to [2]
+                                     ::proof/from [0]}
+                                  2 {::proof/from [1]}}}]
+    (are [proof problem-idx result-idxs]
+        (= (proof/backward-gather-problem-idxs
+            proof problem-idx)
+           result-idxs)
+        proof 2 [2 1 0]
+        proof 1 [1 0]
+        proof 0 [0])))
 
+(deftest test-direct-proof
+  (are [proof result]
+      (= (proof/direct-proof proof)
+         result)
+    ;; Case 1
+      assertion-hypothesis-proof
+      {::proof/current-problem 0
+       ::proof/premises {0 {::proof/formula p
+                            ::proof/justification ::proof/assertion}
+                         1 {::proof/formula q
+                            ::proof/justification ::proof/hypothesis}}
+       ::proof/problems {0 {::proof/premises [0]
+                            ::proof/goal     r
+                            ::proof/id 0
+                            ::proof/status ::proof/open}
+                         1 {::proof/premises [1]
+                            ::proof/goal     p
+                            ::proof/id 1
+                            ::proof/status ::proof/closed}}
+       ::proof/edges {0 {::proof/to [1]}
+                      1 {::proof/from [0]}}}
+      ;; Case 2
+      {::proof/current-problem 1
+         ::proof/premises {0 {::proof/formula p
+                              ::proof/justification ::proof/assertion}
+                           1 {::proof/formula q
+                              ::proof/justification ::proof/assertion}}
+         ::proof/problems {0 {::proof/premises [0]
+                              ::proof/goal     r
+                              ::proof/id 0
+                              ::proof/status ::proof/open}
+                           1 {::proof/premises [1]
+                              ::proof/goal     p
+                              ::proof/id 1
+                              ::proof/status ::proof/open}}
+         ::proof/edges {0 {::proof/to [1]}
+                        1 {::proof/from [0]}}}
+      {::proof/current-problem 0
+       ::proof/premises {0 {::proof/formula p
+                            ::proof/justification ::proof/assertion}
+                         1 {::proof/formula q
+                            ::proof/justification ::proof/assertion}}
+       ::proof/problems {0 {::proof/premises [0 1]
+                            ::proof/goal     r
+                            ::proof/id 0
+                            ::proof/status ::proof/open}
+                         1 {::proof/premises [1]
+                            ::proof/goal     p
+                            ::proof/id 1
+                            ::proof/status ::proof/closed}}
+       ::proof/edges {0 {::proof/to [1]}
+                      1 {::proof/from [0]}}}
+      ;; Case 3
+      {::proof/current-problem 1
+       ::proof/premises {0 (proof/new-premise p ::proof/assertion)}
+       ::proof/problems {0 (proof/new-problem [0] r 0)
+                         1 (proof/new-problem [] p 1)
+                         2 (proof/new-problem [] q 2)}
+       ::proof/edges {0 {::proof/to [1 2]}
+                      1 {::proof/from [0]}
+                      2 {::proof/from [0]}}}
+      {::proof/current-problem 2
+       ::proof/premises {0 (proof/new-premise p ::proof/assertion)}
+       ::proof/problems {0 (proof/new-problem [0] r 0)
+                         2 (proof/new-problem [] q 2)
+                         1 {::proof/premises []
+                            ::proof/goal p
+                            ::proof/id  1
+                            ::proof/status ::proof/closed}}
+       ::proof/edges {0 {::proof/to [1 2]}
+                      1 {::proof/from [0]}
+                      2 {::proof/from [0]}}}))
 
+(deftest test-filter-premises-by-problem-and-status
+  (are [proof problem-idx status results]
+      (= (proof/filter-premises-by-problem-and-status
+          proof problem-idx status) results)
+      assertion-hypothesis-proof 1 ::proof/hypothesis [1]
+      assertion-hypothesis-proof 0 ::proof/assertion [0]))
 
-(deftest test-universal-proof-one
-  (let [p (formula/forall '[?x]
-                          (formula/atom "@P" '?x))
-        proof (proof/new-proof [] p [])]
-    (is (= (proof/universal-proof proof)
-           {:premises []
-            :status :open
-            :goal p
-            :subproofs [{:premises []
-                         :status :open
-                         :goal (formula/atom "@P" "b")
-                         :subproofs []}]}))))
+(deftest test-conjunctive-proof
+  (let [pandq (formula/conj p q)]
+    (are [proof result]
+        (= (proof/conjunctive-proof proof) result)
+        {::proof/current-problem 0
+         ::proof/premises {}
+         ::proof/problems {0 {::proof/premises []
+                              ::proof/goal pandq
+                              ::proof/status ::proof/open
+                              ::proof/id 0}}
+         ::proof/edges {}}
+        {::proof/current-problem 2
+         ::proof/premises {}
+         ::proof/problems {2 {::proof/premises []
+                              ::proof/goal q
+                              ::proof/status ::proof/open
+                              ::proof/id 2}
+                           1 {::proof/premises []
+                              ::proof/goal p
+                              ::proof/status ::proof/open
+                              ::proof/id 1}
+                           0 {::proof/premises []
+                              ::proof/goal pandq
+                              ::proof/status ::proof/open
+                              ::proof/id 0}}
+         ::proof/edges {0 {::proof/to [1 2]}
+                        1 {::proof/from [0]}
+                        2 {::proof/from [0]}}}
+        assertion-hypothesis-proof assertion-hypothesis-proof)))
 
-(deftest test-universal-proof-two
-  (let [base (formula/forall '[?x]
-                             (formula/atom "@P" '?x))
-        form (formula/implies base base)]
-    (is (= (proof/universal-proof
-            (proof/conditional-proof
-             (proof/new-proof [] form [])))
-           {:premises []
-            :status :open
-            :goal form
-            :subproofs
-            [{:premises [{:formula base :index 0}]
-              :status :open
-              :goal base
-              :subproofs
-              [{:premises []
-                :status :open
-                :goal (formula/atom "@P" "b")
-                :subproofs []}]}]}))))
-
-(deftest test-conjunction-elimination
-  (let [p  (formula/atom "@P" "a")
-        q  (formula/atom "@Q" "a")
-        f  (formula/conj p q)
-        pf (proof/new-proof [f] p [])]
-    (is (= (proof/conjunction-elimination pf 0)
-           {:premises
-            [{:formula f :index 0}
-             {:formula p :index 1}
-             {:formula q :index 2}]
-            :goal p
-            :status :open
-            :subproofs []}))))
+(deftest test-disjunctive-proof
+  (let [porq (formula/disj p q)]
+    (are [proof result]
+        (= (proof/disjunctive-proof proof)
+           result)
+        {::proof/current-problem 0
+         ::proof/premises {0 {::proof/formula p
+                              ::proof/justification ::proof/assertion}}
+         ::proof/problems {0 {::proof/premises [0]
+                              ::proof/goal porq
+                              ::proof/id 0
+                              ::proof/status ::proof/open}}
+         ::proof/edges {}}
+        {::proof/current-problem nil
+         ::proof/premises {0 {::proof/formula p
+                              ::proof/justification ::proof/assertion}}
+         ::proof/problems {0 {::proof/premises [0]
+                              ::proof/goal porq
+                              ::proof/id 0
+                              ::proof/status ::proof/closed}}
+         ::proof/edges {}})))
