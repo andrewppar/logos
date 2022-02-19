@@ -349,3 +349,26 @@
                             ::proof/status ::proof/open}}
        ::proof/edges {0 {::proof/to [1]}
                       1 {::proof/from [0]}}}))
+
+(deftest test-add-premise
+  (are [proof formula result]
+      (= (proof/add-premise proof formula)
+         result)
+      assertion-hypothesis-proof r
+      {::proof/current-problem 1
+       ::proof/premises {0 {::proof/formula p
+                            ::proof/justification ::proof/assertion}
+                         1 {::proof/formula q
+                            ::proof/justification ::proof/hypothesis}
+                         2 {::proof/formula r
+                            ::proof/justification ::proof/assertion}}
+       ::proof/problems {0 {::proof/premises [0]
+                            ::proof/goal     r
+                            ::proof/id 0
+                            ::proof/status ::proof/open}
+                         1 {::proof/premises [1 2]
+                            ::proof/goal     p
+                            ::proof/id 1
+                            ::proof/status ::proof/open}}
+       ::proof/edges {0 {::proof/to [1]}
+                      1 {::proof/from [0]}}}))

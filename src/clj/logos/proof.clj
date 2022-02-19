@@ -262,6 +262,35 @@
 ;;;;;;;;;;;;;;;
 ;;; Update Goal
 
+(defn direct-proof
+  "Close the current problem by showing
+  that its goal is a relevant premise"
+  [proof]
+  (let [current-problem-idx (get proof ::current-problem)
+        current-goal  (-> proof
+                          (get ::problems)
+                          (get current-problem-idx)
+                          (get ::goal))
+        premises            (relevant-premises proof)
+        proved?       (if (some #{current-goal} premises)
+                        true
+                        (if (and (formula/disjunction? current-goal)
+                                 (-> current-goal
+                                     formula/disjuncts
+                                     set
+                                     (set/intersection (set premises))
+                                     seq))
+                          true
+                          false))]
+    (if proved?
+      (let [new-current-problem (-> proof
+                                    (get ::edges)
+                                    (get current-problem-idx)
+                                    (get ::from)
+                                    first)]
+        (close-problem proof current-problem-idx))
+      proof)))
+
 (defn conditional-proof
   [proof]
   (let [current-problem (get
@@ -295,34 +324,7 @@
                         (::edges proof) new-edges)))
       proof)))
 
-(defn direct-proof
-  "Close the current problem by showing
-  that its goal is a relevant premise"
-  [proof]
-  (let [current-problem-idx (get proof ::current-problem)
-        current-goal  (-> proof
-                          (get ::problems)
-                          (get current-problem-idx)
-                          (get ::goal))
-        premises            (relevant-premises proof)
-        proved?       (if (some #{current-goal} premises)
-                        true
-                        (if (and (formula/disjunction? current-goal)
-                                 (-> current-goal
-                                     formula/disjuncts
-                                     set
-                                     (set/intersection (set premises))
-                                     seq))
-                          true
-                          false))]
-    (if proved?
-      (let [new-current-problem (-> proof
-                                    (get ::edges)
-                                    (get current-problem-idx)
-                                    (get ::from)
-                                    first)]
-        (close-problem proof current-problem-idx))
-      proof)))
+
 
 (defn conjunctive-proof
   [proof]
@@ -368,3 +370,22 @@
                       current-problem-idx
                       current-problem)))
       proof)))
+
+;;;;;;;;;;;;;;;;;;;
+;;; Update Premises
+
+(defn add-premise
+  [proof formula]
+  (let [problem-index (get proof ::problems)
+        current-problem-idx (get proof ::current-problem)
+        current-problem (get problem-index current-problem-idx)
+        premise         (new-premise formula)
+        new-idx         (inc (apply max (keys (get proof ::premises))))
+        new-problem     (update current-problem
+                                ::premises (fn [x] (conj x new-idx)))
+        new-premise-index (assoc (get proof ::premises) new-idx premise)
+        new-problem-index (assoc problem-index
+                                 current-problem-idx new-problem)]
+    (assoc proof
+           ::premises new-premise-index
+           ::problems new-problem-index)))
