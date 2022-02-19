@@ -189,6 +189,61 @@
          (filter (fn [pr-map] (= (:justification pr-map) status)))
          (map :idx))))
 
+(defn ^:private reset-current-problem
+  [proof]
+  (let [problem-index (get proof ::problems)
+        edges         (get proof ::edges)]
+    (if (= ::open (-> problem-index
+                      (get (get proof ::current-problem))
+                      (get ::status)))
+      proof
+      (loop [result proof]
+        ;; We know the current problem is closed
+        (let [current-problem (get result ::current-problem)]
+          ;; We take the first because a proof is a
+          ;; tree, i.e. no problem can have more than
+          ;; one root.
+          (if-let [upstream-id (-> edges
+                                   (get current-problem)
+                                   (get ::from)
+                                   first)]
+            ;; There is an upstream problems,
+            ;; so we need to migrate assertions down
+            ;; and see if that problem can be closed
+            (let [upstream-problem (-> result
+                                       (get ::problems)
+                                       (get upstream-id))
+                  assertions (filter-premises-by-problem-and-status
+                              result current-problem ::assertion)
+                  new-upstream (assoc upstream-problem
+                                      ::premises
+                                      (concat (get upstream-problem ::premises)
+                                              assertions))
+                  ;; Check for open siblings to make
+                  ;; the current problem
+                  siblings (-> edges
+                               (get upstream-id)
+                               (get ::to))
+                  open-siblings (->> siblings
+                                     (map #(get problem-index %))
+                                     (filter #(= (::status %) ::open)))]
+              (if (seq open-siblings)
+                (assoc result
+                       ::current-problem (-> open-siblings
+                                             first
+                                             (get ::id))
+                       ::problems
+                       (assoc problem-index
+                              upstream-id new-upstream))
+                (let [closed-upstream (assoc new-upstream
+                                             ::status ::closed)]
+                  (recur  (assoc result
+                                 ::current-problem upstream-id
+                                 ::problems (assoc problem-index
+                                                   upstream-id closed-upstream))))))
+            ;; There are no upstream problems
+            (assoc result ::current-problem nil)))))))
+
 (defn close-problem
   "Close the problem in `proof`
   at `idx`"
@@ -198,28 +253,11 @@
   [proof idx]
   (let [problems        (get proof ::problems)
         current-problem (get problems idx)
-        problem-assertions (filter-premises-by-problem-and-status
-                            proof idx ::assertion)
-        upstream-problem-idxs (-> proof
-                                  (get ::edges)
-                                  (get idx)
-                                  (get ::from))
-        new-upstream-problems (reduce
-                               (fn [acc upstream-idx]
-                                 (let [problem (get acc upstream-idx)
-                                       new-premises (concat
-                                                     (get problem ::premises)
-                                                     problem-assertions)
-                                       new-problem (assoc
-                                                    problem
-                                                    ::premises
-                                                    new-premises)]
-                                   (assoc acc upstream-idx new-problem)))
-                               problems upstream-problem-idxs)
         updated-problem (assoc current-problem ::status ::closed)]
     (->> updated-problem
-         (assoc new-upstream-problems idx)
-         (assoc proof ::problems))))
+         (assoc problems idx)
+         (assoc proof ::problems)
+         reset-current-problem)))
 
 ;;;;;;;;;;;;;;;
 ;;; Update Goal
@@ -283,9 +321,7 @@
                                     (get current-problem-idx)
                                     (get ::from)
                                     first)]
-        (-> proof
-            (assoc ::current-problem new-current-problem)
-            (close-problem current-problem-idx)))
+        (close-problem proof current-problem-idx))
       proof)))
 
 (defn conjunctive-proof
@@ -310,3 +346,25 @@
 (defn disjunctive-proof
   [proof]
   (direct-proof proof))
+
+(defn negative-proof
+  [proof]
+  (let [problem-index       (get proof ::problems)
+        current-problem-idx (get proof ::current-problem)
+        current-problem     (get problem-index current-problem-idx)
+        current-goal        (get current-problem ::goal)]
+    (if (formula/negation? current-goal)
+      (let [new-formula (formula/implies
+                         (formula/negatum current-goal)
+                         ::formula/bottom)
+            new-problem (assoc current-problem ::goal new-formula)
+            new-proof   (->> new-problem
+                             (assoc problem-index current-problem-idx)
+                             (assoc proof ::problems)
+                             conditional-proof)]
+        (assoc new-proof
+               ::problems
+               (assoc (get new-proof ::problems)
+                      current-problem-idx
+                      current-problem)))
+      proof)))

@@ -64,3 +64,29 @@
     (formula/atom "@pred1" "c" "b")
     (formula/exists '[?x] (formula/atom "@pred1" '?x '?y))
     (formula/atom "@pred1" "b" '?y)))
+
+(defmacro define-test [function & cases]
+  `(let [meta-info# (meta ~function)
+        args# (reduce
+               (fn [result arglist]
+                 (if (> (count arglist) (count result))
+                   arglist
+                   result))
+               nil (get ~meta-info# :arglists))
+        function-name (str (get meta-info :name))
+         test-name     (format "test-%s" function-name)]
+
+      ))
+
+(deftest test-negation
+  (are [formula expectation]
+      (= (formula/negation? formula) expectation)
+    ::formula/bottom false
+    [:not ["@P"]]    true))
+
+(deftest test-negatum
+  (are [formula result]
+      (= (formula/negatum formula) result)
+    [:not ["@P"]] ["@P"]
+    [:not [:implies ["@P" "q"] ["@P" "r"]]]
+    [:implies ["@P" "q"] ["@P" "r"]]))

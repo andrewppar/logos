@@ -195,7 +195,7 @@
          result)
     ;; Case 1
       assertion-hypothesis-proof
-      {::proof/current-problem 0
+      {::proof/current-problem nil
        ::proof/premises {0 {::proof/formula p
                             ::proof/justification ::proof/assertion}
                          1 {::proof/formula q
@@ -203,7 +203,7 @@
        ::proof/problems {0 {::proof/premises [0]
                             ::proof/goal     r
                             ::proof/id 0
-                            ::proof/status ::proof/open}
+                            ::proof/status ::proof/closed}
                          1 {::proof/premises [1]
                             ::proof/goal     p
                             ::proof/id 1
@@ -212,21 +212,21 @@
                       1 {::proof/from [0]}}}
       ;; Case 2
       {::proof/current-problem 1
-         ::proof/premises {0 {::proof/formula p
-                              ::proof/justification ::proof/assertion}
-                           1 {::proof/formula q
-                              ::proof/justification ::proof/assertion}}
-         ::proof/problems {0 {::proof/premises [0]
-                              ::proof/goal     r
-                              ::proof/id 0
-                              ::proof/status ::proof/open}
-                           1 {::proof/premises [1]
-                              ::proof/goal     p
-                              ::proof/id 1
-                              ::proof/status ::proof/open}}
-         ::proof/edges {0 {::proof/to [1]}
-                        1 {::proof/from [0]}}}
-      {::proof/current-problem 0
+       ::proof/premises {0 {::proof/formula p
+                            ::proof/justification ::proof/assertion}
+                         1 {::proof/formula q
+                            ::proof/justification ::proof/assertion}}
+       ::proof/problems {0 {::proof/premises [0]
+                            ::proof/goal     r
+                            ::proof/id 0
+                            ::proof/status ::proof/open}
+                         1 {::proof/premises [1]
+                            ::proof/goal     p
+                            ::proof/id 1
+                            ::proof/status ::proof/open}}
+       ::proof/edges {0 {::proof/to [1]}
+                      1 {::proof/from [0]}}}
+      {::proof/current-problem nil
        ::proof/premises {0 {::proof/formula p
                             ::proof/justification ::proof/assertion}
                          1 {::proof/formula q
@@ -234,7 +234,7 @@
        ::proof/problems {0 {::proof/premises [0 1]
                             ::proof/goal     r
                             ::proof/id 0
-                            ::proof/status ::proof/open}
+                            ::proof/status ::proof/closed}
                          1 {::proof/premises [1]
                             ::proof/goal     p
                             ::proof/id 1
@@ -304,6 +304,9 @@
     (are [proof result]
         (= (proof/disjunctive-proof proof)
            result)
+      ;; This is failing because reset-current-problem
+      ;; can be called on a proof whose current-problem
+      ;; has already been set to nil
         {::proof/current-problem 0
          ::proof/premises {0 {::proof/formula p
                               ::proof/justification ::proof/assertion}}
@@ -320,3 +323,29 @@
                               ::proof/id 0
                               ::proof/status ::proof/closed}}
          ::proof/edges {}})))
+
+(deftest test-negative-proof
+  (are [proof result]
+      (= (proof/negative-proof proof)
+         result)
+      assertion-hypothesis-proof assertion-hypothesis-proof
+      {::proof/current-problem 0
+       ::proof/premises {}
+       ::proof/problems {0 {::proof/premises []
+                            ::proof/goal [:not ["@P"]]
+                            ::proof/id 0
+                            ::proof/status ::proof/open}}
+       ::proof/edges {}}
+      {::proof/current-problem 1
+       ::proof/premises {0 {::proof/formula ["@P"]
+                            ::proof/justification ::proof/hypothesis}}
+       ::proof/problems {0 {::proof/premises []
+                            ::proof/goal [:not ["@P"]]
+                            ::proof/id 0
+                            ::proof/status ::proof/open}
+                         1 {::proof/premises [0]
+                            ::proof/goal ::formula/bottom
+                            ::proof/id 1
+                            ::proof/status ::proof/open}}
+       ::proof/edges {0 {::proof/to [1]}
+                      1 {::proof/from [0]}}}))

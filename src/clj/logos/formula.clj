@@ -24,12 +24,14 @@
   "A macro to make writing formula predicates
   simpler"
   [object formula-type]
-  `(and
-    (seq ~object)
-    (= (first ~object) ~formula-type)
-    (->> ~object
-         rest
-         (every? formula?))))
+  `(if-not (coll? ~object)
+     false
+     (and
+      (seq ~object)
+      (= (first ~object) ~formula-type)
+      (->> ~object
+           rest
+           (every? formula?)))))
 
 ;;;;;;;;;;;;;;;;;;;;
 ;;; atomic predicate
@@ -102,6 +104,7 @@
 
 (defn atom? [object]
   (or (term? object)
+      (= object ::bottom)
       (and
        (vector? object)
        (predicate? (first object))
@@ -147,7 +150,7 @@
   from a negated formula"
   [formula]
   (when (negation? formula)
-    (first formula)))
+    (second formula)))
 
 ;;;;;;;;;;;;;;
 ;; Conjunction
