@@ -63,10 +63,8 @@
    {::formula formula
     ::justification justification}))
 
-(defn ^:private add-asserted-premises-to-index
-  "Add premises to a premise index with `::assertion`
-  justifications"
-  [index premises]
+(defn ^:private add-premises-to-index-with-justification
+  [index premises justification]
   (if (seq premises)
     (let [old-indexes (keys index)
           new-idx     (if (nil? old-indexes)
@@ -76,7 +74,7 @@
              todo        (rest premises)
              current-idx new-idx
              result      index]
-        (let [premise    (new-premise formula)
+        (let [premise    (new-premise formula justification)
               new-result (assoc
                           result current-idx premise)]
           (if (seq todo)
@@ -86,6 +84,20 @@
                    new-result)
             new-result))))
     index))
+
+(defn add-asserted-premises-to-index
+  "Add premises to a premise index with `::assertion`
+  justifications"
+  [index premises]
+  (add-premises-to-index-with-justification
+   index premises ::assertion))
+
+(defn add-hypotheses-to-index
+  "Add premises to a premise index with `::hypothesis`
+  justifications"
+  [index premises]
+  (add-premises-to-index-with-justification
+   index premises ::hypothesis))
 
 (defn add-new-problems-to-proof
   [proof problems from-id]

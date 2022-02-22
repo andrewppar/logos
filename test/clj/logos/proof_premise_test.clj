@@ -89,3 +89,25 @@
                          2 (proof/new-premise q [0])}
        ::proof/problems {0 (proof/new-problem [0 1 2] q 0)}
        ::proof/edges {}}))
+
+(deftest test-disjunction-elimination
+  (are [proof premise-numbers result]
+      (= (premise/disjunction-elimination proof premise-numbers)
+         result)
+      {::proof/current-problem 0
+       ::proof/premises {0 (proof/new-premise
+                            (formula/disj p q))}
+
+       ::proof/problems {0 (proof/new-problem [0] q 0)}
+       ::proof/edges {}} [0]
+      {::proof/current-problem 1
+       ::proof/premises {0 (proof/new-premise
+                            (formula/disj p q))
+                         1 (proof/new-premise p ::proof/hypothesis)
+                         2 (proof/new-premise q ::proof/hypothesis)}
+       ::proof/problems {0 (proof/new-problem [0] q 0)
+                         1 (proof/new-problem [1] q 1)
+                         2 (proof/new-problem [2] q 2)}
+       ::proof/edges {0 {::proof/to [1 2]}
+                      1 {::proof/from [0]}
+                      2 {::proof/from [0]}}}))

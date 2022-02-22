@@ -104,7 +104,45 @@
                ::proof/problems new-problem-index))
       proof)))
 
-(defn disjunction-elimination [prooof premise-numbers] nil)
+(defn disjunction-elimination
+  [proof premise-numbers]
+  (ensure-premise-count premise-numbers 1)
+  (let [problem-index (get proof ::proof/problems)
+        premise-index (get proof ::proof/premises)
+        current-problem-idx (get proof ::proof/current-problem)
+        current-goal  (-> problem-index
+                          (get current-problem-idx)
+                          (get ::proof/goal))
+        target-premise      (->> premise-numbers
+                                 first
+                                 (get premise-index)
+                                 ::proof/formula)]
+    (if (formula/disjunction? target-premise)
+      (let [disjuncts         (formula/disjuncts target-premise)
+            premise-idx-start (->> premise-index
+                                   keys
+                                   (apply max)
+                                   inc)
+            premise-idxs      (->> disjuncts
+                                   count
+                                   range
+                                   (map
+                                    (fn [offset]
+                                      (+ premise-idx-start offset))))
+            new-premise-index (proof/add-hypotheses-to-index
+                               premise-index disjuncts)
+            new-problems      (map
+                               (fn [premise-idx]
+                                 (proof/new-problem
+                                  [premise-idx] current-goal nil))
+                               premise-idxs)
+            last-problem-id (apply max (keys problem-index))]
+        (-> proof
+            (assoc ::proof/current-problem (inc last-problem-id))
+            (assoc ::proof/premises new-premise-index)
+            (proof/add-new-problems-to-proof
+             new-problems last-problem-id)))
+      proof)))
 
 (defn bottom-introduction [proof premise-numbers] nil)
 
