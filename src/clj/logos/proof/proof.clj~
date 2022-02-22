@@ -1,4 +1,4 @@
-(ns logos.proof
+(ns logos.proof.proof
   (:require [logos.formula :as formula]
             [clojure.string :as string]
             [clojure.set :as set]))
@@ -217,8 +217,9 @@
                               result current-problem ::assertion)
                   new-upstream (assoc upstream-problem
                                       ::premises
-                                      (concat (get upstream-problem ::premises)
-                                              assertions))
+                                      (concat
+                                       (get upstream-problem ::premises)
+                                       assertions))
                   ;; Check for open siblings to make
                   ;; the current problem
                   siblings (-> edges
@@ -239,8 +240,10 @@
                                              ::status ::closed)]
                   (recur  (assoc result
                                  ::current-problem upstream-id
-                                 ::problems (assoc problem-index
-                                                   upstream-id closed-upstream))))))
+                                 ::problems (assoc
+                                             problem-index
+                                             upstream-id
+                                             closed-upstream))))))
             ;; There are no upstream problems
             (assoc result ::current-problem nil)))))))
 
@@ -258,134 +261,3 @@
          (assoc problems idx)
          (assoc proof ::problems)
          reset-current-problem)))
-
-;;;;;;;;;;;;;;;
-;;; Update Goal
-
-(defn direct-proof
-  "Close the current problem by showing
-  that its goal is a relevant premise"
-  [proof]
-  (let [current-problem-idx (get proof ::current-problem)
-        current-goal  (-> proof
-                          (get ::problems)
-                          (get current-problem-idx)
-                          (get ::goal))
-        premises            (relevant-premises proof)
-        proved?       (if (some #{current-goal} premises)
-                        true
-                        (if (and (formula/disjunction? current-goal)
-                                 (-> current-goal
-                                     formula/disjuncts
-                                     set
-                                     (set/intersection (set premises))
-                                     seq))
-                          true
-                          false))]
-    (if proved?
-      (let [new-current-problem (-> proof
-                                    (get ::edges)
-                                    (get current-problem-idx)
-                                    (get ::from)
-                                    first)]
-        (close-problem proof current-problem-idx))
-      proof)))
-
-(defn conditional-proof
-  [proof]
-  (let [current-problem (get
-                         (::problems proof)
-                         (::current-problem proof))
-        current-goal    (::goal current-problem)]
-    (if (formula/implication? current-goal)
-      (let [new-problem-idx (get-new-problem-idx proof)
-            old-problem-idx (::id current-problem)
-            new-edges       [[old-problem-idx
-                              new-problem-idx]]
-            hypothesis     (formula/antecedent
-                             current-goal)
-            new-goal        (formula/consequent
-                             current-goal)
-            new-premise-idx (get-new-premise-idx proof)
-            new-problem     (new-problem
-                             [new-premise-idx]
-                             new-goal
-                             new-problem-idx)]
-        (assoc proof
-               ::current-problem new-problem-idx
-               ::premises (assoc
-                           (::premises proof)
-                           new-premise-idx
-                           (new-premise hypothesis ::hypothesis))
-               ::problems (assoc
-                           (::problems proof)
-                           new-problem-idx new-problem)
-               ::edges (add-edges-to-edge-index
-                        (::edges proof) new-edges)))
-      proof)))
-
-
-
-(defn conjunctive-proof
-  [proof]
-  (let [current-problem-idx (get proof ::current-problem)
-        current-goal        (-> proof
-                                (get ::problems)
-                                (get current-problem-idx)
-                                (get ::goal))]
-    (if (formula/conjunction? current-goal)
-      (let [new-problems (->> current-goal
-                              formula/conjuncts
-                              (map (fn [conjunct]
-                                     (new-problem [] conjunct nil))))
-            new-proof (add-new-problems-to-proof
-                       proof new-problems  current-problem-idx)]
-        (assoc new-proof
-               ::current-problem
-               (apply max (keys (get new-proof ::problems)))))
-      proof)))
-
-(defn disjunctive-proof
-  [proof]
-  (direct-proof proof))
-
-(defn negative-proof
-  [proof]
-  (let [problem-index       (get proof ::problems)
-        current-problem-idx (get proof ::current-problem)
-        current-problem     (get problem-index current-problem-idx)
-        current-goal        (get current-problem ::goal)]
-    (if (formula/negation? current-goal)
-      (let [new-formula (formula/implies
-                         (formula/negatum current-goal)
-                         ::formula/bottom)
-            new-problem (assoc current-problem ::goal new-formula)
-            new-proof   (->> new-problem
-                             (assoc problem-index current-problem-idx)
-                             (assoc proof ::problems)
-                             conditional-proof)]
-        (assoc new-proof
-               ::problems
-               (assoc (get new-proof ::problems)
-                      current-problem-idx
-                      current-problem)))
-      proof)))
-
-;;;;;;;;;;;;;;;;;;;
-;;; Update Premises
-
-(defn add-premise
-  [proof formula]
-  (let [problem-index (get proof ::problems)
-        current-problem-idx (get proof ::current-problem)
-        current-problem (get problem-index current-problem-idx)
-        premise         (new-premise formula)
-        new-idx         (inc (apply max (keys (get proof ::premises))))
-        new-problem     (update current-problem
-                                ::premises (fn [x] (conj x new-idx)))
-        new-premise-index (assoc (get proof ::premises) new-idx premise)
-        new-problem-index (assoc problem-index
-                                 current-problem-idx new-problem)]
-    (assoc proof
-           ::premises new-premise-index
-           ::problems new-problem-index)))

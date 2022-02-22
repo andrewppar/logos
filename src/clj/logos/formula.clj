@@ -579,16 +579,21 @@
 (defn to-string [formula]
   (cond
     (atom? formula)
-    (if (term? formula)
-      (str formula)
-      (let [pred (->> formula
-                      first
-                      serialize-predicate)]
-        (str "(" pred " "
-             (->> formula
-                  rest
-                  (clojure.string/join " "))
-             ")")))
+    (cond (term? formula)
+          (str formula)
+          (= formula ::bottom)
+          (str (name formula))
+          :else
+          (let [pred (->> formula
+                          first
+                          serialize-predicate)]
+            (if (seq (terms formula))
+              (str "(" pred " "
+                   (->> formula
+                        rest
+                        (clojure.string/join " "))
+                   ")")
+              (str pred))))
     (negation? formula)
     (format "(not %s)"
             (->> formula
