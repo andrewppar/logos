@@ -111,3 +111,20 @@
        ::proof/edges {0 {::proof/to [1 2]}
                       1 {::proof/from [0]}
                       2 {::proof/from [0]}}}))
+
+(deftest bottom-elimination-test
+  (are [proof premise-idxs result]
+      (= (premise/bottom-introduction proof premise-idxs)
+         result)
+      {::proof/current-problem 0
+       ::proof/premises {0 (proof/new-premise p)
+                         1 (proof/new-premise [:not p])}
+       ::proof/problems {0 (proof/new-problem [0 1] q 0)}
+       ::proof/edges {}} [0 1]
+
+      {::proof/current-problem 0
+       ::proof/premises {0 (proof/new-premise p)
+                         1 (proof/new-premise [:not p])
+                         2 (proof/new-premise ::formula/bottom [0 1])}
+       ::proof/problems {0 (proof/new-problem [0 1 2] q 0)}
+       ::proof/edges {}}))

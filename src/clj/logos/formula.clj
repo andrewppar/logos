@@ -88,13 +88,16 @@
 ;;;;;;;;
 ;;; term
 
+;;; STACK OVERFLOW HERE
 (defn term?
   "Predicate determining whether
   an `object` is a `term`"
   [object]
+  (if-not (nil? object)
   (or
    (constant? object)
-   (variable? object)))
+   (variable? object))
+  false))
 
 
 ;;;;;;;
@@ -593,7 +596,7 @@
                         rest
                         (clojure.string/join " "))
                    ")")
-              (str pred))))
+              (str pred)))
     (negation? formula)
     (format "(not %s)"
             (->> formula
@@ -601,13 +604,11 @@
                  to-string))
     (conjunction? formula)
     (str "(and "
-         (clojure.string/join
-          (->> formula
-               conjuncts
-               (map to-string))
-          " ")
+         (clojure.string/join " "
+                              (->> formula
+                                   conjuncts
+                                   (map to-string)))
          ")")
-
     (disjunction? formula)
     (str "(or "
          (clojure.string/join
@@ -641,7 +642,7 @@
                  (clojure.string/join " "))
             (->> formula
                  quantified-subformula
-                 to-string))))
+                 to-string)))))
 
 ;;;;;;;;;;;;;;
 ;;; To Formula

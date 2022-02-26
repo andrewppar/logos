@@ -268,9 +268,10 @@
 (defn close-problem
   "Close the problem in `proof`
   at `idx`"
-  ;; Has to close as many of the prblems as
-  ;; can be closed by traversing the problem tree
-  ;; there's a failiing test for this
+  ;; There are no tests for this yet
+  ;; hypothetical premises are forgotten
+  ;; we'll also need to tear down premises
+  ;; that rely on hypotheses being removed
   [proof idx]
   (let [problems        (get proof ::problems)
         current-problem (get problems idx)

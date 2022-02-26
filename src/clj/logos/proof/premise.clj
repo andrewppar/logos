@@ -3,20 +3,22 @@
             [logos.proof.proof :as proof]))
 
 (defn add-premise
-  [proof formula]
-  (let [problem-index (get proof ::proof/problems)
-        current-problem-idx (get proof ::proof/current-problem)
-        current-problem (get problem-index current-problem-idx)
-        premise         (proof/new-premise formula)
-        new-idx         (proof/get-new-premise-idx proof)
-        new-problem     (update current-problem
-                                ::proof/premises (fn [x] (conj x new-idx)))
-        new-premise-index (assoc (get proof ::proof/premises) new-idx premise)
-        new-problem-index (assoc problem-index
-                                 current-problem-idx new-problem)]
-    (assoc proof
-           ::proof/premises new-premise-index
-           ::proof/problems new-problem-index)))
+  ([proof formula]
+   (add-premise proof formula ::proof/assertion))
+  ([proof formula justification]
+   (let [problem-index (get proof ::proof/problems)
+         current-problem-idx (get proof ::proof/current-problem)
+         current-problem (get problem-index current-problem-idx)
+         premise         (proof/new-premise formula justification)
+         new-idx         (proof/get-new-premise-idx proof)
+         new-problem     (update current-problem
+                                 ::proof/premises (fn [x] (conj x new-idx)))
+         new-premise-index (assoc (get proof ::proof/premises) new-idx premise)
+         new-problem-index (assoc problem-index
+                                  current-problem-idx new-problem)]
+     (assoc proof
+            ::proof/premises new-premise-index
+            ::proof/problems new-problem-index))))
 
 (defmacro ^:private ensure-premise-count
   [premise-vector number]
@@ -25,9 +27,22 @@
              "Incorrect number of premises passed to rule"
              {:caused-by ~premise-vector}))))
 
+(defn ^:private ensure-premises-relevant
+  [proof premise-numbers]
+  (let [relevant-premises (proof/relevant-premise-idxs proof)]
+    (map (fn [idx]
+           (when (not (some #{idx} relevant-premises))
+             (throw
+              (ex-info (format
+                        "Premise %s is not relevant for current proof"
+                        idx)
+                       {:caused-by idx}))))
+         premise-numbers)))
+
 (defn conditional-elimination
   [proof premise-numbers]
   (ensure-premise-count premise-numbers 2)
+  (ensure-premises-relevant proof premise-numbers)
   (let [premise-index (get proof ::proof/premises)
         premise-one   (-> premise-index
                           (get (first premise-numbers))
@@ -82,6 +97,7 @@
 (defn conjunction-elimination
   [proof premise-numbers]
   (ensure-premise-count premise-numbers 1)
+  (ensure-premises-relevant proof premise-numbers)
   (let [premise-index (get proof ::proof/premises)
         formula       (-> premise-index
                           (get (first premise-numbers))
@@ -107,6 +123,7 @@
 (defn disjunction-elimination
   [proof premise-numbers]
   (ensure-premise-count premise-numbers 1)
+  (ensure-premises-relevant proof premise-numbers)
   (let [problem-index (get proof ::proof/problems)
         premise-index (get proof ::proof/premises)
         current-problem-idx (get proof ::proof/current-problem)
@@ -144,7 +161,30 @@
              new-problems last-problem-id)))
       proof)))
 
-(defn bottom-introduction [proof premise-numbers] nil)
+(defn bottom-introduction
+  [proof premise-numbers]
+  (ensure-premise-count premise-numbers 2)
+  (ensure-premises-relevant proof premise-numbers)
+  (let [current-prblm-idx (get proof ::proof/current-problem)
+        problem-index     (get proof ::proof/problems)
+        problem           (get problem-index current-prblm-idx)
+        premise-index     (get proof ::proof/premises)
+        premise-one-idx   (first premise-numbers)
+        premise-two-idx   (second premise-numbers)
+        premise-one       (-> premise-index
+                              (get premise-one-idx)
+                              (get ::proof/formula))
+        premise-two       (-> premise-index
+                              (get premise-two-idx)
+                              (get ::proof/formula))]
+    (if (or (= premise-one (formula/negatum premise-two))
+            (= premise-two (formula/negatum premise-one)))
+      (add-premise proof ::formula/bottom premise-numbers)
+      proof)))
+
+
+
+
 
 (defn universal-elimination [proof premise-numbers] nil)
 
