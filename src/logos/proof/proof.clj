@@ -122,6 +122,10 @@
   ([goal]
    (new-proof [] goal))
   ([premises goal]
+   (when (or (not (formula/formula? goal))
+             (not (every? formula/formula? premises)))
+     (ex-info "Cannot make a proof with non-formulas"
+              {:caused-by [goal premises]}))
    (let [premise-index (add-asserted-premises-to-index {} premises)
          indexes       (keys premise-index)
          problem       (new-problem indexes goal 0)

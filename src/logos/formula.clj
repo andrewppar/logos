@@ -596,7 +596,7 @@
                         rest
                         (clojure.string/join " "))
                    ")")
-              (str pred)))
+              (str pred))))
     (negation? formula)
     (format "(not %s)"
             (->> formula
@@ -642,7 +642,7 @@
                  (clojure.string/join " "))
             (->> formula
                  quantified-subformula
-                 to-string)))))
+                 to-string))))
 
 ;;;;;;;;;;;;;;
 ;;; To Formula
