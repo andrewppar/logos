@@ -108,7 +108,39 @@
                       current-problem)))
       proof)))
 
-(defn universal-proof [proof] nil)
+(defn universal-proof [proof]
+  (let [current-problem-idx (get proof ::proof/current-problem)
+        problem-index       (get proof ::proof/problems)
+        current-goal        (-> problem-index
+                                (get current-problem-idx)
+                                (get ::proof/goal))]
+    (if (formula/universal? current-goal)
+      (let [new-problem-idx (proof/get-new-problem-idx proof)
+            used-constants  (->> proof
+                                 proof/relevant-premises
+                                 (mapcat
+                                  (fn [formula]
+                                    (formula/formula-gather
+                                     formula #'formula/constant?))))
+            new-goal        (formula/instantiate-new-variables
+                             current-goal used-constants)
+            new-problem     (proof/new-problem
+                             [] new-goal new-problem-idx)
+            new-problem-index (assoc problem-index
+                                     new-problem-idx new-problem)
+            new-edges       [[current-problem-idx new-problem-idx]]]
+        (assoc proof
+               ::proof/problems new-problem-index
+               ::proof/current-problem new-problem-idx
+               ::proof/edges
+               (proof/add-edges-to-edge-index
+                (::proof/edges proof) new-edges)))
+      proof)))
+
+
+
+
+
 
 (defn existential-proof [proof] nil)
 

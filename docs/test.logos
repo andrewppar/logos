@@ -19,3 +19,10 @@ Theorem t5 [:implies  [:and ["@P"] ["@Q"]]
 Theorem t6 [:implies [:and ["@P"] [:not ["@Q"]]]
                   [:not [:implies ["@P"] ["@Q"]]]].
 ->P. ~P. &E 0. ->E 1 2. BI 3 4. DD.
+
+Theorem t7 [:implies
+             [:forall [?x] [:implies  ["@P" ?x] ["@Q" ?x]]]
+	     [:implies
+	       [:forall [?x] ["@P" ?x]]
+	       [:forall [?x] ["@Q" ?x]]]].
+->P. ->P. UP. UE 1 "b". UE 0 "b". ->E 2 3. ->E 3 2. DD.

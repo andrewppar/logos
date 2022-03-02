@@ -77,3 +77,27 @@
     [:not ["@P"]] ["@P"]
     [:not [:implies ["@P" "q"] ["@P" "r"]]]
     [:implies ["@P" "q"] ["@P" "r"]]))
+
+(deftest formula-gather
+  (are [formula gather-fn result]
+       (= (formula/formula-gather formula gather-fn)
+	  result)
+    '[:forall [?x] [:implies ["@P" ?x] ["@Q" ?x]]] formula/implication?
+    '[[:implies ["@P" ?x] ["@Q" ?x]]]
+
+    '[:forall [?x] [:implies ["@P" ?x] ["@Q" ?x]]] formula/variable?
+    '[?x ?x ?x]
+
+    '[:forall [?x] [:implies ["@P" ?x] ["@Q" ?x]]] formula/universal?
+    '[[:forall [?x] [:implies ["@P" ?x] ["@Q" ?x]]]]
+
+    '[:forall [?x] [:implies ["@P" ?x] ["@Q" ?x]]] formula/constant?
+    []
+
+    '[:forall [?x] [:implies ["@P" ?x] ["@Q" "b"]]] formula/constant?
+    ["b"]
+
+    '[:implies ["@R"] [:forall [?x] [:implies ["@P" ?x] ["@Q" "b"]]]]
+    formula/implication?
+    '[[:implies ["@R"] [:forall [?x] [:implies ["@P" ?x] ["@Q" "b"]]]]
+     [:implies ["@P" ?x] ["@Q" "b"]]]))

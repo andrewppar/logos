@@ -88,16 +88,15 @@
 ;;;;;;;;
 ;;; term
 
-;;; STACK OVERFLOW HERE
 (defn term?
   "Predicate determining whether
   an `object` is a `term`"
   [object]
   (if-not (nil? object)
-  (or
-   (constant? object)
-   (variable? object))
-  false))
+    (or
+     (constant? object)
+     (variable? object))
+    false))
 
 
 ;;;;;;;
@@ -267,50 +266,6 @@
                           (existential? ~object)))}))
     (set (second object))))
 
-(defn update-todos
-  [current-item old-todos]
-  (cond (term? current-item)
-        old-todos
-        (or (atom? current-item)
-            (negation? current-item)
-            (conjunction? current-item)
-            (disjunction? current-item)
-            (implication? current-item))
-        (concat old-todos (rest current-item))
-        (or (universal? current-item)
-            (existential? current-item))
-        (clojure.core/conj old-todos (nth current-item 2))
-        "else"
-        old-todos))
-
-(defn formula-constants
-  [formula collection-pred]
-  (loop [current-item formula
-         todos        []
-         collection   []]
-    (let [new-collection
-          (if (collection-pred current-item)
-            (clojure.core/conj collection current-item)
-            collection)
-          new-todos (update-todos current-item todos)]
-      (cond (not (seq new-todos))
-            new-collection
-            (or (atom? current-item)
-                (negation? current-item)
-                (conjunction? current-item)
-                (disjunction? current-item)
-                (implication? current-item)
-                (universal? current-item)
-                (existential? current-item))
-            (recur (first new-todos)
-                   (rest new-todos)
-                   new-collection)
-            :else
-            (throw
-             (ex-info
-              "What happened"
-              {:caused-by current-item}))))))
-
 (defn free-variables-internal
   [formula acc bound-vars]
   (cond (atom? formula)
@@ -358,20 +313,57 @@
   (free-variables-internal formula (set []) (set [])))
 
 
-;; TODO!!!
-;;(defn formula-gather
-;;  [formula predicate]
-;;  (loop [current-item formula
-;;         todo         []
-;;         result       []]
-;;    (let [new-result (if (predicate current-item)
-;;                       (conj current-item result)
-;;                       result)]
-;;      (cond...))
-;;
-;;
-;;
-;;    ))
+(defn formula-gather
+  [formula predicate-fn]
+  (loop [current-item formula
+         todos        []
+         result       []]
+    (let [new-result (if (predicate-fn current-item)
+                       (clojure.core/conj result current-item)
+                       result)
+          new-todos  (cond
+                       (or (term? current-item)
+                           (= current-item ::bottom))
+                       todos
+                       (atom? current-item)
+                           (concat (clojure.core/conj todos (predicate current-item))
+                                   (terms current-item))
+                           (or (lambda? current-item)
+                               (existential? current-item)
+                               (universal? current-item))
+                           (concat
+                            (clojure.core/conj todos
+                                  (quantified-subformula current-item))
+                            (bound-variables current-item))
+                           (negation? current-item)
+                           (clojure.core/conj todos (negatum current-item))
+                           (conjunction? current-item)
+                           (->> current-item
+                                conjuncts
+                                (apply concat todos))
+                           (disjunction? current-item)
+                           (->> current-item
+                                disjuncts
+                                (apply concat todos))
+                           (implication? current-item)
+                           (-> todos
+                               (clojure.core/conj (antecedent current-item))
+                               (clojure.core/conj (consequent current-item)))
+                           :else
+                           todos)]
+      (if (seq new-todos)
+        (recur (first new-todos)
+               (rest new-todos)
+               new-result)
+        new-result))))
+
+
+
+
+
+
+
+
 
 ;;;;;;;;;;;;;
 ;;; universal
@@ -546,7 +538,7 @@
               {:caused-by formula})))
   (let [vars          (bound-variables formula)
         old-constants (concat used-constants
-                              (formula-constants formula #'constant?))
+                              (formula-gather formula #'constant?))
         new-constant-map (generate-new-constant-map
                           old-constants vars)]
     (substitute-free-variables (quantified-subformula

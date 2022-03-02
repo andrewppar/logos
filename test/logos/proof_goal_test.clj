@@ -359,3 +359,27 @@
                             ::proof/status ::proof/open}}
        ::proof/edges {0 {::proof/to [1]}
                       1 {::proof/from [0]}}}))
+
+(deftest test-universal-proof
+  (are [proof result]
+      (= (goal/universal-proof proof)
+         result)
+      {::proof/current-problem 0
+       ::proof/premises {}
+       ::proof/problems {0 {::proof/premises []
+                            ::proof/goal '[:forall [?x] ["@P" ?x]]
+                            ::proof/id 0
+                            ::proof/status ::proof/open}}
+       ::proof/edges {}}
+      {::proof/current-problem 1
+       ::proof/premises {}
+       ::proof/problems {0 {::proof/premises []
+                            ::proof/goal '[:forall [?x] ["@P" ?x]]
+                            ::proof/id 0
+                            ::proof/status ::proof/open}
+                         1 {::proof/premises []
+                            ::proof/goal '["@P" "b"]
+                            ::proof/id 1
+                            ::proof/status ::proof/open}}
+       ::proof/edges {0 {::proof/to [1]}
+                      1 {::proof/from [0]}}}))

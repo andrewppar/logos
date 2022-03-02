@@ -128,3 +128,20 @@
                          2 (proof/new-premise ::formula/bottom [0 1])}
        ::proof/problems {0 (proof/new-problem [0 1 2] q 0)}
        ::proof/edges {}}))
+
+(deftest universal-elimination-test
+  (are [proof args result]
+      (= (premise/universal-elimination proof args)
+         result)
+      {::proof/current-problem 0
+       ::proof/premises {0 (proof/new-premise
+                            '[:forall [?x] ["@P" ?x]])}
+       ::proof/problems {0 (proof/new-problem [0] ["@Q"] 0)}
+       ::proof/edges {}} [0 "a"]
+      {::proof/current-problem 0
+       ::proof/premises {0 (proof/new-premise
+                            '[:forall [?x] ["@P" ?x]])
+                         1 (proof/new-premise
+                            ["@P" "a"] [0 "a"])}
+       ::proof/problems {0 (proof/new-problem [0 1] ["@Q"] 0)}
+       ::proof/edges {}}))

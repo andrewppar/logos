@@ -72,7 +72,9 @@
       "VP"
       (function #'goal/disjunctive-proof)
       "~P"
-      (function #'goal/negative-proof))))
+      (function #'goal/negative-proof)
+      "UP"
+      (function #'goal/universal-proof))))
 
 (defn execute-premise-operation
   [proof command]
@@ -94,7 +96,9 @@
       "VE"
       (function #'premise/disjunction-elimination)
       "BI"
-      (function #'premise/bottom-introduction))))
+      (function #'premise/bottom-introduction)
+      "UE"
+      (function #'premise/universal-elimination))))
 
 
 (defn execute-command

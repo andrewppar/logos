@@ -182,11 +182,67 @@
       (add-premise proof ::formula/bottom premise-numbers)
       proof)))
 
+(defn create-variable-map
+  [variables constants]
+  (if (not= (count variables)
+            (count constants))
+    (throw
+     (ex-info
+      "Cannot  create variable map for different number of variables and constants"
+      {:caused-by `(not= (count ~variables)
+                         (count ~constants))}))
+    (loop [var            (first variables)
+           todo-vars      (rest variables)
+           constant       (first constants)
+           todo-constants (rest constants)
+           result         {}]
+      (let [new-result (assoc result var constant)]
+        (if (seq todo-vars)
+          (recur (first todo-vars)
+                 (rest todo-vars)
+                 (first todo-constants)
+                 (rest todo-constants)
+                 new-result)
+          new-result)))))
+
+(defn universal-elimination [proof args]
+  (ensure-premises-relevant proof [(first args)])
+  (let [premise-index (get proof ::proof/premises)
+        formula       (-> premise-index
+                          (get (first args))
+                          (get ::proof/formula))
+        new-constants (rest args)]
+    (if (formula/universal? formula)
+      (let [bound-vars        (formula/bound-variables formula)
+            variable-map      (create-variable-map
+                               bound-vars new-constants)
+            new-formula       (formula/substitute-free-variables
+                               (formula/quantified-subformula formula)
+                               variable-map)
+            new-premise       (proof/new-premise new-formula args)
+            new-premise-idx   (proof/get-new-premise-idx proof)
+            new-premise-index (assoc premise-index
+                                     new-premise-idx new-premise)
+            current-problems  (get proof ::proof/problems)
+            current-prblm-idx (get proof ::proof/current-problem)
+            current-problem   (get current-problems current-prblm-idx)
+            new-problem       (update current-problem
+                                      ::proof/premises
+                                      (fn [premises]
+                                        (conj
+                                         premises new-premise-idx)))
+            new-problems      (assoc current-problems
+                                     current-prblm-idx new-problem)]
+        (assoc proof
+               ::proof/premises new-premise-index
+               ::proof/problems new-problems))
+      proof)))
 
 
 
 
-(defn universal-elimination [proof premise-numbers] nil)
+
+
 
 (defn existential-eliminiation [proof premise-numbers] nil)
 

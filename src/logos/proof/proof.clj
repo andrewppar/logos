@@ -287,13 +287,43 @@
          (assoc proof ::problems)
          reset-current-problem)))
 
+(defn get-proof-root-idx
+  [proof]
+  ;; This assumes that there is a unique
+  ;; root problem to which all other problems
+  ;; eventually bottom out
+  (let [start (->> ::problems
+                   (get proof)
+                   keys
+                   (apply min))]
+    (loop [current-idx start]
+      (let [upstream (-> proof
+                         (get ::edges)
+                         (get current-idx)
+                         (get ::from))]
+        (if (seq upstream)
+          (recur (first upstream))
+          current-idx)))))
+
 (defn proof-done?
   [proof]
-  (let [problems (get proof ::problems)]
-    (reduce
-     (fn [done? problem-idx]
-       (let [problem (get problems problem-idx)]
-         (if (= (get problem ::status) ::closed)
-           done?
-           (reduced false))))
-     true (keys problems))))
+  (let [root-problem (-> proof
+                         (get ::problems)
+                         (get (get-proof-root-idx proof)))
+        premise-idxs     (get root-problem ::premises)
+        premise-index (get proof ::premises)
+        premises      (->> premise-idxs
+                           (map (fn [idx] (get premise-index idx))))
+        assertions    (filter (fn [premise] (-> premise
+                                                (get ::justification)
+                                                (= ::assertion))) premises)]
+    (if (seq assertions)
+      false
+      (let [problems (get proof ::problems)]
+        (reduce
+         (fn [done? problem-idx]
+           (let [problem (get problems problem-idx)]
+             (if (= (get problem ::status) ::closed)
+               done?
+               (reduced false))))
+         true (keys problems))))))
