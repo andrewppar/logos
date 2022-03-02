@@ -119,21 +119,22 @@
 ;;; Proof
 
 (defn new-proof
-  ([goal]
-   (new-proof [] goal))
-  ([premises goal]
-   (when (or (not (formula/formula? goal))
-             (not (every? formula/formula? premises)))
-     (ex-info "Cannot make a proof with non-formulas"
-              {:caused-by [goal premises]}))
-   (let [premise-index (add-asserted-premises-to-index {} premises)
-         indexes       (keys premise-index)
-         problem       (new-problem indexes goal 0)
-         problem-index {0 problem}]
-     {::current-problem 0
-      ::premises        premise-index
-      ::problems        problem-index
-      ::edges           {}})))
+  [goal
+   & {:keys [premises theorem-name],
+      :or {premises []}}]
+  (when (or (not (formula/formula? goal))
+            (not (every? formula/formula? premises)))
+    (ex-info "Cannot make a proof with non-formulas"
+             {:caused-by [goal premises]}))
+  (let [premise-index (add-asserted-premises-to-index {} premises)
+        indexes       (keys premise-index)
+        problem       (new-problem indexes goal 0)
+        problem-index {0 problem}]
+    {::current-problem 0
+     ::premises        premise-index
+     ::problems        problem-index
+     ::theorem-name    theorem-name
+     ::edges           {}}))
 
 (defn ^:private get-new-idx-for-type
   [proof type]

@@ -14,12 +14,17 @@
   (reset! current-proof nil))
 
 (defn start-proof
-  [goal & {:keys [premises]}]
-  (let [new-proof (if (nil? premises)
-                    (proof/new-proof premises goal)
-                    (proof/new-proof goal))]
+  [goal & {:keys [premises theorem-name]}]
+  (let [args (cond-> {}
+               (some? premises)
+               (assoc :premises premises)
+               (some? theorem-name)
+               (assoc :theorem-name theorem-name))
+        new-proof (apply proof/new-proof goal (-> args vec flatten))]
     (reset! current-proof new-proof)
-    new-proof))
+        new-proof))
+
+
 
 (defn one-step
   [proof function & {:keys [premise-idxs]}]
@@ -36,7 +41,9 @@
         clean-array (filter #(not= "" %) theorem-array)
         theorem-declaration (string/lower-case
                              (first clean-array))
+        title               (second clean-array)
         formula-string      (->> clean-array
+                                 rest
                                  rest
                                  (string/join " "))]
     (when-not (= theorem-declaration "theorem")
@@ -49,7 +56,7 @@
          (ex-info
           (format "Cannot parse %s as a formula" formula)
           {:caused-by formula}))
-        (start-proof formula)))))
+        (start-proof formula :theorem-name title)))))
 
 (defn execute-goal-operation [proof operation-string]
   (let [operation (-> operation-string
