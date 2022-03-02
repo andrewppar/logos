@@ -611,11 +611,10 @@
          ")")
     (disjunction? formula)
     (str "(or "
-         (clojure.string/join
-          (->> formula
-               disjuncts
-               (map to-string))
-          " ")
+         (clojure.string/join " "
+                              (->> formula
+                                   disjuncts
+                                   (map to-string)))
          ")")
     (implication? formula)
     (format "(implies %s %s)"

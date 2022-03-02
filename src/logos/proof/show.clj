@@ -43,7 +43,9 @@
                          (generate-premise-string
                           premise-index premise-idxs)
                          "")
-        goal-string    (format "SHOW: %s\n" (-> problem
-                                                (get ::proof/goal)
-                                                formula/to-string))]
+        goal-string    (if (proof/proof-done? proof)
+                         "QED"
+                         (format "SHOW: %s\n" (-> problem
+                                                  (get ::proof/goal)
+                                                  formula/to-string)))]
     (str premise-string goal-string)))

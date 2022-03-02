@@ -208,7 +208,76 @@
                             ::proof/status ::proof/closed}}
        ::proof/edges {0 {::proof/to [1 2]}
                       1 {::proof/from [0]}
-                      2 {::proof/from [0]}}}))
+                      2 {::proof/from [0]}}}
+
+      ;; Case 4
+      {::proof/current-problem 2
+       ::proof/premises {0 {::proof/formula ["@P"]
+                            ::proof/justification ::proof/hypothesis}
+                         1 {::proof/formula ["@Q"]
+                            ::proof/justification ::proof/hypothesis}}
+       ::proof/problems {0 {::proof/premises ()
+                            ::proof/goal [:implies
+                                          ["@P"]
+                                          [:implies ["@Q"] ["@P"]]]
+                            ::proof/id 0
+                            ::proof/status ::proof/open}
+                         1 {::proof/premises [0]
+                            ::proof/goal [:implies ["@Q"] ["@P"]]
+                            ::proof/id 1
+                            ::proof/status ::proof/open}
+                         2 {::proof/premises [1]
+                            ::proof/goal ["@P"]
+                            ::proof/id 2
+                            ::proof/status ::proof/open}}
+       ::proof/edges
+       {0 {::proof/to [1]}
+        1 {::proof/from [0] ::proof/to [2]},
+        2 {::proof/from [1]}}}
+
+      {::proof/current-problem nil
+       ::proof/premises {0 {::proof/formula ["@P"]
+                            ::proof/justification ::proof/hypothesis}
+                         1 {::proof/formula ["@Q"]
+                            ::proof/justification ::proof/hypothesis}}
+       ::proof/problems {0 {::proof/premises ()
+                            ::proof/goal [:implies
+                                          ["@P"]
+                                          [:implies ["@Q"] ["@P"]]]
+                            ::proof/id 0
+                            ::proof/status ::proof/closed}
+                         1 {::proof/premises [0]
+                            ::proof/goal [:implies ["@Q"] ["@P"]]
+                            ::proof/id 1
+                            ::proof/status ::proof/closed}
+                         2 {::proof/premises [1]
+                            ::proof/goal ["@P"]
+                            ::proof/id 2
+                            ::proof/status ::proof/closed}}
+       ::proof/edges
+       {0 {::proof/to [1]}
+        1 {::proof/from [0] ::proof/to [2]},
+        2 {::proof/from [1]}}}
+
+      ;; Case 5
+      {::proof/current-problem 0
+       ::proof/premises {0 {::proof/formula ::formula/bottom
+                            ::proof/justification ::proof/assertion}}
+       ::proof/problems {0 {::proof/premises [0]
+                            ::proof/goal q
+                            ::proof/id 0
+                            ::proof/status ::proof/open}}
+       ::proof/edges {}}
+      {::proof/current-problem nil
+       ::proof/premises {0 {::proof/formula ::formula/bottom
+                            ::proof/justification ::proof/assertion}}
+       ::proof/problems {0 {::proof/premises [0]
+                            ::proof/goal q
+                            ::proof/id 0
+                            ::proof/status ::proof/closed}}
+       ::proof/edges {}}
+
+      ))
 
 (deftest test-conjunctive-proof
   (let [pandq (formula/conj p q)]

@@ -7,6 +7,11 @@
             [clojure.string :as string]))
 
 (def current-proof (atom nil))
+(def theorems      (atom (set [])))
+
+(defn clear-current-proof
+  []
+  (reset! current-proof nil))
 
 (defn start-proof
   [goal & {:keys [premises]}]
@@ -25,7 +30,9 @@
 
 (defn parse-goal
   [string]
-  (let [theorem-array   (string/split string #" ")
+  (let [theorem-array   (-> string
+                            string/trim
+                            (string/split #" "))
         clean-array (filter #(not= "" %) theorem-array)
         theorem-declaration (string/lower-case
                              (first clean-array))
@@ -46,8 +53,7 @@
 
 (defn execute-goal-operation [proof operation-string]
   (let [operation (-> operation-string
-                      string/upper-case
-                      string/trim)
+                      string/upper-case)
         function  (fn [fnct] (one-step proof fnct))]
     (case operation
       "DD"
@@ -86,8 +92,9 @@
 
 (defn execute-command
   [proof command]
-  (let [split-command (->> #" "
-                           (string/split command)
+  (let [remove-newlines (string/trim command)
+        split-command   (->> #" "
+                           (string/split remove-newlines)
                            (filter #(not= "" %)))]
     (cond (= (count split-command) 1)
           (execute-goal-operation proof (first split-command))
@@ -99,20 +106,26 @@
             (format "Could not parse %s as a command" command)
             {:caused-by command})))))
 
-(defn prove
-  "Takes a string representing a proof specification and runs
-  executes that proof"
-  [string]
-  (let [commands (string/split string #"\.")
-        proof    (parse-goal (first commands))]
-    (reduce
-     (fn [proof command]
-       (execute-command proof command))
-     proof (rest commands))))
-
-(defn next-step [string]
+(defn next-step! [string]
   (if (nil? @current-proof)
     (show-proof (parse-goal string))
     (let [new-proof (execute-command @current-proof string)]
-      (reset! current-proof new-proof)
+      (if (proof/proof-done? new-proof)
+        (do
+          (clear-current-proof)
+          (swap! theorems (fn [ts] (conj ts new-proof))))
+        (reset! current-proof new-proof))
       (show-proof new-proof))))
+
+(defn eval-commands!
+  "Takes a string representing a set of commands
+  and executes next-step! on them"
+  [string]
+  (let [commands (string/split string #"\.")]
+    (loop [command (first commands)
+           todo    (rest  commands)]
+      (next-step! command)
+      (when (seq todo)
+        (recur (first todo)
+               (rest  todo))))
+    (show-proof @current-proof)))

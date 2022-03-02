@@ -1,2 +1,21 @@
 Theorem [:implies ["@P"] ["@P"]].
 ->P. DD.
+
+Theorem [:implies ["@P"]  [:implies ["@Q"] ["@P"]]].
+->P. ->P. DD.
+
+Theorem [:implies [:implies ["@P"] [:implies ["@Q"] ["@R"]]]
+           [:implies [:implies ["@P"] ["@Q"]]
+	             [:implies ["@P"] ["@R"]]]].
+->P. ->P. ->P. ->E 0 2. ->E 1 2. ->E 3 4. DD.
+
+Theorem [:implies ["@P"] [:not [:not ["@P"]]]].
+->P. ~P. BI 0 1. DD.
+
+Theorem [:implies  [:and ["@P"] ["@Q"]]
+                   [:or ["@P"] ["@Q"]]].
+->P. &E 0. VP.
+
+Theorem [:implies [:and ["@P"] [:not ["@Q"]]]
+                  [:not [:implies ["@P"] ["@Q"]]]].
+->P. ~P. &E 0. ->E 1 2. BI 3 4. DD.

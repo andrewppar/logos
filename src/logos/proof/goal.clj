@@ -13,16 +13,19 @@
                           (get current-problem-idx)
                           (get ::proof/goal))
         premises            (proof/relevant-premises proof)
-        proved?       (if (some #{current-goal} premises)
-                        true
-                        (if (and (formula/disjunction? current-goal)
-                                 (-> current-goal
-                                     formula/disjuncts
-                                     set
-                                     (set/intersection (set premises))
-                                     seq))
-                          true
-                          false))]
+        proved?           (cond (some #{::formula/bottom} premises)
+                                true
+                                (some #{current-goal} premises)
+                                true
+                                (and (formula/disjunction? current-goal)
+                                     (-> current-goal
+                                         formula/disjuncts
+                                         set
+                                         (set/intersection (set premises))
+                                         seq))
+                                true
+                                :else
+                                false)]
     (if proved?
       (proof/close-problem proof current-problem-idx)
       proof)))

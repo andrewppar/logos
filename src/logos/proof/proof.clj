@@ -213,15 +213,16 @@
 
 (defn ^:private reset-current-problem
   [proof]
-  (let [problem-index (get proof ::problems)
-        edges         (get proof ::edges)]
-    (if (= ::open (-> problem-index
+  (let [edges (get proof ::edges)]
+    (if (= ::open (-> proof
+                      (get ::problems)
                       (get (get proof ::current-problem))
                       (get ::status)))
       proof
       (loop [result proof]
         ;; We know the current problem is closed
-        (let [current-problem (get result ::current-problem)]
+        (let [problem-index (get result ::problems)
+              current-problem (get result ::current-problem)]
           ;; We take the first because a proof is a
           ;; tree, i.e. no problem can have more than
           ;; one root.
@@ -284,3 +285,14 @@
          (assoc problems idx)
          (assoc proof ::problems)
          reset-current-problem)))
+
+(defn proof-done?
+  [proof]
+  (let [problems (get proof ::problems)]
+    (reduce
+     (fn [done? problem-idx]
+       (let [problem (get problems problem-idx)]
+         (if (= (get problem ::status) ::closed)
+           done?
+           (reduced false))))
+     true (keys problems))))
