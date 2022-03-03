@@ -16,3 +16,4 @@ Capstanfile
 .lsp*
 /node_modules
 /log
+/.clj-kondo

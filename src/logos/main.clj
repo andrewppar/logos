@@ -98,7 +98,12 @@
       "BI"
       (function #'premise/bottom-introduction)
       "UE"
-      (function #'premise/universal-elimination))))
+      (function #'premise/universal-elimination)
+      ;; Existential Proof requires extra args
+      "EP"
+      (function #'goal/existential-proof)
+      "EE"
+      (function #'premise/existential-elimination))))
 
 
 (defn execute-command
@@ -109,6 +114,8 @@
                            (filter #(not= "" %)))]
     (cond (= (count split-command) 1)
           (execute-goal-operation proof (first split-command))
+          ;; Unfortunately Existential Proof also goes here
+          ;; Maybe rename these functions??
           (> (count split-command) 1)
           (execute-premise-operation proof split-command)
           :else

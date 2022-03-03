@@ -1,5 +1,5 @@
 (ns logos.proof-goal-test
-  (:require [clojure.test :refer [deftest are]]
+  (:require [clojure.test :refer [deftest are is]]
             [logos.proof.proof :as proof]
             [logos.proof.goal  :as goal]
             [logos.formula :as formula]))
@@ -383,3 +383,39 @@
                             ::proof/status ::proof/open}}
        ::proof/edges {0 {::proof/to [1]}
                       1 {::proof/from [0]}}}))
+
+(deftest test-existential-proof
+  (are [proof constants result]
+      (= (goal/existential-proof proof constants)
+         result)
+    {::proof/current-problem 0
+     ::proof/premises {}
+     ::proof/problems {0 {::proof/premises []
+                         ::proof/goal '[:exists [?x ?y] ["@P" ?x ?y]]
+                         ::proof/id 0
+                         ::proof/status ::proof/open}}
+     ::proof/edges {}} ["a" "b"]
+    {::proof/current-problem 1
+     ::proof/premises {}
+     ::proof/problems {0 {::proof/premises []
+                         ::proof/goal '[:exists [?x ?y] ["@P" ?x ?y]]
+                         ::proof/id 0
+                         ::proof/status ::proof/open}
+                      1 {::proof/premises []
+                         ::proof/goal '["@P" "a" "b"]
+                         ::proof/id 1
+                         ::proof/status ::proof/open}}
+     ::proof/edges {0 {::proof/to [1]}
+                    1 {::proof/from [0]}}}))
+
+(deftest test-existentital-proof-exception
+  (is (thrown? java.lang.Exception
+               (goal/existential-proof
+                {::proof/current-problem 0
+                 ::proof/premises {}
+                 ::proof/problems {0 {::proof/premises []
+                                      ::proof/goal
+                                      '[:exists [?x ?y] ["@P" ?x ?y]]
+                                      ::proof/id 0
+                                      ::proof/status ::proof/open}}
+                 ::proof/edges {}} '["a" ?z]))))

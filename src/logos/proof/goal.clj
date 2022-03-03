@@ -137,11 +137,37 @@
                 (::proof/edges proof) new-edges)))
       proof)))
 
+(defn existential-proof [proof constants]
+  (let [current-problem-idx (get proof ::proof/current-problem)
+        current-problems    (get proof ::proof/problems)
+        current-problem     (get current-problems current-problem-idx)
+        current-goal        (get current-problem ::proof/goal)]
+    (if (formula/existential? current-goal)
+      (let [open-formula (formula/quantified-subformula current-goal)
+            vars         (formula/bound-variables current-goal)
+            constant-map (zipmap vars constants)
+            new-goal     (formula/substitute-free-variables
+                          open-formula constant-map)]
+        (when (seq (formula/free-variables new-goal))
+          (throw
+           (ex-info
+            "Existential Proof cannot result in an open formula"
+            {:caused-by new-goal})))
+        (let [new-problem-idx (proof/get-new-problem-idx proof)
+              new-problem     (proof/new-problem
+                               [] new-goal new-problem-idx)
+              new-problems    (assoc current-problems
+                                     new-problem-idx new-problem)
+              new-edges        [[current-problem-idx new-problem-idx]]
+              edge-index      (get proof ::proof/edges)]
+          (assoc proof
+                 ::proof/problems new-problems
+                 ::proof/current-problem new-problem-idx
+                 ::proof/edges
+                 (proof/add-edges-to-edge-index
+                  edge-index new-edges))))
+      proof)))
 
+(defn id-reflexivity [proof] nil)
 
-
-
-
-(defn existential-proof [proof] nil)
-
-;;; Lambdas...
+(defn modal-proof [proof] nil)

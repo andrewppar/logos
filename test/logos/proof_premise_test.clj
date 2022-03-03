@@ -145,3 +145,21 @@
                             ["@P" "a"] [0 "a"])}
        ::proof/problems {0 (proof/new-problem [0 1] ["@Q"] 0)}
        ::proof/edges {}}))
+
+(deftest test-existential-elimination
+  (are [proof premise-idxs result]
+      (= (premise/existential-elimination proof premise-idxs)
+         result)
+    {::proof/current-problem 0
+     ::proof/premises {0 (proof/new-premise '[:exists [?x ?y]
+                                              ["@P" ?x ?y "a"]])}
+     ::proof/problems {0
+                       (proof/new-problem [0] ["@Q"] 0)}
+     ::proof/edges {}} [0]
+    {::proof/current-problem 0
+     ::proof/premises {0 (proof/new-premise '[:exists [?x ?y]
+                                              ["@P" ?x ?y "a"]])
+                       1 (proof/new-premise '["@P" "b" "c" "a"] [0])}
+     ::proof/problems {0
+                       (proof/new-problem [0 1] ["@Q"] 0)}
+     ::proof/edges {}}))

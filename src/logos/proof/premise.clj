@@ -238,12 +238,47 @@
                ::proof/problems new-problems))
       proof)))
 
+(defn existential-elimination
+  [proof premise-numbers]
+  (ensure-premise-count premise-numbers 1)
+  (ensure-premises-relevant proof premise-numbers)
+  (let [premises (get proof ::proof/premises)
+        premise  (->> premise-numbers
+                      first
+                      (get premises))
+        formula  (get premise ::proof/formula)]
+    (if (formula/existential? formula)
+      (let [problem-idx (get proof ::proof/current-problem)
+            problem     (-> proof
+                            (get ::proof/problems)
+                            (get problem-idx))
+            used-constants  (->> proof
+                                 proof/relevant-premises
+                                 (mapcat
+                                  (fn [formula]
+                                    (formula/formula-gather
+                                     formula #'formula/constant?))))
+            new-formula     (formula/instantiate-new-variables
+                             formula used-constants)
+            new-premise     (proof/new-premise
+                             new-formula premise-numbers)
+            new-premise-idx (proof/get-new-premise-idx proof)
+            new-problem     (update problem
+                                    ::proof/premises
+                                    (fn [premises]
+                                      (conj premises new-premise-idx)))
+            new-problems    (assoc (get proof ::proof/problems)
+                                   problem-idx new-problem)
+            new-premises    (assoc premises
+                                   new-premise-idx new-premise)]
+        (assoc proof
+               ::proof/problems new-problems
+               ::proof/premises new-premises))
+      proof)))
 
 
+(defn id-substitute [proof premise-numbers] nil)
 
-
-
-
-(defn existential-eliminiation [proof premise-numbers] nil)
+(defn beta-reduction [proof premise-numbers] nil)
 
 ;;; Lambdas...
