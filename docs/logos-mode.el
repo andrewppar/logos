@@ -1,7 +1,7 @@
 ;; logos-mode.el --- major mode for logos  -*- lexical-binding: t; -*-
 
 (defvar *logos-host* "localhost")
-(defvar *logos-port* nil)
+(defvar *logos-port* "4000")
 (defvar *logos-connection* nil)
 (defvar *logos-proof-buffer* "*Proof*")
 (defvar *logos-eval-marker* 1)

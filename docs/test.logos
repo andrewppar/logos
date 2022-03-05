@@ -26,3 +26,11 @@ Theorem t7 [:implies
 	       [:forall [?x] ["@P" ?x]]
 	       [:forall [?x] ["@Q" ?x]]]].
 ->P. ->P. UP. UE 1 "b". UE 0 "b". ->E 2 3. ->E 3 2. DD.
+
+Theorem t8 [:implies
+            [:and [:exists [?x] ["@P" ?x]]
+	          [:forall [?y]
+		   [:implies  ["@P" ?y]
+		              ["@Q" ?y]]]]
+	    [:exists [?z] ["@Q" ?z]]].
+->P. &E 0. EE 1. UE 2 "b". EP "b". ->E 4 3. DD.

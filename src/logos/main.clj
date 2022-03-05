@@ -27,10 +27,15 @@
 
 
 (defn one-step
-  [proof function & {:keys [premise-idxs]}]
-  (let [new-proof (if (nil? premise-idxs)
+  "Given a `proof` and an operation-`function`
+  perform the corresponding operation on the proof.
+  `args` is for the most part premise-ids, with the
+  exception of the case of existential proof. In that case
+  it is a list of substituents."
+  [proof function & {:keys [args]}]
+  (let [new-proof (if (nil? args)
                     (function proof)
-                    (function proof premise-idxs))]
+                    (function proof args))]
     new-proof))
 
 (defn parse-goal
@@ -85,7 +90,7 @@
                     (one-step
                      proof
                      fnct
-                     :premise-idxs premise-idxs))]
+                     :args premise-idxs))]
     (case operation
       "assert"
       (function #'premise/add-premise)
@@ -99,11 +104,15 @@
       (function #'premise/bottom-introduction)
       "UE"
       (function #'premise/universal-elimination)
-      ;; Existential Proof requires extra args
-      "EP"
-      (function #'goal/existential-proof)
       "EE"
       (function #'premise/existential-elimination))))
+
+(defn execute-existential-proof [proof substituent-string]
+  (let [substituents (read-string (format "[%s]" substituent-string))]
+    (one-step
+     proof #'goal/existential-proof :args substituents)))
+
+
 
 
 (defn execute-command
@@ -114,8 +123,10 @@
                            (filter #(not= "" %)))]
     (cond (= (count split-command) 1)
           (execute-goal-operation proof (first split-command))
-          ;; Unfortunately Existential Proof also goes here
-          ;; Maybe rename these functions??
+          (= (first split-command) "EP")
+          ;; Existential Proof
+          (execute-existential-proof
+           proof (string/join " " (rest split-command)))
           (> (count split-command) 1)
           (execute-premise-operation proof split-command)
           :else

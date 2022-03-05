@@ -265,7 +265,7 @@
                           (universal? ~object)
                           (lambda? ~object)
                           (existential? ~object)))}))
-    (set (second object))))
+    (vec (set (second object)))))
 
 (defn free-variables-internal
   [formula acc bound-vars]
@@ -409,6 +409,7 @@
 (defn predicate?
   [object]
   (or (atomic-predicate? object)
+      (variable? object)
       (lambda? object)))
 
 (defn lambda [vars formula]
@@ -551,11 +552,12 @@
 ;;TODO These should be multimethods
 ;; or formula should be a protocol
 
-(declare to-string-internal)
+(declare to-string)
 
 (defn serialize-predicate
   [predicate ]
-  (cond (atomic-predicate? predicate)
+  (cond (or (atomic-predicate? predicate)
+            (variable? predicate))
         (str predicate)
         (lambda? predicate)
         (let [vars (bound-variables predicate)
@@ -566,14 +568,14 @@
                 (map name)
                 (clojure.string/join " "))
            ")"
-           (to-string-internal formula)
+           (to-string formula)
            ")"))
         :else
         (throw
          (ex-info "Trying to serialize non-predicate."
                   {:caused-by predicate}))))
 
-(defn to-string-internal [formula]
+(defn to-string [formula]
   (cond
     (atom? formula)
     (cond (term? formula)
@@ -595,29 +597,29 @@
     (format "(not %s)"
             (->> formula
                  negatum
-                 to-string-internal))
+                 to-string))
     (conjunction? formula)
     (str "(and "
          (clojure.string/join " "
                               (->> formula
                                    conjuncts
-                                   (map to-string-internal)))
+                                   (map to-string)))
          ")")
     (disjunction? formula)
     (str "(or "
          (clojure.string/join " "
                               (->> formula
                                    disjuncts
-                                   (map to-string-internal)))
+                                   (map to-string)))
          ")")
     (implication? formula)
     (format "(implies %s %s)"
             (->> formula
                  antecedent
-                 to-string-internal)
+                 to-string)
             (->> formula
                  consequent
-                 to-string-internal))
+                 to-string))
     (universal? formula)
     (format "(forall %s %s)"
             (->> formula
@@ -626,7 +628,7 @@
                  (clojure.string/join " "))
             (->> formula
                  quantified-subformula
-                 to-string-internal))
+                 to-string))
     (existential? formula)
     (format "(exists %s %s)"
             (->> formula
@@ -635,13 +637,8 @@
                  (clojure.string/join " "))
             (->> formula
                  quantified-subformula
-                 to-string-internal))))
+                 to-string))))
 
-(defn to-string [formula]
-  (with-out-str
-    (pprint/pprint
-     (read-string
-      (to-string-internal formula)))))
 
 ;;;;;;;;;;;;;;
 ;;; To Formula
