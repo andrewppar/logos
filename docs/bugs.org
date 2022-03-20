@@ -1,0 +1,35 @@
+#+title: Logos
+#+date: 03-17-2022
+#+author: Andrew Parisi
+
+* Bugs
+
+** TODO If quantified args are not quoted or formulas they are treated as vars this should error (or make a good interpretation of intention)
+
+* Version 1
+
+** TODO Fix everything in the [[Bugs]] section
+** DONE All the theorems in test.logos
+CLOSED: [2022-03-19 Sat 18:20]
+** DONE Read formulas as strings that look the same as how a formula is serialized
+CLOSED: [2022-03-19 Sat 22:05]
+** TODO pretty print formulas that are too long
+** TODO README
+** TODO Easy Deployment [%]
+*** TODO Add git checks
+*** TODO Add a release process
+*** TODO Figure out how to launch anywhere with a single command (this should be easy -- it's on the jvm :))
+** TODO Documentation in the UI
+** TODO Add a theorems pane to the UI
+** TODO Remove the =theorems= and the =current-proof= atoms
+** TODO Check for wrong number of premises when doing premise operation
+
+* Version 2
+** TODO Support Lambdas
+** TODO Formula builder
+** TODO See other goals, or goals coming down the line
+** TODO Support assertions in proofs and figure out what a proof with assertions means
+** TODO Support using other theorem in proofs
+
+* Future
+** TODO Support model creation for failed proofs

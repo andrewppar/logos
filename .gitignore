@@ -16,3 +16,6 @@ Capstanfile
 .lsp*
 /node_modules
 /log
+/.clj-kondo
+/.shadow-cljs
+/public/js

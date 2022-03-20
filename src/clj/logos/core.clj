@@ -1,80 +1,81 @@
 (ns logos.core
-  (:require
-    [logos.handler :as handler]
-    [logos.nrepl :as nrepl]
-    [luminus.http-server :as http]
-    [luminus-migrations.core :as migrations]
-    [logos.config :refer [env]]
-    [clojure.tools.cli :refer [parse-opts]]
-    [clojure.tools.logging :as log]
-    [mount.core :as mount]
-    [logos.proof :as proof]
-    [logos.formula :as formula])
-  (:gen-class))
+  (:require [org.httpkit.server       :as server]
+            [clojure.data.json        :as json]
+            [compojure.core           :as compojure]
+            [compojure.route          :as route]
+            [logos.main               :as main]
+            [ring.middleware.cors     :as cors]
+            [ring.middleware.defaults :as middleware]))
 
-;; log uncaught exceptions in threads
-(Thread/setDefaultUncaughtExceptionHandler
-  (reify Thread$UncaughtExceptionHandler
-    (uncaughtException [_ thread ex]
-      (log/error {:what :uncaught-exception
-                  :exception ex
-                  :where (str "Uncaught exception on" (.getName thread))}))))
+(defn ^:private one-step-internal
+  [req]
+  (let [command (-> req (get :query-params) (get "command"))
+        result (main/next-step! command)]
+    result))
 
-(def cli-options
-  [["-p" "--port PORT" "Port number"
-    :parse-fn #(Integer/parseInt %)]])
+(defn one-step
+  [req]
+  (try
+    (let [body (json/write-str (one-step-internal req))]
+      {:status 200
+       :headers {"Content-Type" "text/json"}
+       :body body})
+    (catch Exception e
+      (println e)
+      (println (ex-data e))
+      {:status 400
+       :heades {"Content-Type" "text/json"}
+       :body (ex-data e)})))
 
-(mount/defstate ^{:on-reload :noop} http-server
-  :start
-  (http/start
-    (-> env
-        (update :io-threads #(or % (* 2 (.availableProcessors (Runtime/getRuntime))))) 
-        (assoc  :handler (handler/app))
-        (update :port #(or (-> env :options :port) %))
-        (select-keys [:handler :host :port])))
-  :stop
-  (http/stop http-server))
+(defn ^:private clear-current-proof-internal
+  []
+  (main/clear-current-proof))
 
-(mount/defstate ^{:on-reload :noop} repl-server
-  :start
-  (when (env :nrepl-port)
-    (nrepl/start {:bind (env :nrepl-bind)
-                  :port (env :nrepl-port)}))
-  :stop
-  (when repl-server
-    (nrepl/stop repl-server)))
+(defn clear-current-proof
+  [_]
+  {:status 200
+   :headers {"Content-Type" "text/json"}
+   :body (json/write-str (clear-current-proof-internal))})
 
+(defn ^:private run-steps-internal
+  [req]
+  (let [command (-> req (get :query-params) (get "command"))
+        result  (main/eval-commands! command)]
+    result))
 
-(defn stop-app []
-  (doseq [component (:stopped (mount/stop))]
-    (log/info component "stopped"))
-  (shutdown-agents))
+(defn run-steps
+  [req]
+  {:status 200
+   :headers {"Content-Type" "text/json"}
+   :body (json/write-str (run-steps-internal req))})
 
-(defn start-app [args]
-  (doseq [component (-> args
-                        (parse-opts cli-options)
-                        mount/start-with-args
-                        :started)]
-    (log/info component "started"))
-  (.addShutdownHook (Runtime/getRuntime) (Thread. stop-app)))
+(defn health-check
+  [req]
+  {:status 200
+   :headers {"Content-Type" "text/json"
+             "Access-Control-Allow-Origin" "*"
+             "Access-Control-Allow-Headers" "x-requested-with"
+             "Access-Control-Allow-Methods" "*"}
+
+   :body (json/write-str {:status "OK"})})
+
+(compojure/defroutes app
+  (compojure/GET "/" req (str req))
+  (compojure/GET "/health-check" [] health-check)
+  (compojure/POST "/one-step" [] one-step)
+  (compojure/POST "/clear-current-proof" [] clear-current-proof)
+  (compojure/POST "/run-steps" [] run-steps)
+  (route/not-found "<h1>Page not found</h1>"))
+
 
 (defn -main [& args]
-  (-> args
-                            (parse-opts cli-options)
-                            (mount/start-with-args #'logos.config/env))
-  (cond
-    (nil? (:database-url env))
-    (do
-      (log/error "Database configuration not found, :database-url environment variable must be set before running")
-      (System/exit 1))
-    (some #{"init"} args)
-    (do
-      (migrations/init (select-keys env [:database-url :init-script]))
-      (System/exit 0))
-    (migrations/migration? args)
-    (do
-      (migrations/migrate args (select-keys env [:database-url]))
-      (System/exit 0))
-    :else
-    (start-app args)))
-  
+  (server/run-server
+    (cors/wrap-cors
+     (middleware/wrap-defaults
+      #'app middleware/api-defaults)
+     :access-control-allow-origin [#".*"]
+     :access-control-allow-methods [:get :put :post :delete]
+     :access-control-allow-headers ["Origin" "X-Requested-With"
+                                    "Content-Type" "Accept"])
+   {:port 4000})
+  (println "Server started on port 4000"))

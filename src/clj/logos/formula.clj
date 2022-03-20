@@ -1,6 +1,7 @@
 (ns logos.formula
   (:require [clojure.string :as string]
-            [clojure.set :as s]))
+            [clojure.set :as s]
+            [clojure.pprint :as pprint]))
 
 (defmacro defs [& bindings]
   (loop [name  (first bindings)
@@ -24,12 +25,14 @@
   "A macro to make writing formula predicates
   simpler"
   [object formula-type]
-  `(and
-    (seq ~object)
-    (= (first ~object) ~formula-type)
-    (->> ~object
-         rest
-         (every? formula?))))
+  `(if-not (coll? ~object)
+     false
+     (and
+      (seq ~object)
+      (= (first ~object) ~formula-type)
+      (->> ~object
+           rest
+           (every? formula?)))))
 
 ;;;;;;;;;;;;;;;;;;;;
 ;;; atomic predicate
@@ -38,7 +41,7 @@
   [object]
   (and
    (string? object)
-   (string/starts-with? object "@")))
+   (string/starts-with? object "!")))
 
 ;;;;;;;;;;;;
 ;;; constant
@@ -90,9 +93,11 @@
   "Predicate determining whether
   an `object` is a `term`"
   [object]
-  (or
-   (constant? object)
-   (variable? object)))
+  (if-not (nil? object)
+    (or
+     (constant? object)
+     (variable? object))
+    false))
 
 
 ;;;;;;;
@@ -102,6 +107,7 @@
 
 (defn atom? [object]
   (or (term? object)
+      (= object ::bottom)
       (and
        (vector? object)
        (predicate? (first object))
@@ -147,7 +153,7 @@
   from a negated formula"
   [formula]
   (when (negation? formula)
-    (first formula)))
+    (second formula)))
 
 ;;;;;;;;;;;;;;
 ;; Conjunction
@@ -259,51 +265,7 @@
                           (universal? ~object)
                           (lambda? ~object)
                           (existential? ~object)))}))
-    (set (second object))))
-
-(defn update-todos
-  [current-item old-todos]
-  (cond (term? current-item)
-        old-todos
-        (or (atom? current-item)
-            (negation? current-item)
-            (conjunction? current-item)
-            (disjunction? current-item)
-            (implication? current-item))
-        (concat old-todos (rest current-item))
-        (or (universal? current-item)
-            (existential? current-item))
-        (clojure.core/conj old-todos (nth current-item 2))
-        "else"
-        old-todos))
-
-(defn formula-constants
-  [formula collection-pred]
-  (loop [current-item formula
-         todos        []
-         collection   []]
-    (let [new-collection
-          (if (collection-pred current-item)
-            (clojure.core/conj collection current-item)
-            collection)
-          new-todos (update-todos current-item todos)]
-      (cond (not (seq new-todos))
-            new-collection
-            (or (atom? current-item)
-                (negation? current-item)
-                (conjunction? current-item)
-                (disjunction? current-item)
-                (implication? current-item)
-                (universal? current-item)
-                (existential? current-item))
-            (recur (first new-todos)
-                   (rest new-todos)
-                   new-collection)
-            :else
-            (throw
-             (ex-info
-              "What happened"
-              {:caused-by current-item}))))))
+    (vec (set (second object)))))
 
 (defn free-variables-internal
   [formula acc bound-vars]
@@ -352,20 +314,57 @@
   (free-variables-internal formula (set []) (set [])))
 
 
-;; TODO!!!
-;;(defn formula-gather
-;;  [formula predicate]
-;;  (loop [current-item formula
-;;         todo         []
-;;         result       []]
-;;    (let [new-result (if (predicate current-item)
-;;                       (conj current-item result)
-;;                       result)]
-;;      (cond...))
-;;
-;;
-;;
-;;    ))
+(defn formula-gather
+  [formula predicate-fn]
+  (loop [current-item formula
+         todos        []
+         result       []]
+    (let [new-result (if (predicate-fn current-item)
+                       (clojure.core/conj result current-item)
+                       result)
+          new-todos  (cond
+                       (or (term? current-item)
+                           (= current-item ::bottom))
+                       todos
+                       (atom? current-item)
+                           (concat (clojure.core/conj todos (predicate current-item))
+                                   (terms current-item))
+                           (or (lambda? current-item)
+                               (existential? current-item)
+                               (universal? current-item))
+                           (concat
+                            (clojure.core/conj todos
+                                  (quantified-subformula current-item))
+                            (bound-variables current-item))
+                           (negation? current-item)
+                           (clojure.core/conj todos (negatum current-item))
+                           (conjunction? current-item)
+                           (->> current-item
+                                conjuncts
+                                (apply concat todos))
+                           (disjunction? current-item)
+                           (->> current-item
+                                disjuncts
+                                (apply concat todos))
+                           (implication? current-item)
+                           (-> todos
+                               (clojure.core/conj (antecedent current-item))
+                               (clojure.core/conj (consequent current-item)))
+                           :else
+                           todos)]
+      (if (seq new-todos)
+        (recur (first new-todos)
+               (rest new-todos)
+               new-result)
+        new-result))))
+
+
+
+
+
+
+
+
 
 ;;;;;;;;;;;;;
 ;;; universal
@@ -410,6 +409,7 @@
 (defn predicate?
   [object]
   (or (atomic-predicate? object)
+      (variable? object)
       (lambda? object)))
 
 (defn lambda [vars formula]
@@ -486,10 +486,14 @@
   (cond (atom? formula)
         ;; This feels like an abstraction
         ;; violation
-        (mapv (fn [item]
-               (if-let [new (constant-map item)]
-                 new
-                 item)) formula)
+        (if (term? formula)
+          (if-let [new (constant-map formula)]
+            new
+            formula)
+          (mapv (fn [item]
+                  (if-let [new (constant-map item)]
+                    new
+                    item)) formula))
         (negation? formula)
         (->> formula
              negatum
@@ -540,7 +544,7 @@
               {:caused-by formula})))
   (let [vars          (bound-variables formula)
         old-constants (concat used-constants
-                              (formula-constants formula #'constant?))
+                              (formula-gather formula #'constant?))
         new-constant-map (generate-new-constant-map
                           old-constants vars)]
     (substitute-free-variables (quantified-subformula
@@ -554,8 +558,10 @@
 
 (declare to-string)
 
-(defn serialize-predicate [predicate]
-  (cond (atomic-predicate? predicate)
+(defn serialize-predicate
+  [predicate ]
+  (cond (or (atomic-predicate? predicate)
+            (variable? predicate))
         (str predicate)
         (lambda? predicate)
         (let [vars (bound-variables predicate)
@@ -576,16 +582,21 @@
 (defn to-string [formula]
   (cond
     (atom? formula)
-    (if (term? formula)
-      (str formula)
-      (let [pred (->> formula
-                      first
-                      serialize-predicate)]
-        (str "(" pred " "
-             (->> formula
-                  rest
-                  (clojure.string/join " "))
-             ")")))
+    (cond (term? formula)
+          (str formula)
+          (= formula ::bottom)
+          (str (name formula))
+          :else
+          (let [pred (->> formula
+                          first
+                          serialize-predicate)]
+            (if (seq (terms formula))
+              (str "(" pred " "
+                   (->> formula
+                        rest
+                        (clojure.string/join " "))
+                   ")")
+              (str pred))))
     (negation? formula)
     (format "(not %s)"
             (->> formula
@@ -593,20 +604,17 @@
                  to-string))
     (conjunction? formula)
     (str "(and "
-         (clojure.string/join
-          (->> formula
-               conjuncts
-               (map to-string))
-          " ")
+         (clojure.string/join " "
+                              (->> formula
+                                   conjuncts
+                                   (map to-string)))
          ")")
-
     (disjunction? formula)
     (str "(or "
-         (clojure.string/join
-          (->> formula
-               disjuncts
-               (map to-string))
-          " ")
+         (clojure.string/join " "
+                              (->> formula
+                                   disjuncts
+                                   (map to-string)))
          ")")
     (implication? formula)
     (format "(implies %s %s)"
@@ -626,7 +634,7 @@
                  quantified-subformula
                  to-string))
     (existential? formula)
-    (format "(forall %s %s)"
+    (format "(exists %s %s)"
             (->> formula
                  bound-variables
                  (map name)
@@ -635,18 +643,71 @@
                  quantified-subformula
                  to-string))))
 
+
 ;;;;;;;;;;;;;;
 ;;; To Formula
+
+(declare read-formula-internal)
+
+(defn read-formula-error [s-expression]
+  (ex-info "Cannot parse to formula"
+           {:caused-by s-expression}))
+
+(defn read-quantified-formula
+  [operator args]
+  (if (= (count args) 2)
+    (let [vars        (into [] (first args))
+          subformula  (read-formula-internal (second args))]
+      (cond (= operator 'forall)
+            (forall vars subformula)
+            (= operator 'exists)
+            (exists vars subformula)
+            (= operator 'lambda)
+            (lambda vars subformula)))
+    (read-formula-error (list operator args))))
+
+(defn read-formula-internal
+  [s-expression]
+  (cond (seq? s-expression)
+        (let [raw-operator (first s-expression)
+              operator     (->> raw-operator
+                            name
+                            string/lower-case
+                            symbol)
+              args     (rest  s-expression)]
+          (cond
+            (= operator 'not)
+            (if (= (count args) 1)
+              (not (-> args first read-formula-internal))
+              (throw (read-formula-error s-expression)))
+            (= operator 'and)
+            (apply #'and (map read-formula-internal args))
+            (= operator 'or)
+            (apply #'or  (map read-formula-internal args))
+
+            (= operator 'implies)
+            (if (= (count args) 2)
+              (let [antecedent (first args)
+                    consequent (second args)]
+                (implies (read-formula-internal antecedent)
+                         (read-formula-internal consequent)))
+              (throw (read-formula-error s-expression)))
+            (or (= operator 'forall)
+                (= operator 'exists)
+                (= operator 'lambda))
+            (read-quantified-formula operator args)
+            (predicate? (str raw-operator))
+            (apply
+             logos.formula/atom (str raw-operator)
+             (map read-formula-internal args))))
+        (variable? s-expression)
+        s-expression
+        :else
+        (str s-expression)))
 
 (defn read-formula
   "Convert a string to a formula
   object"
   [string]
-  )
-
-
-
-(def one  (forall '[?p ?x]
-                  (implies
-		   (neg (atom "@wants" '?x '?p))
-		   (atom "@wants" '?x (neg '?p)))))
+  (let [to-parse (read-string string)]
+    (read-formula-internal to-parse)))
