@@ -7,9 +7,9 @@
 ;;;;;;;;;;;;;;;;;;;;
 ;;; Useful Constants
 
-(def p       (formula/atom "@P"))
-(def q       (formula/atom "@Q"))
-(def r       (formula/atom "@R"))
+(def p       (formula/atom "!P"))
+(def q       (formula/atom "!Q"))
+(def r       (formula/atom "!R"))
 (def p->q    (formula/implies p q))
 
 (def assertion-hypothesis-proof
@@ -52,7 +52,7 @@
                 ::proof/to [1]}}))
 
 (deftest test-backward-gather-relevant-problem-idxs
-  (let [p (formula/atom "@P")
+  (let [p (formula/atom "!P")
         proof     {::proof/current-problem 2
                    ::proof/premises {}
                    ::proof/problems {0 {::proof/premises []

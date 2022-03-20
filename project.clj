@@ -6,7 +6,13 @@
   :dependencies [[org.clojure/clojure "1.10.1"]
                  [compojure "1.6.1"]
                  [http-kit "2.3.0"]
+                 [reagent "1.1.0"]
+                 [re-frame "1.2.0"]
+                 [ring-cors "0.1.13"]
                  [ring/ring-defaults "0.3.2"]]
+  :source-paths ["src/clj" "src/cljs"]
+  :test-paths ["test/"]
+  :resource-paths ["resources"]
   :main ^:skip-aot logos.core
   :target-path "target/%s"
   :profiles {:uberjar {:aot :all

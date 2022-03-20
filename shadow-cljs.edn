@@ -1,0 +1,31 @@
+;; shadow-cljs configuration
+
+{:nrepl
+ {:port 8777}
+
+ :source-paths
+ ["src/cljs"]
+
+ :dependencies
+ [[bidi                  "2.1.5"]
+  [bulma-cljs            "0.1.4"]
+  [cljs-ajax             "0.7.5"]
+  [day8.re-frame/http-fx "0.2.4"]
+  [kibu/pushy            "0.3.8"]
+  [metosin/reitit        "0.5.16"]
+  [reagent               "1.1.0"]
+  [re-frame              "0.10.7"]]
+
+ :builds
+ {:client {:target :browser
+           :output-dir "public/js"
+           :asset-path "/js"
+
+           :modules {:client {:init-fn logos.core/init}}
+
+           :compiler-options {:shadow-keywords true}
+
+           :devtools {:http-root   "public"
+                      :http-port   3000}}}
+
+ }

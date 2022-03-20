@@ -41,7 +41,7 @@
   [object]
   (and
    (string? object)
-   (string/starts-with? object "@")))
+   (string/starts-with? object "!")))
 
 ;;;;;;;;;;;;
 ;;; constant
@@ -486,10 +486,14 @@
   (cond (atom? formula)
         ;; This feels like an abstraction
         ;; violation
-        (mapv (fn [item]
-               (if-let [new (constant-map item)]
-                 new
-                 item)) formula)
+        (if (term? formula)
+          (if-let [new (constant-map formula)]
+            new
+            formula)
+          (mapv (fn [item]
+                  (if-let [new (constant-map item)]
+                    new
+                    item)) formula))
         (negation? formula)
         (->> formula
              negatum
@@ -643,15 +647,67 @@
 ;;;;;;;;;;;;;;
 ;;; To Formula
 
+(declare read-formula-internal)
+
+(defn read-formula-error [s-expression]
+  (ex-info "Cannot parse to formula"
+           {:caused-by s-expression}))
+
+(defn read-quantified-formula
+  [operator args]
+  (if (= (count args) 2)
+    (let [vars        (into [] (first args))
+          subformula  (read-formula-internal (second args))]
+      (cond (= operator 'forall)
+            (forall vars subformula)
+            (= operator 'exists)
+            (exists vars subformula)
+            (= operator 'lambda)
+            (lambda vars subformula)))
+    (read-formula-error (list operator args))))
+
+(defn read-formula-internal
+  [s-expression]
+  (cond (seq? s-expression)
+        (let [raw-operator (first s-expression)
+              operator     (->> raw-operator
+                            name
+                            string/lower-case
+                            symbol)
+              args     (rest  s-expression)]
+          (cond
+            (= operator 'not)
+            (if (= (count args) 1)
+              (not (-> args first read-formula-internal))
+              (throw (read-formula-error s-expression)))
+            (= operator 'and)
+            (apply #'and (map read-formula-internal args))
+            (= operator 'or)
+            (apply #'or  (map read-formula-internal args))
+
+            (= operator 'implies)
+            (if (= (count args) 2)
+              (let [antecedent (first args)
+                    consequent (second args)]
+                (implies (read-formula-internal antecedent)
+                         (read-formula-internal consequent)))
+              (throw (read-formula-error s-expression)))
+            (or (= operator 'forall)
+                (= operator 'exists)
+                (= operator 'lambda))
+            (read-quantified-formula operator args)
+            (predicate? (str raw-operator))
+            (apply
+             logos.formula/atom (str raw-operator)
+             (map read-formula-internal args))))
+        (variable? s-expression)
+        s-expression
+        :else
+        (str s-expression)))
+
 (defn read-formula
   "Convert a string to a formula
   object"
   [string]
-  )
-
-
-
-(def one  (forall '[?p ?x]
-                  (implies
-		   (neg (atom "@wants" '?x '?p))
-		   (atom "@wants" '?x (neg '?p)))))
+  (let [to-parse (read-string string)]
+    (read-formula-internal to-parse)))

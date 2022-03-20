@@ -9,9 +9,9 @@
 
 ;;; TODO: This is repeated. Factor it out
 
-(def p       (formula/atom "@P"))
-(def q       (formula/atom "@Q"))
-(def r       (formula/atom "@R"))
+(def p       (formula/atom "!P"))
+(def q       (formula/atom "!Q"))
+(def r       (formula/atom "!R"))
 (def p->q    (formula/implies p q))
 
 (def assertion-hypothesis-proof
@@ -212,22 +212,22 @@
 
       ;; Case 4
       {::proof/current-problem 2
-       ::proof/premises {0 {::proof/formula ["@P"]
+       ::proof/premises {0 {::proof/formula ["!P"]
                             ::proof/justification ::proof/hypothesis}
-                         1 {::proof/formula ["@Q"]
+                         1 {::proof/formula ["!Q"]
                             ::proof/justification ::proof/hypothesis}}
        ::proof/problems {0 {::proof/premises ()
                             ::proof/goal [:implies
-                                          ["@P"]
-                                          [:implies ["@Q"] ["@P"]]]
+                                          ["!P"]
+                                          [:implies ["!Q"] ["!P"]]]
                             ::proof/id 0
                             ::proof/status ::proof/open}
                          1 {::proof/premises [0]
-                            ::proof/goal [:implies ["@Q"] ["@P"]]
+                            ::proof/goal [:implies ["!Q"] ["!P"]]
                             ::proof/id 1
                             ::proof/status ::proof/open}
                          2 {::proof/premises [1]
-                            ::proof/goal ["@P"]
+                            ::proof/goal ["!P"]
                             ::proof/id 2
                             ::proof/status ::proof/open}}
        ::proof/edges
@@ -236,22 +236,22 @@
         2 {::proof/from [1]}}}
 
       {::proof/current-problem nil
-       ::proof/premises {0 {::proof/formula ["@P"]
+       ::proof/premises {0 {::proof/formula ["!P"]
                             ::proof/justification ::proof/hypothesis}
-                         1 {::proof/formula ["@Q"]
+                         1 {::proof/formula ["!Q"]
                             ::proof/justification ::proof/hypothesis}}
        ::proof/problems {0 {::proof/premises ()
                             ::proof/goal [:implies
-                                          ["@P"]
-                                          [:implies ["@Q"] ["@P"]]]
+                                          ["!P"]
+                                          [:implies ["!Q"] ["!P"]]]
                             ::proof/id 0
                             ::proof/status ::proof/closed}
                          1 {::proof/premises [0]
-                            ::proof/goal [:implies ["@Q"] ["@P"]]
+                            ::proof/goal [:implies ["!Q"] ["!P"]]
                             ::proof/id 1
                             ::proof/status ::proof/closed}
                          2 {::proof/premises [1]
-                            ::proof/goal ["@P"]
+                            ::proof/goal ["!P"]
                             ::proof/id 2
                             ::proof/status ::proof/closed}}
        ::proof/edges
@@ -342,15 +342,15 @@
       {::proof/current-problem 0
        ::proof/premises {}
        ::proof/problems {0 {::proof/premises []
-                            ::proof/goal [:not ["@P"]]
+                            ::proof/goal [:not ["!P"]]
                             ::proof/id 0
                             ::proof/status ::proof/open}}
        ::proof/edges {}}
       {::proof/current-problem 1
-       ::proof/premises {0 {::proof/formula ["@P"]
+       ::proof/premises {0 {::proof/formula ["!P"]
                             ::proof/justification ::proof/hypothesis}}
        ::proof/problems {0 {::proof/premises []
-                            ::proof/goal [:not ["@P"]]
+                            ::proof/goal [:not ["!P"]]
                             ::proof/id 0
                             ::proof/status ::proof/open}
                          1 {::proof/premises [0]
@@ -367,18 +367,37 @@
       {::proof/current-problem 0
        ::proof/premises {}
        ::proof/problems {0 {::proof/premises []
-                            ::proof/goal '[:forall [?x] ["@P" ?x]]
+                            ::proof/goal '[:forall [?x] ["!P" ?x]]
                             ::proof/id 0
                             ::proof/status ::proof/open}}
        ::proof/edges {}}
       {::proof/current-problem 1
        ::proof/premises {}
        ::proof/problems {0 {::proof/premises []
-                            ::proof/goal '[:forall [?x] ["@P" ?x]]
+                            ::proof/goal '[:forall [?x] ["!P" ?x]]
                             ::proof/id 0
                             ::proof/status ::proof/open}
                          1 {::proof/premises []
-                            ::proof/goal '["@P" "b"]
+                            ::proof/goal '["!P" "b"]
+                            ::proof/id 1
+                            ::proof/status ::proof/open}}
+       ::proof/edges {0 {::proof/to [1]}
+                      1 {::proof/from [0]}}}
+      {::proof/current-problem 0
+       ::proof/premises {}
+       ::proof/problems {0 {::proof/premises []
+                            ::proof/goal '[:forall [?p] [:implies ?p ?p]]
+                            ::proof/id 0
+                            ::proof/status ::proof/open}}
+       ::proof/edges {}}
+      {::proof/current-problem 1
+       ::proof/premises {}
+       ::proof/problems {0 {::proof/premises []
+                            ::proof/goal '[:forall [?p] [:implies ?p ?p]]
+                            ::proof/id 0
+                            ::proof/status ::proof/open}
+                         1 {::proof/premises []
+                            ::proof/goal '[:implies "b" "b"]
                             ::proof/id 1
                             ::proof/status ::proof/open}}
        ::proof/edges {0 {::proof/to [1]}
@@ -391,18 +410,18 @@
     {::proof/current-problem 0
      ::proof/premises {}
      ::proof/problems {0 {::proof/premises []
-                         ::proof/goal '[:exists [?x ?y] ["@P" ?x ?y]]
+                         ::proof/goal '[:exists [?x ?y] ["!P" ?x ?y]]
                          ::proof/id 0
                          ::proof/status ::proof/open}}
      ::proof/edges {}} ["a" "b"]
     {::proof/current-problem 1
      ::proof/premises {}
      ::proof/problems {0 {::proof/premises []
-                         ::proof/goal '[:exists [?x ?y] ["@P" ?x ?y]]
+                         ::proof/goal '[:exists [?x ?y] ["!P" ?x ?y]]
                          ::proof/id 0
                          ::proof/status ::proof/open}
                       1 {::proof/premises []
-                         ::proof/goal '["@P" "a" "b"]
+                         ::proof/goal '["!P" "a" "b"]
                          ::proof/id 1
                          ::proof/status ::proof/open}}
      ::proof/edges {0 {::proof/to [1]}
@@ -415,7 +434,7 @@
                  ::proof/premises {}
                  ::proof/problems {0 {::proof/premises []
                                       ::proof/goal
-                                      '[:exists [?x ?y] ["@P" ?x ?y]]
+                                      '[:exists [?x ?y] ["!P" ?x ?y]]
                                       ::proof/id 0
                                       ::proof/status ::proof/open}}
                  ::proof/edges {}} '["a" ?z]))))

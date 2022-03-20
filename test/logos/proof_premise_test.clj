@@ -9,9 +9,9 @@
 
 ;;; TODO: This is repeated. Factor it out
 
-(def p       (formula/atom "@P"))
-(def q       (formula/atom "@Q"))
-(def r       (formula/atom "@R"))
+(def p       (formula/atom "!P"))
+(def q       (formula/atom "!Q"))
+(def r       (formula/atom "!R"))
 (def p->q    (formula/implies p q))
 
 (def assertion-hypothesis-proof
@@ -68,6 +68,12 @@
                    ::proof/premises {0 (proof/new-premise p)
                                      1 (proof/new-premise p->q)
                                      2 (proof/new-premise q [1 0])}
+                   ::proof/problems {0 (proof/new-problem [0 1 2] q 0)}
+                   ::proof/edges {}}
+        pf [0 1]  {::proof/current-problem 0
+                   ::proof/premises {0 (proof/new-premise p)
+                                     1 (proof/new-premise p->q)
+                                     2 (proof/new-premise q [0 1])}
                    ::proof/problems {0 (proof/new-problem [0 1 2] q 0)}
                    ::proof/edges {}}
         pf [1 2] pf)))
@@ -135,15 +141,15 @@
          result)
       {::proof/current-problem 0
        ::proof/premises {0 (proof/new-premise
-                            '[:forall [?x] ["@P" ?x]])}
-       ::proof/problems {0 (proof/new-problem [0] ["@Q"] 0)}
+                            '[:forall [?x] ["!P" ?x]])}
+       ::proof/problems {0 (proof/new-problem [0] ["!Q"] 0)}
        ::proof/edges {}} [0 "a"]
       {::proof/current-problem 0
        ::proof/premises {0 (proof/new-premise
-                            '[:forall [?x] ["@P" ?x]])
+                            '[:forall [?x] ["!P" ?x]])
                          1 (proof/new-premise
-                            ["@P" "a"] [0 "a"])}
-       ::proof/problems {0 (proof/new-problem [0 1] ["@Q"] 0)}
+                            ["!P" "a"] [0 "a"])}
+       ::proof/problems {0 (proof/new-problem [0 1] ["!Q"] 0)}
        ::proof/edges {}}))
 
 (deftest test-existential-elimination
@@ -152,14 +158,14 @@
          result)
     {::proof/current-problem 0
      ::proof/premises {0 (proof/new-premise '[:exists [?x ?y]
-                                              ["@P" ?x ?y "a"]])}
+                                              ["!P" ?x ?y "a"]])}
      ::proof/problems {0
-                       (proof/new-problem [0] ["@Q"] 0)}
+                       (proof/new-problem [0] ["!Q"] 0)}
      ::proof/edges {}} [0]
     {::proof/current-problem 0
      ::proof/premises {0 (proof/new-premise '[:exists [?x ?y]
-                                              ["@P" ?x ?y "a"]])
-                       1 (proof/new-premise '["@P" "b" "c" "a"] [0])}
+                                              ["!P" ?x ?y "a"]])
+                       1 (proof/new-premise '["!P" "b" "c" "a"] [0])}
      ::proof/problems {0
-                       (proof/new-problem [0 1] ["@Q"] 0)}
+                       (proof/new-problem [0 1] ["!Q"] 0)}
      ::proof/edges {}}))

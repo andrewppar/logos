@@ -9,6 +9,32 @@
 (def current-proof (atom nil))
 (def theorems      (atom (set [])))
 
+(defn serialize-proof-formulas
+  [proof]
+  (let [relevant-premise-idxs (proof/relevant-premise-idxs proof)
+        premises (mapv
+                  (fn [idx]
+                    (let [premise (-> proof
+                                      (get ::proof/premises)
+                                      (get idx))]
+                      {:idx idx
+                       :formula (-> premise
+                                    (get ::proof/formula)
+                                    f/to-string)
+                       :justification
+                       (get premise ::proof/justification)}))
+                  relevant-premise-idxs)
+        goal {:idx "SHOW: "
+              :formula
+              (-> proof
+                  (get ::proof/problems)
+                  (get (get
+                        proof ::proof/current-problem))
+                  (get ::proof/goal)
+                  f/to-string)
+              :justification ""}]
+    (conj premises goal)))
+
 (defn clear-current-proof
   []
   (reset! current-proof nil))
@@ -112,9 +138,6 @@
     (one-step
      proof #'goal/existential-proof :args substituents)))
 
-
-
-
 (defn execute-command
   [proof command]
   (let [remove-newlines (string/trim command)
@@ -137,14 +160,21 @@
 
 (defn next-step! [string]
   (if (nil? @current-proof)
-    (show-proof (parse-goal string))
+    (let [proof (parse-goal string)]
+      {:proof-string
+       (show-proof proof)
+       :proof proof
+       :proof-formulas (serialize-proof-formulas proof)})
     (let [new-proof (execute-command @current-proof string)]
       (if (proof/proof-done? new-proof)
         (do
           (clear-current-proof)
           (swap! theorems (fn [ts] (conj ts new-proof))))
         (reset! current-proof new-proof))
-      (show-proof new-proof))))
+      {:proof-string
+       (show-proof new-proof)
+       :proof new-proof
+       :proof-formulas (serialize-proof-formulas new-proof)})))
 
 (defn eval-commands!
   "Takes a string representing a set of commands
@@ -157,4 +187,6 @@
       (when (seq todo)
         (recur (first todo)
                (rest  todo))))
-    (show-proof @current-proof)))
+    {:proof-string (show-proof @current-proof)
+     :proof @current-proof
+     :proof-formula (serialize-proof-formulas @current-proof)}))
