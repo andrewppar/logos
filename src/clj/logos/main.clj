@@ -81,7 +81,8 @@
       (throw
        (ex-info "First proof action must be \"theorem\""
                 {:caused-by string})))
-    (let [formula (read-string formula-string)]
+    (let [formula (f/read-formula formula-string)]
+      ;;TODO Support both ways of adding formulas
       (if-not (f/formula? formula)
         (throw
          (ex-info

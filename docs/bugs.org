@@ -3,16 +3,15 @@
 #+author: Andrew Parisi
 
 * Bugs
-
 ** TODO If quantified args are not quoted or formulas they are treated as vars this should error (or make a good interpretation of intention)
 
 * Version 1
-
 ** TODO Fix everything in the [[Bugs]] section
 ** DONE All the theorems in test.logos
 CLOSED: [2022-03-19 Sat 18:20]
 ** DONE Read formulas as strings that look the same as how a formula is serialized
 CLOSED: [2022-03-19 Sat 22:05]
+** TODO Support reading formulas as clojure structs and as lispy serialized forms
 ** TODO pretty print formulas that are too long
 ** TODO README
 ** TODO Easy Deployment [%]
