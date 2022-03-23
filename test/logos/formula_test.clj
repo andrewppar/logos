@@ -106,7 +106,7 @@
   (are [string result]
       (= (formula/read-formula string) result)
     "(implies ?x ?x)" '[:implies ?x ?x]
-    "(forall (?x)
+    "(forall ?x
       (implies (!P ?x) (!P ?x)))" '[:forall [?x]
                                     [:implies
                                      ["!P" ?x]

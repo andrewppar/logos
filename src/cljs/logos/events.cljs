@@ -21,9 +21,6 @@
  ::fetch-proof-start
  (fn [_ [_ theorem-name formula]]
    (let [encoded-command (gstring/urlEncode (str "Theorem " theorem-name " " formula) "UTF-8")]
-     (println formula)
-     (println theorem-name)
-     (println encoded-command)
      {:http-xhrio {:uri (str  "http://10.0.0.130:4000/one-step?command=" encoded-command)
                    :method :post
                    :format (ajax/transit-request-format)
@@ -112,3 +109,25 @@
  ::hide-modal
  (fn [db [_ modal-id]]
    (update db :active-modals dissoc modal-id)))
+
+
+(rf/reg-event-fx
+ ::format-formula
+ (fn [_ [_ formula]]
+   {:dispatch [::format-formula-internal formula]}))
+
+(rf/reg-event-fx
+ ::format-formula-internal
+ (fn [_ [_ formula]]
+   {:http-xhrio {:uri (str "http://10.0.0.130:4000/format?formula="
+                           (gstring/urlEncode formula "UTF-8"))
+                 :method :post
+                 :format (ajax/transit-request-format)
+                 :response-format (ajax/json-response-format {:keywords? true})
+                 :on-success [::add-format-formula]
+                 :on-failure [::set-error]}}))
+
+(rf/reg-event-db
+ ::add-format-formula
+ (fn [db [_ formula]]
+   (assoc db :formatted-formula formula)))

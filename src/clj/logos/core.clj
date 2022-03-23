@@ -1,6 +1,7 @@
 (ns logos.core
   (:require [org.httpkit.server       :as server]
             [clojure.data.json        :as json]
+            [clojure.pprint           :as pp]
             [compojure.core           :as compojure]
             [compojure.route          :as route]
             [logos.main               :as main]
@@ -59,14 +60,30 @@
 
    :body (json/write-str {:status "OK"})})
 
+(defn ^:private format-formula-internal
+  [req]
+  (let [formula (-> req (get :query-params) (get "formula"))
+        result  (binding [pp/*print-pretty* true
+                          pp/*print-miser-width* nil
+                          pp/*print-right-margin* 50]
+                  (with-out-str
+                    (pp/pprint (read-string formula))))]
+    result))
+
+(defn format-formula
+  [req]
+  {:status 200
+   :headers {"Content-Type"  "text/json"}
+   :body (json/write-str (format-formula-internal req))})
+
 (compojure/defroutes app
   (compojure/GET "/" req (str req))
   (compojure/GET "/health-check" [] health-check)
   (compojure/POST "/one-step" [] one-step)
   (compojure/POST "/clear-current-proof" [] clear-current-proof)
   (compojure/POST "/run-steps" [] run-steps)
+  (compojure/POST "/format" [] format-formula)
   (route/not-found "<h1>Page not found</h1>"))
-
 
 (defn -main [& args]
   (server/run-server

@@ -1,5 +1,7 @@
 (ns logos.subs
-  (:require [re-frame.core :as rf]))
+  (:require [re-frame.core :as rf]
+            [reagent.ratom :as r :refer-macros [reaction]]
+            ))
 
 (rf/reg-sub
  ::name
@@ -46,3 +48,8 @@
  ::checked-boxes
  (fn [db]
    (get db :checked-boxes)))
+
+(rf/register-sub
+ ::formatted-formula
+ (fn [db _]
+   (r/reaction (:formatted-formula @db))))

@@ -364,6 +364,7 @@
   (are [proof result]
       (= (goal/universal-proof proof)
          result)
+    ;; case 1
       {::proof/current-problem 0
        ::proof/premises {}
        ::proof/problems {0 {::proof/premises []
@@ -383,6 +384,7 @@
                             ::proof/status ::proof/open}}
        ::proof/edges {0 {::proof/to [1]}
                       1 {::proof/from [0]}}}
+      ;; Case 2
       {::proof/current-problem 0
        ::proof/premises {}
        ::proof/problems {0 {::proof/premises []
@@ -401,7 +403,34 @@
                             ::proof/id 1
                             ::proof/status ::proof/open}}
        ::proof/edges {0 {::proof/to [1]}
-                      1 {::proof/from [0]}}}))
+                      1 {::proof/from [0]}}}
+
+      ;; Case 3
+      {::proof/current-problem 0
+       ::proof/premises {}
+       ::proof/problems {0  {::proof/premises []
+                             ::proof/goal '[:forall
+                                            [?x]
+                                            [:or ["!P" ?x] ["!Q" ?x]]]
+                             ::proof/id 0
+                             ::proof/status ::proof/open}}
+       ::proof/edges {}}
+{::proof/current-problem 1
+ ::proof/premises {}
+ ::proof/problems {0 {::proof/premises []
+                      ::proof/goal '[:forall
+                                     [?x]
+                                     [:or ["!P" ?x] ["!Q" ?x]]]
+                      ::proof/id 0
+                      ::proof/status ::proof/open}
+                   1 {::proof/premises []
+                      ::proof/goal '[:or ["!P" "b"] ["!Q" "b"]]
+                      ::proof/id 1
+                      ::proof/status ::proof/open}
+                   }
+ ::proof/edges {0 {::proof/to [1]}
+                1 {::proof/from [0]}}}
+      ))
 
 (deftest test-existential-proof
   (are [proof constants result]
