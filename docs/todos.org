@@ -8,22 +8,59 @@
 
 * Version 1
 ** TODO Fix everything in the [[Bugs]] section
+:PROPERTIES:
+:ID:       C8E34E31-2C6B-4549-BACA-6F674428AA12
+:END:
 ** DONE All the theorems in test.logos
 CLOSED: [2022-03-19 Sat 18:20]
 ** DONE Read formulas as strings that look the same as how a formula is serialized
 CLOSED: [2022-03-19 Sat 22:05]
-** TODO Support reading formulas as clojure structs and as lispy serialized forms
+** DONE Support reading formulas as clojure structs and as lispy serialized forms
+CLOSED: [2022-03-23 Wed 21:46]
 ** TODO README
+:PROPERTIES:
+:ID:       C795903F-3E48-4760-8D7D-03D1A425F0AA
+:END:
 ** TODO Easy Deployment [%]
+:PROPERTIES:
+:ID:       2C2AE56C-D36F-43F8-A1F2-7E3AB49D0FBB
+:END:
 *** TODO Add git checks
+:PROPERTIES:
+:ID:       9FBDB657-99F3-441B-A5F7-64A2BA780105
+:END:
 *** TODO Add a release process
+:PROPERTIES:
+:ID:       609270BF-E0A5-45B4-B6FC-45A38467D378
+:END:
 *** TODO Figure out how to launch anywhere with a single command (this should be easy -- it's on the jvm :))
+:PROPERTIES:
+:ID:       70777A4F-DB7C-47CD-9804-F0CB7785337D
+:END:
 ** TODO Documentation in the UI
+:PROPERTIES:
+:ID:       5012FF0F-92F4-4989-91F9-E7D53DA8B788
+:END:
 ** TODO Add a theorems pane to the UI
+:PROPERTIES:
+:ID:       0DBDB8EE-7742-4237-B9DA-D52E7F9E042D
+:END:
 ** TODO Remove the =theorems= and the =current-proof= atoms
+:PROPERTIES:
+:ID:       F616D54A-BA0D-48E0-BAE2-269A4113D0AC
+:END:
 ** TODO Check for wrong number of premises when doing premise operation
+:PROPERTIES:
+:ID:       DB61BAE3-60D9-46AA-8AC8-33540BE98631
+:END:
 ** TODO All premise operations should happen inside a modal -- that is, we should select which premises to operate on in a modal and then submit the operation. Premise selection should still be a checkbox though
+:PROPERTIES:
+:ID:       F999DB06-AA05-4D2C-BAE8-0BF885BC83F7
+:END:
 ** TODO We should call format on premises and goals before we send them back to the front end
+:PROPERTIES:
+:ID:       3FEC10EC-1326-405B-BD3E-79EEAC3B687E
+:END:
 * Version 2
 ** TODO Support Lambdas
 ** TODO Formula builder
