@@ -110,4 +110,7 @@
       (implies (!P ?x) (!P ?x)))" '[:forall [?x]
                                     [:implies
                                      ["!P" ?x]
-                                     ["!P" ?x]]]))
+                                     ["!P" ?x]]]
+    "[:forall [?x] [\"!P\" ?x]]" '[:forall [?x]
+                                   ["!P" ?x]]
+    ))

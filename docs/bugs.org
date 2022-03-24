@@ -3,6 +3,7 @@
 #+author: Andrew Parisi
 
 * Bugs
+** TODO make the host for events.clj to use into an environment variable
 ** TODO If quantified args are not quoted or formulas they are treated as vars this should error (or make a good interpretation of intention)
 
 * Version 1
@@ -12,7 +13,6 @@ CLOSED: [2022-03-19 Sat 18:20]
 ** DONE Read formulas as strings that look the same as how a formula is serialized
 CLOSED: [2022-03-19 Sat 22:05]
 ** TODO Support reading formulas as clojure structs and as lispy serialized forms
-** TODO pretty print formulas that are too long
 ** TODO README
 ** TODO Easy Deployment [%]
 *** TODO Add git checks
@@ -22,7 +22,8 @@ CLOSED: [2022-03-19 Sat 22:05]
 ** TODO Add a theorems pane to the UI
 ** TODO Remove the =theorems= and the =current-proof= atoms
 ** TODO Check for wrong number of premises when doing premise operation
-
+** TODO All premise operations should happen inside a modal -- that is, we should select which premises to operate on in a modal and then submit the operation. Premise selection should still be a checkbox though
+** TODO We should call format on premises and goals before we send them back to the front end
 * Version 2
 ** TODO Support Lambdas
 ** TODO Formula builder

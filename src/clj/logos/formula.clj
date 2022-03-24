@@ -710,4 +710,6 @@
   object"
   [string]
   (let [to-parse (read-string string)]
-    (read-formula-internal to-parse)))
+    (if (formula? to-parse)
+      to-parse
+      (read-formula-internal to-parse))))
