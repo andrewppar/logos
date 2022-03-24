@@ -35,7 +35,7 @@
                                  [:td id]
                                  [:td (get proof-formula :formula)]
                                  [:td (if (= justification "")
-                                        "λoɣos"
+                                        "λogos"
                                         (if (string? justification)
                                           justification
                                           (string/join "," justification)))]])]
@@ -49,7 +49,6 @@
 
 (defn next-proof
   [command]
-  (println command)
   (rf/dispatch [::events/next-command command]))
 
 (defn clear-all-checkboxes
@@ -229,7 +228,6 @@
   []
   (let [proof-formulas (rf/subscribe [::subs/proof-formulas])
         proof-string   (rf/subscribe [::subs/proof-string])]
-
     [:div
      [:br]
      [:h3
@@ -249,7 +247,7 @@
    [:section
     {:class "hero is-info"}
     [:div.hero-body
-     [:p.title "Logos"]]]
+     [:p.title "λogos"]]]
    [proof-section]
    [modal-card "error" "Error"
     [:div (str @error)]]]))
