@@ -48,8 +48,9 @@
   (rf/dispatch [::events/proof-init theorem-name formula]))
 
 (defn next-proof
-  [command]
-  (rf/dispatch [::events/next-command command]))
+  [command proof]
+  (rf/dispatch [::events/store-command command])
+  (rf/dispatch [::events/next-command command proof]))
 
 (defn clear-all-checkboxes
   []
@@ -66,25 +67,34 @@
     :on-click
     (fn []
       (let [checked-boxes  @(rf/subscribe [::subs/checked-boxes])
+            proof          @(rf/subscribe [::subs/proof])
             premise-strings (string/join " " checked-boxes)
             new-command (str command " " premise-strings)]
         (clear-all-checkboxes)
-        (next-proof new-command)))}
+        (next-proof new-command proof)))}
    label])
 
 (def theorem-name (r/atom ""))
 (def formula      (r/atom ""))
 
-(defn clear-proof-button []
-  [:button
-   {:class "button is-danger"
-    :on-click
-    (fn []
-      (reset! theorem-name "")
-      (reset! formula "")
-      (clear-all-checkboxes)
-      (rf/dispatch [::events/clear-proof]))}
-   "Clear Proof"])
+(defn clear-proof-button [clear-type]
+  (let [style (case clear-type
+                :clear  "button is-danger"
+                :done   "button is-info")
+        text  (case clear-type
+                :clear "Clear Proof"
+                :done  "Next Proof")]
+    [:button
+     {:class style
+      :on-click
+      (fn []
+        (when (= clear-type :done)
+          (rf/dispatch [::events/store-theorem @theorem-name @formula]))
+        (reset! theorem-name "")
+        (reset! formula "")
+        (clear-all-checkboxes)
+        (rf/dispatch [::events/clear-proof]))}
+     text]))
 
 (defn start-proof-section
   []
@@ -115,7 +125,7 @@
     [:button {:class "button is-info"
               :on-click #(start-proof @theorem-name @formula)}
      "Start Proof"]
-    [clear-proof-button]]])
+    [clear-proof-button :clear]]])
 
 ;;;;;;;;;;
 ;;; TODO:
@@ -172,10 +182,12 @@
                                   [::subs/checked-boxes])
                                 (string/join " ")))
                          " "
-                         input)]
+                         input)
+                proof @(rf/subscribe [::subs/proof])
+                ]
             (rf/dispatch [::events/hide-modal id])
             (clear-all-checkboxes)
-            (next-proof command)))}
+            (next-proof command proof)))}
        "Submit Command"]
       ]]))
 
@@ -183,51 +195,53 @@
 (def ue-atom (r/atom ""))
 
 (defn next-command-section
-  [proof-formulas proof-string]
-  [:div
-   [:div.columns
-    [:div.column
-     {:class "column is-half"}
-     [print-proof-formulas proof-formulas proof-string]]
+  [proof-formulas proof-string proof]
+  (let [clear-type (if (= proof-string "QED") :done :clear)]
     [:div
-     {:class "column is-one-quarter"}
-     [:h3 {:class "title is-h3"} "Goal Operations"]
-     [:div.buttons
-      (map (fn [[command label]]
-             [:div
-              [:button
-               {:class
-                "button is-info is-outlined is-rounded"
-                :on-click
-                #(next-proof command)}
-               label]])
-           [["DD"  "Direct Proof"]
-            ["->P" "Conditional Proof"]
-            ["&P"  "Conjunctive Proof"]
-            ["VP"  "Disjunctive Proof"]
-            ["~P"  "Negative Proof"]
-            ["UP"  "Universal Proof"]])
-      [button-with-input "Existential Proof" "ep" "EP" ep-atom false]]]
-    [:div
-     {:class "column is-one-quarter"}
-     [:h3 {:class "title is-h3"} "Premise Operations"]
-     [:div.buttons
-      (map (fn [[command label]]
-             [premise-operation command label])
-           [["->E" "Conditional Elimination"]
-            ["&E" "Conjunction Elimination"]
-            ["VE" "Disjunction Elimination"]
-            ["BI" "Bottom Introduction"]
-            ["EE" "Existential Elimination"]])
-      [button-with-input
-       "Universal Elimination" "ue" "UE" ue-atom true]
-      ]]]
-   [clear-proof-button]])
+     [:div.columns
+      [:div.column
+       {:class "column is-half"}
+       [print-proof-formulas proof-formulas proof-string]]
+      [:div
+       {:class "column is-one-quarter"}
+       [:h3 {:class "title is-h3"} "Goal Operations"]
+       [:div.buttons
+        (map (fn [[command label]]
+               [:div
+                [:button
+                 {:class
+                  "button is-info is-outlined is-rounded"
+                  :on-click
+                  #(next-proof command proof)}
+                 label]])
+             [["DD"  "Direct Proof"]
+              ["->P" "Conditional Proof"]
+              ["&P"  "Conjunctive Proof"]
+              ["VP"  "Disjunctive Proof"]
+              ["~P"  "Negative Proof"]
+              ["UP"  "Universal Proof"]])
+        [button-with-input "Existential Proof" "ep" "EP" ep-atom false]]]
+      [:div
+       {:class "column is-one-quarter"}
+       [:h3 {:class "title is-h3"} "Premise Operations"]
+       [:div.buttons
+        (map (fn [[command label]]
+               [premise-operation command label])
+             [["->E" "Conditional Elimination"]
+              ["&E" "Conjunction Elimination"]
+              ["VE" "Disjunction Elimination"]
+              ["BI" "Bottom Introduction"]
+              ["EE" "Existential Elimination"]])
+        [button-with-input
+         "Universal Elimination" "ue" "UE" ue-atom true]
+        ]]]
+     [clear-proof-button clear-type]]))
 
 (defn proof-section
   []
   (let [proof-formulas (rf/subscribe [::subs/proof-formulas])
-        proof-string   (rf/subscribe [::subs/proof-string])]
+        proof-string   (rf/subscribe [::subs/proof-string])
+        proof          (rf/subscribe [::subs/proof])]
     [:div
      [:br]
      [:h3
@@ -236,8 +250,7 @@
      [:div
     (if (nil? @proof-formulas)
       [start-proof-section]
-      [next-command-section @proof-formulas @proof-string])]]))
-
+      [next-command-section @proof-formulas @proof-string @proof])]]))
 
 (defn main-panel []
   (let [error (rf/subscribe [::subs/error])]
