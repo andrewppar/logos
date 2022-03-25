@@ -6,37 +6,51 @@
             [compojure.route          :as route]
             [logos.main               :as main]
             [ring.middleware.cors     :as cors]
-            [ring.middleware.defaults :as middleware]))
+            [ring.middleware.defaults :as middleware]
+            [clojure.java.io :as io]))
 
 (defn ^:private one-step-internal
-  [req]
-  (let [command (-> req (get :query-params) (get "command"))
-        result (main/next-step! command)]
+  [command proof]
+  (let [result (main/next-step command proof)]
     result))
 
 (defn one-step
   [req]
-  (try
-    (let [body (json/write-str (one-step-internal req))]
-      {:status 200
-       :headers {"Content-Type" "text/json"}
-       :body body})
-    (catch Exception e
-      (println e)
-      (println (ex-data e))
-      {:status 400
-       :heades {"Content-Type" "text/json"}
-       :body (ex-data e)})))
+  (let [rdr (io/reader (:body req))
+        body (->> rdr
+                  slurp
+                  json/read-str
+                  second
+                  read-string
+                  :body)                ; I have no idea why all this
+                                        ; is necessary
+        command (get body :command)
+        proof   (get body :proof)]
+    (try
+      (let [body (json/write-str (one-step-internal command proof))]
+        {:status 200
+         :headers {"Content-Type" "text/json"}
+         :body body})
+      (catch Exception e
+        (println e)
+        (println (ex-data e))
+        {:status 400
+         :heades {"Content-Type" "text/json"}
+         :body (ex-data e)}))))
 
-(defn ^:private clear-current-proof-internal
-  []
-  (main/clear-current-proof))
+(defn ^:private start-proof-internal
+  [req]
+  (let [command (-> req (get :query-params) (get "theorem"))
+        result  (main/start-proof command)]
+    result))
 
-(defn clear-current-proof
-  [_]
-  {:status 200
-   :headers {"Content-Type" "text/json"}
-   :body (json/write-str (clear-current-proof-internal))})
+
+(defn start-proof
+  [req]
+  (let [body (json/write-str (start-proof-internal req))]
+    {:status 200
+     :headers {"Content-Type" "text/json"}
+     :body body}))
 
 (defn ^:private run-steps-internal
   [req]
@@ -79,8 +93,9 @@
 (compojure/defroutes app
   (compojure/GET "/" req (str req))
   (compojure/GET "/health-check" [] health-check)
-  (compojure/POST "/one-step" [] one-step)
-  (compojure/POST "/clear-current-proof" [] clear-current-proof)
+  (compojure/POST "/one-step" req (one-step req))
+
+  (compojure/GET  "/start-proof"  [] start-proof)
   (compojure/POST "/run-steps" [] run-steps)
   (compojure/POST "/format" [] format-formula)
   (route/not-found "<h1>Page not found</h1>"))
