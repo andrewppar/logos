@@ -75,7 +75,8 @@ CLOSED: [2022-03-25 Fri 08:37]
 :PROPERTIES:
 :ID:       DB61BAE3-60D9-46AA-8AC8-33540BE98631
 :END:
-** TODO All premise operations should happen inside a modal -- that is, we should select which premises to operate on in a modal and then submit the operation. Premise selection should still be a checkbox though
+** DONE All premise operations should happen inside a modal -- that is, we should select which premises to operate on in a modal and then submit the operation. Premise selection should still be a checkbox though
+CLOSED: [2022-03-27 Sun 00:17]
 :PROPERTIES:
 :ID:       F999DB06-AA05-4D2C-BAE8-0BF885BC83F7
 :END:

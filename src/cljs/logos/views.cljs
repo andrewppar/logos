@@ -11,7 +11,7 @@
   (rf/dispatch [::events/toggle-check-box id]))
 
 (defn print-proof-formulas
-  [proof-formulas proof-string with-checkboxes?]
+  [proof-formulas proof-string with-checkboxes? show-goal?]
   (let [premises (filter #(number? (:idx %)) proof-formulas)
         goals    (filter #(string? (:idx %)) proof-formulas)
         sorted-formulas (concat (sort-by < :idx premises) goals)]
@@ -22,25 +22,29 @@
              result        [:table {:class "table is-bordered"}]]
         (let [justification (get proof-formula :justification)
               id            (get proof-formula :idx)
-              new-result    (conj result
-                                  [:tr
-                                   [:td id]
-                                   (when with-checkboxes?
-                                     [:td
-                                      (if (= justification "")
-                                        ""
-                                        [:label.checkbox
-                                         [:input
-                                          {:type "checkbox"
-                                           :on-change
-                                           #(toggle-check-box id)}]])])
-                                   [:td (get proof-formula :formula)]
-                                   [:td (if (= justification "")
-                                          "λogos"
-                                          (if (string? justification)
-                                            justification
-                                            (string/join
-                                             "," justification)))]])]
+              new-item      [:tr
+                             [:td id]
+                             (when with-checkboxes?
+                               [:td
+                                (if (= justification "")
+                                  ""
+                                  [:label.checkbox
+                                   [:input
+                                    {:type "checkbox"
+                                     :on-change
+                                     #(toggle-check-box id)}]])])
+                             [:td (get proof-formula :formula)]
+                             [:td (if (= justification "")
+                                    "λogos"
+                                    (if (string? justification)
+                                      justification
+                                      (string/join
+                                       "," justification)))]]
+              new-result  (if (= justification "")
+                            (if show-goal?
+                              (conj result new-item)
+                              result)
+                            (conj result new-item))]
           (if (seq todo)
             (recur (first todo) (rest todo) new-result)
             new-result))))))
@@ -164,7 +168,7 @@
      id label
      [:div.container
       (when with-premises?
-        [print-proof-formulas proof-formulas proof-string true])
+        [print-proof-formulas proof-formulas proof-string true false])
       (when with-vars?
         [:div
          "Enter a list of values for variable"
@@ -214,7 +218,7 @@
       [:div.column
        {:class "column is-half"}
        [print-proof-formulas
-        proof-formulas proof-string false]]
+        proof-formulas proof-string false true]]
       [:div
        {:class "column is-one-quarter"}
        [:h3 {:class "title is-h3"} "Goal Operations"]
@@ -252,7 +256,7 @@
               ["Existential Elimination" "existential-elim" "EE"
                existential-elimination-atom false]
               ["Universal Elimination" "universal-elim" "UE"
-               universal-elimination-atom false]
+               universal-elimination-atom true]
               ])
         ]]]
      [clear-proof-button clear-type]]))
