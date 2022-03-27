@@ -11,37 +11,43 @@
   (rf/dispatch [::events/toggle-check-box id]))
 
 (defn print-proof-formulas
-  [proof-formulas proof-string]
+  [proof-formulas proof-string with-checkboxes? show-goal?]
   (let [premises (filter #(number? (:idx %)) proof-formulas)
         goals    (filter #(string? (:idx %)) proof-formulas)
         sorted-formulas (concat (sort-by < :idx premises) goals)]
-  (if (= proof-string "QED")
-    [:div proof-string]
-    (loop [proof-formula (first sorted-formulas)
-           todo          (rest sorted-formulas)
-           result        [:table {:class "table is-bordered"}]]
-      (let [justification (get proof-formula :justification)
-            id            (get proof-formula :idx)
-            new-result    (conj result
-                                [:tr
-                                 [:td
-                                  (if (= justification "")
-                                    ""
-                                    [:label.checkbox
-                                     [:input
-                                      {:type "checkbox"
-                                       :on-change
-                                       #(toggle-check-box id)}]])]
-                                 [:td id]
-                                 [:td (get proof-formula :formula)]
-                                 [:td (if (= justification "")
-                                        "λogos"
-                                        (if (string? justification)
-                                          justification
-                                          (string/join "," justification)))]])]
-        (if (seq todo)
-          (recur (first todo) (rest todo) new-result)
-          new-result))))))
+    (if (= proof-string "QED")
+      [:div proof-string]
+      (loop [proof-formula (first sorted-formulas)
+             todo          (rest sorted-formulas)
+             result        [:table {:class "table is-bordered"}]]
+        (let [justification (get proof-formula :justification)
+              id            (get proof-formula :idx)
+              new-item      [:tr
+                             [:td id]
+                             (when with-checkboxes?
+                               [:td
+                                (if (= justification "")
+                                  ""
+                                  [:label.checkbox
+                                   [:input
+                                    {:type "checkbox"
+                                     :on-change
+                                     #(toggle-check-box id)}]])])
+                             [:td (get proof-formula :formula)]
+                             [:td (if (= justification "")
+                                    "λogos"
+                                    (if (string? justification)
+                                      justification
+                                      (string/join
+                                       "," justification)))]]
+              new-result  (if (= justification "")
+                            (if show-goal?
+                              (conj result new-item)
+                              result)
+                            (conj result new-item))]
+          (if (seq todo)
+            (recur (first todo) (rest todo) new-result)
+            new-result))))))
 
 (defn start-proof
   [theorem-name formula]
@@ -155,25 +161,30 @@
     title]
    [modal-card id title body footer]])
 
-(defn button-with-input
-  [label id command input-atom with-premises?]
+(defn proof-step-input-button
+  [label id command input-atom with-premises? with-vars? proof-formulas proof-string]
   (let [input-id (str id "-input")]
     [modal-button
      id label
      [:div.container
-      "Enter a list of values for variable"
-      [:input.input
-       {:id input-id
-        :type "text"
-        :value @input-atom
-        :on-change #(reset! input-atom (.-value (.-target %)))}]
+      (when with-premises?
+        [print-proof-formulas proof-formulas proof-string true false])
+      (when with-vars?
+        [:div
+         "Enter a list of values for variable"
+         [:input.input
+          {:id input-id
+           :type "text"
+           :value @input-atom
+           :on-change #(reset! input-atom (.-value (.-target %)))}]])
       [:button
        {:class "button is-info is-outlined is-rounded"
         :on-click
         (fn []
-          (let [input (-> js/document
+          (let [input (when with-vars?
+                        (-> js/document
                           (.getElementById input-id)
-                          (.-value))
+                          (.-value)))
                 command (str
                          command
                          " "
@@ -182,9 +193,9 @@
                                   [::subs/checked-boxes])
                                 (string/join " ")))
                          " "
-                         input)
-                proof @(rf/subscribe [::subs/proof])
-                ]
+                         (when with-vars?
+                           input))
+                proof @(rf/subscribe [::subs/proof])]
             (rf/dispatch [::events/hide-modal id])
             (clear-all-checkboxes)
             (next-proof command proof)))}
@@ -192,7 +203,12 @@
       ]]))
 
 (def ep-atom (r/atom ""))
-(def ue-atom (r/atom ""))
+(def conditional-elimination-atom (r/atom ""))
+(def conjunction-elimination-atom (r/atom ""))
+(def disjunction-elimination-atom (r/atom ""))
+(def bottom-introduction-atom (r/atom ""))
+(def existential-elimination-atom (r/atom ""))
+(def universal-elimination-atom (r/atom ""))
 
 (defn next-command-section
   [proof-formulas proof-string proof]
@@ -201,7 +217,8 @@
      [:div.columns
       [:div.column
        {:class "column is-half"}
-       [print-proof-formulas proof-formulas proof-string]]
+       [print-proof-formulas
+        proof-formulas proof-string false true]]
       [:div
        {:class "column is-one-quarter"}
        [:h3 {:class "title is-h3"} "Goal Operations"]
@@ -220,20 +237,27 @@
               ["VP"  "Disjunctive Proof"]
               ["~P"  "Negative Proof"]
               ["UP"  "Universal Proof"]])
-        [button-with-input "Existential Proof" "ep" "EP" ep-atom false]]]
+        [proof-step-input-button "Existential Proof" "ep" "EP" ep-atom false true]]]
       [:div
        {:class "column is-one-quarter"}
        [:h3 {:class "title is-h3"} "Premise Operations"]
        [:div.buttons
-        (map (fn [[command label]]
-               [premise-operation command label])
-             [["->E" "Conditional Elimination"]
-              ["&E" "Conjunction Elimination"]
-              ["VE" "Disjunction Elimination"]
-              ["BI" "Bottom Introduction"]
-              ["EE" "Existential Elimination"]])
-        [button-with-input
-         "Universal Elimination" "ue" "UE" ue-atom true]
+        (map (fn [[label id command atom with-vars?]]
+               [proof-step-input-button
+                label id command atom true with-vars? proof-formulas proof-string])
+             [["Conditional Elimination" "conditional-elim" "->E"
+               conditional-elimination-atom false]
+              ["Conjunction Elimination" "conjunction-elim" "&E"
+               conjunction-elimination-atom false]
+              ["Disjunction Elimination" "disjunction-elim" "VE"
+               disjunction-elimination-atom false]
+              ["Bottom Introduction"  "bottom-intro" "BI"
+               bottom-introduction-atom false]
+              ["Existential Elimination" "existential-elim" "EE"
+               existential-elimination-atom false]
+              ["Universal Elimination" "universal-elim" "UE"
+               universal-elimination-atom true]
+              ])
         ]]]
      [clear-proof-button clear-type]]))
 
