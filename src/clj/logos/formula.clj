@@ -1,7 +1,7 @@
 (ns logos.formula
-  (:require [clojure.string :as string]
+  (:require
             [clojure.set :as s]
-            [clojure.pprint :as pprint]))
+            [clojure.string :as string]))
 
 (defmacro defs [& bindings]
   (loop [name  (first bindings)
@@ -495,24 +495,24 @@
                     new
                     item)) formula))
         (negation? formula)
-        (->> formula
-             negatum
-             substitute-free-variables
-             neg)
+        (-> formula
+            negatum
+            (substitute-free-variables constant-map)
+            neg)
         (conjunction? formula)
         (->> formula
              conjuncts
              (map (fn [conjunct]
                     (substitute-free-variables
                      conjunct constant-map)))
-             (apply conj))
+             (apply logos.formula/conj))
         (disjunction? formula)
         (->> formula
-             conjuncts
-             (map (fn [conjunct]
+             disjuncts
+             (map (fn [disjunct]
                     (substitute-free-variables
-                     conjunct constant-map)))
-             (apply conj))
+                     disjunct constant-map)))
+             (apply logos.formula/disj))
         (implication? formula)
         (implies
          (substitute-free-variables
@@ -647,7 +647,7 @@
 ;;;;;;;;;;;;;;
 ;;; To Formula
 
-(declare read-formula-internal)
+(declare read-formula-sexp)
 
 (defn read-formula-error [s-expression]
   (ex-info "Cannot parse to formula"
@@ -655,20 +655,20 @@
 
 (defn read-quantified-formula
   [operator args]
-  (if (= (count args) 2)
-    (let [vars        (into [] (first args))
-          subformula  (read-formula-internal (second args))]
-      (cond (= operator 'forall)
-            (forall vars subformula)
-            (= operator 'exists)
-            (exists vars subformula)
-            (= operator 'lambda)
-            (lambda vars subformula)))
-    (read-formula-error (list operator args))))
+    (let [vars        (into [] (butlast args))
+          subformula  (read-formula-sexp (last args))]
+      (if (every? variable? vars)
+        (cond (= operator 'forall)
+              (forall vars subformula)
+              (= operator 'exists)
+              (exists vars subformula)
+              (= operator 'lambda)
+              (lambda vars subformula))
+        (read-formula-error (list operator args)))))
 
-(defn read-formula-internal
+(defn read-formula-sexp
   [s-expression]
-  (cond (seq? s-expression)
+  (cond (coll? s-expression)
         (let [raw-operator (first s-expression)
               operator     (->> raw-operator
                             name
@@ -678,19 +678,19 @@
           (cond
             (= operator 'not)
             (if (= (count args) 1)
-              (not (-> args first read-formula-internal))
+              (neg (-> args first read-formula-sexp))
               (throw (read-formula-error s-expression)))
             (= operator 'and)
-            (apply #'and (map read-formula-internal args))
+            (apply logos.formula/conj (map read-formula-sexp args))
             (= operator 'or)
-            (apply #'or  (map read-formula-internal args))
+            (apply logos.formula/disj  (map read-formula-sexp args))
 
             (= operator 'implies)
             (if (= (count args) 2)
               (let [antecedent (first args)
                     consequent (second args)]
-                (implies (read-formula-internal antecedent)
-                         (read-formula-internal consequent)))
+                (implies (read-formula-sexp antecedent)
+                         (read-formula-sexp consequent)))
               (throw (read-formula-error s-expression)))
             (or (= operator 'forall)
                 (= operator 'exists)
@@ -699,7 +699,7 @@
             (predicate? (str raw-operator))
             (apply
              logos.formula/atom (str raw-operator)
-             (map read-formula-internal args))))
+             (map read-formula-sexp args))))
         (variable? s-expression)
         s-expression
         :else
@@ -710,4 +710,6 @@
   object"
   [string]
   (let [to-parse (read-string string)]
-    (read-formula-internal to-parse)))
+    (if (formula? to-parse)
+      to-parse
+      (read-formula-sexp to-parse))))

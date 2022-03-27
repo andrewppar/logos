@@ -4,10 +4,14 @@
             [logos.proof.goal :as goal]
             [logos.proof.premise :as premise]
             [logos.proof.show :refer [show-proof]]
-            [clojure.string :as string]))
+            [clojure.string :as string])
+  (:import java.util.Base64))
 
-(def current-proof (atom nil))
-(def theorems      (atom (set [])))
+(defn encode [to-encode]
+  (.encodeToString (Base64/getEncoder) (.getBytes to-encode)))
+
+(defn decode [to-decode]
+  (String. (.decode (Base64/getDecoder) to-decode)))
 
 (defn serialize-proof-formulas
   [proof]
@@ -35,11 +39,10 @@
               :justification ""}]
     (conj premises goal)))
 
-(defn clear-current-proof
-  []
-  (reset! current-proof nil))
+;;;;;;;;;;;;;
+;;; New Proof
 
-(defn start-proof
+(defn start-proof-internal
   [goal & {:keys [premises theorem-name]}]
   (let [args (cond-> {}
                (some? premises)
@@ -47,21 +50,6 @@
                (some? theorem-name)
                (assoc :theorem-name theorem-name))
         new-proof (apply proof/new-proof goal (-> args vec flatten))]
-    (reset! current-proof new-proof)
-        new-proof))
-
-
-
-(defn one-step
-  "Given a `proof` and an operation-`function`
-  perform the corresponding operation on the proof.
-  `args` is for the most part premise-ids, with the
-  exception of the case of existential proof. In that case
-  it is a list of substituents."
-  [proof function & {:keys [args]}]
-  (let [new-proof (if (nil? args)
-                    (function proof)
-                    (function proof args))]
     new-proof))
 
 (defn parse-goal
@@ -81,13 +69,37 @@
       (throw
        (ex-info "First proof action must be \"theorem\""
                 {:caused-by string})))
-    (let [formula (read-string formula-string)]
+    (let [formula (f/read-formula formula-string)]
       (if-not (f/formula? formula)
         (throw
          (ex-info
           (format "Cannot parse %s as a formula" formula)
           {:caused-by formula}))
-        (start-proof formula :theorem-name title)))))
+        (start-proof-internal formula :theorem-name title)))))
+
+(defn start-proof
+  [string]
+  (let [proof (parse-goal string)]
+      {:proof-string
+       (show-proof proof)
+       :proof (encode (str proof))
+       :proof-formulas (serialize-proof-formulas proof)}))
+
+;;;;;;;;;;;;;;;;
+;;; Within Proof
+
+(defn one-step
+  "Given a `proof` and an operation-`function`
+  perform the corresponding operation on the proof.
+  `args` is for the most part premise-ids, with the
+  exception of the case of existential proof. In that case
+  it is a list of substituents."
+  [raw-proof function & {:keys [args]}]
+  (let [proof (read-string (decode raw-proof))
+        new-proof (if (nil? args)
+                    (function proof)
+                    (function proof args))]
+    new-proof))
 
 (defn execute-goal-operation [proof operation-string]
   (let [operation (-> operation-string
@@ -158,35 +170,27 @@
             (format "Could not parse %s as a command" command)
             {:caused-by command})))))
 
-(defn next-step! [string]
-  (if (nil? @current-proof)
-    (let [proof (parse-goal string)]
-      {:proof-string
-       (show-proof proof)
-       :proof proof
-       :proof-formulas (serialize-proof-formulas proof)})
-    (let [new-proof (execute-command @current-proof string)]
-      (if (proof/proof-done? new-proof)
-        (do
-          (clear-current-proof)
-          (swap! theorems (fn [ts] (conj ts new-proof))))
-        (reset! current-proof new-proof))
-      {:proof-string
-       (show-proof new-proof)
-       :proof new-proof
-       :proof-formulas (serialize-proof-formulas new-proof)})))
+(defn next-step [string proof]
+  (let [new-proof (execute-command proof string)]
+    {:proof-string
+     (show-proof new-proof)
+     :proof (encode (str new-proof))
+     :proof-formulas (serialize-proof-formulas new-proof)}))
 
 (defn eval-commands!
   "Takes a string representing a set of commands
   and executes next-step! on them"
-  [string]
-  (let [commands (string/split string #"\.")]
-    (loop [command (first commands)
-           todo    (rest  commands)]
-      (next-step! command)
-      (when (seq todo)
-        (recur (first todo)
-               (rest  todo))))
-    {:proof-string (show-proof @current-proof)
-     :proof @current-proof
-     :proof-formula (serialize-proof-formulas @current-proof)}))
+  [string proof]
+  (let [commands (string/split string #"\.")
+        new-proof (loop [command (first commands)
+                         todo    (rest  commands)
+                         last-proof  proof]
+                    (let [new-proof (next-step command last-proof)]
+                      (if (seq todo)
+                        (recur (first todo)
+                               (rest  todo)
+                               new-proof)
+                        new-proof)))]
+    {:proof-string (show-proof new-proof)
+     :proof (encode (str new-proof))
+     :proof-formula (serialize-proof-formulas new-proof)}))
