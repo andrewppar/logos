@@ -11,7 +11,8 @@
 :PROPERTIES:
 :ID:       3A2C430B-2675-48B4-B214-DD0F9BF8D1FC
 :END:
-** TODO We don't have the machinery in place to prove (implies (and (or p q) r) (or (and p r) (and q r))) -- probably disjunctive proof has to break out of the direct proof code and take an input specifying the disjunct to prove /somehow/
+** DONE We don't have the machinery in place to prove (implies (and (or p q) r) (or (and p r) (and q r))) -- probably disjunctive proof has to break out of the direct proof code and take an input specifying the disjunct to prove /somehow/
+CLOSED: [2022-03-29 Tue 00:04]
 :PROPERTIES:
 :ID:       CB509F0E-E0C6-462B-973D-14404D244F86
 :END:
@@ -19,12 +20,14 @@
 :PROPERTIES:
 :ID:       E57D10DC-D223-4BA5-8333-CACA7099E820
 :END:
-** TODO No way to prove (implies (not (not (not p))) (not p)) without support for using other theorems or arbitrary established proofs
+** DONE No way to prove (implies (not (not (not p))) (not p)) without support for using other theorems or arbitrary established proofs
+CLOSED: [2022-03-28 Mon 23:56]
 :PROPERTIES:
 :ID:       24F7DEFA-436F-47BB-A6E4-478B14077952
 :END:
 * Version 1                                                              :v1:
-** TODO support =assert= which allows the user to prove an arbitrary formula and add it based on current relevant premises
+** DONE support =assert= which allows the user to prove an arbitrary formula and add it based on current relevant premises
+CLOSED: [2022-03-28 Mon 23:56]
 :PROPERTIES:
 :ID:       D01BD36C-E447-4215-BB22-30C9857279D4
 :END:

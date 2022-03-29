@@ -130,8 +130,6 @@
                      fnct
                      :args premise-idxs))]
     (case operation
-      "assert"
-      (function #'premise/add-premise)
       "->E"
       (function #'premise/conditional-elimination)
       "&E"
@@ -144,6 +142,10 @@
       (function #'premise/universal-elimination)
       "EE"
       (function #'premise/existential-elimination))))
+
+(defn assert-formula-to-proof [proof formula-string]
+  (let [formula (f/read-formula formula-string)]
+    (one-step proof #'goal/assert :args formula)))
 
 (defn execute-existential-proof [proof substituent-string]
   (let [substituents (read-string (format "[%s]" substituent-string))]
@@ -158,9 +160,13 @@
                            (filter #(not= "" %)))]
     (cond (= (count split-command) 1)
           (execute-goal-operation proof (first split-command))
-          (= (first split-command) "EP")
           ;; Existential Proof
+          (= (first split-command) "EP")
           (execute-existential-proof
+           proof (string/join " " (rest split-command)))
+          ;; Assert
+          (= (first split-command) "ASSERT")
+          (assert-formula-to-proof
            proof (string/join " " (rest split-command)))
           (> (count split-command) 1)
           (execute-premise-operation proof split-command)

@@ -23,13 +23,16 @@
          ::proof/problems {0 {::proof/premises [0]
                               ::proof/goal     r
                               ::proof/id 0
+                              ::proof/type ::proof/proof
                               ::proof/status ::proof/open}
                            1 {::proof/premises [1]
                               ::proof/goal     p
                               ::proof/id 1
+                              ::proof/type ::proof/proof
                               ::proof/status ::proof/open}}
          ::proof/edges {0 {::proof/to [1]}
                         1 {::proof/from [0]}}})
+
 (deftest test-conditional-proofs
   (are [start-proof result-proof]
       (= (goal/conditional-proof start-proof)
@@ -40,8 +43,8 @@
        ::proof/problems        {0 {::proof/premises []
                                    ::proof/goal   p->q
                                    ::proof/id        0
-                                   ::proof/status
-                                   ::proof/open}}
+                                   ::proof/type ::proof/proof
+                                   ::proof/status ::proof/open}}
        ::proof/edges           {}}
       {::proof/current-problem 1
        ::proof/premises        {0 {::proof/formula p
@@ -50,13 +53,13 @@
        ::proof/problems       {0 {::proof/premises []
                                   ::proof/goal   p->q
                                   ::proof/id        0
-                                  ::proof/status
-                                  ::proof/open}
+                                  ::proof/type ::proof/proof
+                                  ::proof/status ::proof/open}
                                1 {::proof/premises [0]
                                   ::proof/goal q
                                   ::proof/id 1
-                                  ::proof/status
-                                  ::proof/open}}
+                                  ::proof/type ::proof/proof
+                                  ::proof/status ::proof/open}}
        ::proof/edges {0 {::proof/to [1]}
                       1 {::proof/from [0]}}}
       ;;: Case 2
@@ -67,13 +70,13 @@
        ::proof/problems        {0 {::proof/premises [0]
                                    ::proof/goal      q
                                    ::proof/id        0
-                                   ::proof/status
-                                   ::proof/open}
+                                   ::proof/type ::proof/proof
+                                   ::proof/status ::proof/open}
                                 1 {::proof/premises []
                                    ::proof/goal     p->q
                                    ::proof/id        1
-                                   ::proof/status
-                                   ::proof/open}}
+                                   ::proof/type ::proof/proof
+                                   ::proof/status ::proof/open}}
        ::proof/edges           {0 {::proof/to [1]}
                                 1 {::proof/from [0]}}}
       {::proof/current-problem 2
@@ -86,18 +89,18 @@
        ::proof/problems        {0 {::proof/premises [0]
                                    ::proof/goal      q
                                    ::proof/id        0
-                                   ::proof/status
-                                   ::proof/open}
+                                   ::proof/type ::proof/proof
+                                   ::proof/status ::proof/open}
                                 1 {::proof/premises []
                                    ::proof/goal     p->q
                                    ::proof/id        1
-                                   ::proof/status
-                                   ::proof/open}
+                                   ::proof/type ::proof/proof
+                                   ::proof/status ::proof/open}
                                 2 {::proof/premises [1]
                                    ::proof/goal      q
                                    ::proof/id        2
-                                   ::proof/status
-                                   ::proof/open}
+                                   ::proof/type ::proof/proof
+                                   ::proof/status ::proof/open}
                                 }
        ::proof/edges           {0 {::proof/to [1]}
                                 1 {::proof/from [0]
@@ -111,13 +114,13 @@
        ::proof/problems        {0 {::proof/premises [0]
                                    ::proof/goal      q
                                    ::proof/id        0
-                                   ::proof/status
-                                   ::proof/open}
+                                   ::proof/type ::proof/proof
+                                   ::proof/status ::proof/open}
                                 1 {::proof/premises []
                                    ::proof/goal     p->q
                                    ::proof/id        1
-                                   ::proof/status
-                                   ::proof/open}}
+                                   ::proof/type ::proof/proof
+                                   ::proof/status ::proof/open}}
        ::proof/edges           {0 {::proof/to [1]}
                                 1 {::proof/from [0]}}}
       {::proof/current-problem 0
@@ -127,13 +130,13 @@
        ::proof/problems        {0 {::proof/premises [0]
                                    ::proof/goal      q
                                    ::proof/id        0
-                                   ::proof/status
-                                   ::proof/open}
+                                   ::proof/type ::proof/proof
+                                   ::proof/status ::proof/open}
                                 1 {::proof/premises []
                                    ::proof/goal     p->q
                                    ::proof/id        1
-                                   ::proof/status
-                                   ::proof/open}}
+                                   ::proof/type ::proof/proof
+                                   ::proof/status ::proof/open}}
        ::proof/edges           {0 {::proof/to [1]}
                                 1 {::proof/from [0]}}}))
 
@@ -151,10 +154,13 @@
        ::proof/problems {0 {::proof/premises [0]
                             ::proof/goal     r
                             ::proof/id 0
+                            ::proof/type ::proof/proof
                             ::proof/status ::proof/closed}
                          1 {::proof/premises [1]
                             ::proof/goal     p
                             ::proof/id 1
+
+                            ::proof/type ::proof/proof
                             ::proof/status ::proof/closed}}
        ::proof/edges {0 {::proof/to [1]}
                       1 {::proof/from [0]}}}
@@ -167,10 +173,12 @@
        ::proof/problems {0 {::proof/premises [0]
                             ::proof/goal     r
                             ::proof/id 0
+                            ::proof/type ::proof/proof
                             ::proof/status ::proof/open}
                          1 {::proof/premises [1]
                             ::proof/goal     p
                             ::proof/id 1
+                            ::proof/type ::proof/proof
                             ::proof/status ::proof/open}}
        ::proof/edges {0 {::proof/to [1]}
                       1 {::proof/from [0]}}}
@@ -182,10 +190,12 @@
        ::proof/problems {0 {::proof/premises [0 1]
                             ::proof/goal     r
                             ::proof/id 0
+                            ::proof/type ::proof/proof
                             ::proof/status ::proof/closed}
                          1 {::proof/premises [1]
                             ::proof/goal     p
                             ::proof/id 1
+                            ::proof/type ::proof/proof
                             ::proof/status ::proof/closed}}
        ::proof/edges {0 {::proof/to [1]}
                       1 {::proof/from [0]}}}
@@ -205,6 +215,7 @@
                          1 {::proof/premises []
                             ::proof/goal p
                             ::proof/id  1
+                            ::proof/type ::proof/proof
                             ::proof/status ::proof/closed}}
        ::proof/edges {0 {::proof/to [1 2]}
                       1 {::proof/from [0]}
@@ -221,14 +232,17 @@
                                           ["!P"]
                                           [:implies ["!Q"] ["!P"]]]
                             ::proof/id 0
+                            ::proof/type ::proof/proof
                             ::proof/status ::proof/open}
                          1 {::proof/premises [0]
                             ::proof/goal [:implies ["!Q"] ["!P"]]
                             ::proof/id 1
+                            ::proof/type ::proof/proof
                             ::proof/status ::proof/open}
                          2 {::proof/premises [1]
                             ::proof/goal ["!P"]
                             ::proof/id 2
+                            ::proof/type ::proof/proof
                             ::proof/status ::proof/open}}
        ::proof/edges
        {0 {::proof/to [1]}
@@ -245,14 +259,17 @@
                                           ["!P"]
                                           [:implies ["!Q"] ["!P"]]]
                             ::proof/id 0
+                            ::proof/type ::proof/proof
                             ::proof/status ::proof/closed}
                          1 {::proof/premises [0]
                             ::proof/goal [:implies ["!Q"] ["!P"]]
                             ::proof/id 1
+                            ::proof/type ::proof/proof
                             ::proof/status ::proof/closed}
                          2 {::proof/premises [1]
                             ::proof/goal ["!P"]
                             ::proof/id 2
+                            ::proof/type ::proof/proof
                             ::proof/status ::proof/closed}}
        ::proof/edges
        {0 {::proof/to [1]}
@@ -266,6 +283,7 @@
        ::proof/problems {0 {::proof/premises [0]
                             ::proof/goal q
                             ::proof/id 0
+                            ::proof/type ::proof/proof
                             ::proof/status ::proof/open}}
        ::proof/edges {}}
       {::proof/current-problem nil
@@ -274,9 +292,94 @@
        ::proof/problems {0 {::proof/premises [0]
                             ::proof/goal q
                             ::proof/id 0
+                            ::proof/type ::proof/proof
                             ::proof/status ::proof/closed}}
        ::proof/edges {}}
 
+      ;; Case 6
+      {::proof/current-problem 1
+       ::proof/premises {0 {::proof/formula ::formula/bottom
+                            ::proof/justification ::proof/assertion}
+                         1 {::proof/formula ["!A"]
+                            ::proof/justification ::proof/hypothesis}}
+       ::proof/problems {0 {::proof/premises [0]
+                            ::proof/goal q
+                            ::proof/id 0
+                            ::proof/type ::proof/proof
+                            ::proof/status ::proof/open}
+                         1 {::proof/premises [1]
+                            ::proof/goal ["!A"]
+                            ::proof/id 1
+                            ::proof/status ::proof/open
+                            ::proof/type   ::proof/assert}}
+       ::proof/edges {0 {::proof/to [1]}
+                      1 {::proof/from[0]}}}
+      {::proof/current-problem 0
+       ::proof/premises {0 {::proof/formula ::formula/bottom
+                            ::proof/justification ::proof/assertion}
+                         1 {::proof/formula ["!A"]
+                            ::proof/justification ::proof/hypothesis}
+                         2 {::proof/formula ["!A"]
+                            ::proof/justification ::proof/proved}}
+       ::proof/problems {0 {::proof/premises [0 2]
+                            ::proof/goal q
+                            ::proof/id 0
+                            ::proof/type ::proof/proof
+                            ::proof/status ::proof/open}
+                         1 {::proof/premises [1]
+                            ::proof/goal ["!A"]
+                            ::proof/id 1
+                            ::proof/status ::proof/closed
+                            ::proof/type   ::proof/assert}}
+       ::proof/edges {0 {::proof/to [1]}
+                      1 {::proof/from[0]}}}
+      ;; Case 7
+      {::proof/current-problem 1
+       ::proof/premises {0 {::proof/formula ::formula/bottom
+                            ::proof/justification ::proof/assertion}
+                         1 {::proof/formula ["!A"]
+                            ::proof/justification ::proof/hypothesis}}
+       ::proof/problems {0 {::proof/premises [0]
+                            ::proof/goal q
+                            ::proof/id 0
+                            ::proof/type ::proof/proof
+                            ::proof/status ::proof/open}
+                         1 {::proof/premises [1]
+                            ::proof/goal ["!A"]
+                            ::proof/id 1
+                            ::proof/status ::proof/open
+                            ::proof/type   ::proof/assert}
+                         2 {::proof/premises [1]
+                            ::proof/id 2
+                            ::proof/status ::proof/open
+                            ::proof/type   ::proof/proof}}
+       ::proof/edges {0 {::proof/to [1 2]}
+                      1 {::proof/from [0]}
+                      2 {::proof/from [0]}}}
+      {::proof/current-problem 2
+       ::proof/premises {0 {::proof/formula ::formula/bottom
+                            ::proof/justification ::proof/assertion}
+                         1 {::proof/formula ["!A"]
+                            ::proof/justification ::proof/hypothesis}
+                         2 {::proof/formula ["!A"]
+                            ::proof/justification ::proof/proved}}
+       ::proof/problems {0 {::proof/premises [0 2]
+                            ::proof/goal q
+                            ::proof/id 0
+                            ::proof/type ::proof/proof
+                            ::proof/status ::proof/open}
+                         1 {::proof/premises [1]
+                            ::proof/goal ["!A"]
+                            ::proof/id 1
+                            ::proof/status ::proof/closed
+                            ::proof/type   ::proof/assert}
+                         2 {::proof/premises [1]
+                            ::proof/id 2
+                            ::proof/status ::proof/open
+                            ::proof/type   ::proof/proof}}
+       ::proof/edges {0 {::proof/to [1 2]}
+                      1 {::proof/from [0]}
+                      2 {::proof/from [0]}}}
       ))
 
 (deftest test-conjunctive-proof
@@ -287,6 +390,7 @@
          ::proof/premises {}
          ::proof/problems {0 {::proof/premises []
                               ::proof/goal pandq
+                              ::proof/type ::proof/proof
                               ::proof/status ::proof/open
                               ::proof/id 0}}
          ::proof/edges {}}
@@ -295,13 +399,16 @@
          ::proof/problems {2 {::proof/premises []
                               ::proof/goal q
                               ::proof/status ::proof/open
+                              ::proof/type ::proof/proof
                               ::proof/id 2}
                            1 {::proof/premises []
                               ::proof/goal p
+                              ::proof/type ::proof/proof
                               ::proof/status ::proof/open
                               ::proof/id 1}
                            0 {::proof/premises []
                               ::proof/goal pandq
+                              ::proof/type ::proof/proof
                               ::proof/status ::proof/open
                               ::proof/id 0}}
          ::proof/edges {0 {::proof/to [1 2]}
@@ -323,6 +430,7 @@
          ::proof/problems {0 {::proof/premises [0]
                               ::proof/goal porq
                               ::proof/id 0
+                              ::proof/type ::proof/proof
                               ::proof/status ::proof/open}}
          ::proof/edges {}}
         {::proof/current-problem nil
@@ -331,6 +439,7 @@
          ::proof/problems {0 {::proof/premises [0]
                               ::proof/goal porq
                               ::proof/id 0
+                              ::proof/type ::proof/proof
                               ::proof/status ::proof/closed}}
          ::proof/edges {}})))
 
@@ -344,6 +453,7 @@
        ::proof/problems {0 {::proof/premises []
                             ::proof/goal [:not ["!P"]]
                             ::proof/id 0
+                            ::proof/type ::proof/proof
                             ::proof/status ::proof/open}}
        ::proof/edges {}}
       {::proof/current-problem 1
@@ -352,10 +462,12 @@
        ::proof/problems {0 {::proof/premises []
                             ::proof/goal [:not ["!P"]]
                             ::proof/id 0
+                            ::proof/type ::proof/proof
                             ::proof/status ::proof/open}
                          1 {::proof/premises [0]
                             ::proof/goal ::formula/bottom
                             ::proof/id 1
+                            ::proof/type ::proof/proof
                             ::proof/status ::proof/open}}
        ::proof/edges {0 {::proof/to [1]}
                       1 {::proof/from [0]}}}))
@@ -370,6 +482,7 @@
        ::proof/problems {0 {::proof/premises []
                             ::proof/goal '[:forall [?x] ["!P" ?x]]
                             ::proof/id 0
+                            ::proof/type ::proof/proof
                             ::proof/status ::proof/open}}
        ::proof/edges {}}
       {::proof/current-problem 1
@@ -377,10 +490,12 @@
        ::proof/problems {0 {::proof/premises []
                             ::proof/goal '[:forall [?x] ["!P" ?x]]
                             ::proof/id 0
+                            ::proof/type ::proof/proof
                             ::proof/status ::proof/open}
                          1 {::proof/premises []
                             ::proof/goal '["!P" "b"]
                             ::proof/id 1
+                            ::proof/type ::proof/proof
                             ::proof/status ::proof/open}}
        ::proof/edges {0 {::proof/to [1]}
                       1 {::proof/from [0]}}}
@@ -390,6 +505,7 @@
        ::proof/problems {0 {::proof/premises []
                             ::proof/goal '[:forall [?p] [:implies ?p ?p]]
                             ::proof/id 0
+                            ::proof/type ::proof/proof
                             ::proof/status ::proof/open}}
        ::proof/edges {}}
       {::proof/current-problem 1
@@ -397,10 +513,12 @@
        ::proof/problems {0 {::proof/premises []
                             ::proof/goal '[:forall [?p] [:implies ?p ?p]]
                             ::proof/id 0
+                            ::proof/type ::proof/proof
                             ::proof/status ::proof/open}
                          1 {::proof/premises []
                             ::proof/goal '[:implies "b" "b"]
                             ::proof/id 1
+                            ::proof/type ::proof/proof
                             ::proof/status ::proof/open}}
        ::proof/edges {0 {::proof/to [1]}
                       1 {::proof/from [0]}}}
@@ -413,6 +531,7 @@
                                             [?x]
                                             [:or ["!P" ?x] ["!Q" ?x]]]
                              ::proof/id 0
+                             ::proof/type ::proof/proof
                              ::proof/status ::proof/open}}
        ::proof/edges {}}
 {::proof/current-problem 1
@@ -422,10 +541,12 @@
                                      [?x]
                                      [:or ["!P" ?x] ["!Q" ?x]]]
                       ::proof/id 0
+                      ::proof/type ::proof/proof
                       ::proof/status ::proof/open}
                    1 {::proof/premises []
                       ::proof/goal '[:or ["!P" "b"] ["!Q" "b"]]
                       ::proof/id 1
+                      ::proof/type ::proof/proof
                       ::proof/status ::proof/open}
                    }
  ::proof/edges {0 {::proof/to [1]}
@@ -440,18 +561,21 @@
      ::proof/premises {}
      ::proof/problems {0 {::proof/premises []
                          ::proof/goal '[:exists [?x ?y] ["!P" ?x ?y]]
-                         ::proof/id 0
+                          ::proof/id 0
+                          ::proof/type ::proof/proof
                          ::proof/status ::proof/open}}
      ::proof/edges {}} ["a" "b"]
     {::proof/current-problem 1
      ::proof/premises {}
      ::proof/problems {0 {::proof/premises []
-                         ::proof/goal '[:exists [?x ?y] ["!P" ?x ?y]]
-                         ::proof/id 0
-                         ::proof/status ::proof/open}
+                          ::proof/goal '[:exists [?x ?y] ["!P" ?x ?y]]
+                          ::proof/id 0
+                          ::proof/type ::proof/proof
+                          ::proof/status ::proof/open}
                       1 {::proof/premises []
                          ::proof/goal '["!P" "a" "b"]
                          ::proof/id 1
+                         ::proof/type ::proof/proof
                          ::proof/status ::proof/open}}
      ::proof/edges {0 {::proof/to [1]}
                     1 {::proof/from [0]}}}))
@@ -465,5 +589,33 @@
                                       ::proof/goal
                                       '[:exists [?x ?y] ["!P" ?x ?y]]
                                       ::proof/id 0
+                                      ::proof/type ::proof/proof
                                       ::proof/status ::proof/open}}
                  ::proof/edges {}} '["a" ?z]))))
+
+(deftest test-assert
+  (are [proof formula result]
+      (= (goal/assert proof formula) result)
+      {::proof/current-problem 0
+       ::proof/premises {}
+       ::proof/problems {0 {::proof/premises []
+                            ::proof/goal '["!F" "a"]
+                            ::proof/id 0
+                            ::proof/type ::proof/proof
+                            ::proof/status ::proof/open}}
+       ::proof/edges {}}
+      '[:implies ["p"] ["p"]]
+      {::proof/current-problem 1
+       ::proof/premises {}
+       ::proof/problems {0 {::proof/premises []
+                            ::proof/goal '["!F" "a"]
+                            ::proof/id 0
+                            ::proof/status ::proof/open
+                            ::proof/type ::proof/proof}
+                         1 {::proof/premises []
+                            ::proof/goal '[:implies ["p"] ["p"]]
+                            ::proof/id 1
+                            ::proof/status ::proof/open
+                            ::proof/type ::proof/assert}}
+       ::proof/edges {0 {::proof/to [1]}
+                      1 {::proof/from [0]}}}))
