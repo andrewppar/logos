@@ -86,7 +86,7 @@
 (defn clear-proof-button [clear-type]
   (let [style (case clear-type
                 :clear  "button is-danger"
-                :done   "button is-info")
+                :done   "button is-success")
         text  (case clear-type
                 :clear "Clear Proof"
                 :done  "Next Proof")]
@@ -198,6 +198,7 @@
                 proof @(rf/subscribe [::subs/proof])]
             (rf/dispatch [::events/hide-modal id])
             (clear-all-checkboxes)
+            (reset! input-atom "")
             (next-proof command proof)))}
        "Submit Command"]
       ]]))
@@ -208,6 +209,7 @@
 (def disjunction-elimination-atom (r/atom ""))
 (def bottom-introduction-atom (r/atom ""))
 (def existential-elimination-atom (r/atom ""))
+(def assert-atom (r/atom ""))
 (def universal-elimination-atom (r/atom ""))
 
 (defn next-command-section
@@ -221,8 +223,9 @@
         proof-formulas proof-string false true]]
       [:div
        {:class "column is-one-quarter"}
-       [:h3 {:class "title is-h3"} "Goal Operations"]
-       [:div.buttons
+       [:div
+        {:class "tile is-vertical is-child box"}
+        [:h3 {:class "title is-h3"} "Goal Operations"]
         (map (fn [[command label]]
                [:div
                 [:button
@@ -237,11 +240,15 @@
               ["VP"  "Disjunctive Proof"]
               ["~P"  "Negative Proof"]
               ["UP"  "Universal Proof"]])
-        [proof-step-input-button "Existential Proof" "ep" "EP" ep-atom false true]]]
+        [proof-step-input-button
+         "Assert" "assert" "ASSERT" assert-atom false true]
+        [proof-step-input-button
+         "Existential Proof" "ep" "EP" ep-atom false true]]]
       [:div
        {:class "column is-one-quarter"}
-       [:h3 {:class "title is-h3"} "Premise Operations"]
-       [:div.buttons
+       [:div
+        {:class "tile is-vertical is-child box"}
+        [:h3 {:class "title is-h3"} "Premise Operations"]
         (map (fn [[label id command atom with-vars?]]
                [proof-step-input-button
                 label id command atom true with-vars? proof-formulas proof-string])

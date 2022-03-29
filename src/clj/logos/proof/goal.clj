@@ -168,6 +168,22 @@
                   edge-index new-edges))))
       proof)))
 
+(defn assert [proof formula]
+  (let [current-idx (get proof ::proof/current-problem)
+        new-idx     (proof/get-new-problem-idx proof)
+        new-problem (proof/new-problem
+                     [] formula new-idx :type ::proof/assert)
+        new-edges   (proof/add-edges-to-edge-index
+                     (get proof ::proof/edges) [[current-idx new-idx]])]
+    (-> proof
+        (update
+         ::proof/problems (fn [pf] (assoc pf new-idx new-problem)))
+        (assoc ::proof/current-problem new-idx
+               ::proof/edges new-edges))))
+
+
+
+
 (defn id-reflexivity [proof] nil)
 
 (defn modal-proof [proof] nil)

@@ -6,12 +6,23 @@
 ;;;;;;;;;;;
 ;;; Problem
 
+(defmacro dpf [form]
+  (let [function    (-> form first name)
+        args        (rest form)]
+    `(let [arg-vals#    (map str '~args)
+           arg-strings# (clojure.string/join " " arg-vals#)
+           result#       (eval ~form)]
+       (println (format "(%s %s) => %s" ~function arg-strings# result#))
+       result#)))
 
-(defn new-problem [premise-indexes goal id]
+(defn new-problem
+  [premise-indexes goal id &
+   {:keys [type] :or {type ::proof}}]
   {::premises premise-indexes
    ::goal     goal
    ::id       id
-   ::status    ::open})
+   ::status   ::open
+   ::type     type})
 
 ;;;;;;;;;
 ;;; Edges
@@ -43,8 +54,8 @@
   (reduce
    (fn [acc [from to]]
      (-> acc
-      (add-from-edge-to-graph from to)
-      (add-to-edge-to-graph from to)))
+         (add-from-edge-to-graph from to)
+         (add-to-edge-to-graph from to)))
    index edges))
 
 ;;;;;;;;;;;;
@@ -212,6 +223,55 @@
          (filter (fn [pr-map] (= (:justification pr-map) status)))
          (map :idx))))
 
+(defn ^:private close-assertion-problem
+  [proof]
+  (let [{::keys [current-problem problems premises edges]} proof
+        focal-problem  (get problems current-problem)
+        new-problem    (assoc focal-problem ::status ::closed)
+        premise-idxs   (get current-problem ::premises)
+        new-premise    (-> focal-problem
+                           (get ::goal)
+                           (new-premise ::proved))
+        new-premise-idx (get-new-premise-idx proof)
+        new-premises    (assoc premises new-premise-idx new-premise)
+        assertion-idxs (reduce
+                        (fn [idxs idx]
+                          (if (= ::assert (get premises idx))
+                            (conj idxs idx)
+                            idxs))
+                        [new-premise-idx] premise-idxs)
+        upstream-problem (-> edges
+                             (get current-problem)
+                             (get ::from)
+                             first)
+        siblings          (filter
+                           (fn [idx]
+                             (not (= idx current-problem)))
+                           (-> edges
+                               (get upstream-problem)
+                               (get ::to)))
+        open-sibling     (reduce
+                          (fn [acc idx]
+                            (when (= ::open (-> problems
+                                                (get idx)
+                                                (get ::status)))
+                              (reduced idx)))
+                          nil siblings)
+        new-upstream     (update (get problems upstream-problem)
+                                 ::premises
+                                 (fn [premises]
+                                   (concat premises assertion-idxs)))
+        new-proof        (assoc proof
+                                ::premises new-premises
+                                ::problems
+                                (assoc problems
+                                       upstream-problem new-upstream
+                                       current-problem new-problem))
+        ]
+    (if (nil? open-sibling)
+      (assoc new-proof ::current-problem upstream-problem)
+      (assoc new-proof ::current-problem open-sibling))))
+
 (defn ^:private reset-current-problem
   [proof]
   (let [edges (get proof ::edges)]
@@ -234,40 +294,43 @@
             ;; There is an upstream problems,
             ;; so we need to migrate assertions down
             ;; and see if that problem can be closed
-            (let [upstream-problem (-> result
-                                       (get ::problems)
-                                       (get upstream-id))
-                  assertions (filter-premises-by-problem-and-status
-                              result current-problem ::assertion)
-                  new-upstream (assoc upstream-problem
-                                      ::premises
-                                      (concat
-                                       (get upstream-problem ::premises)
-                                       assertions))
-                  ;; Check for open siblings to make
-                  ;; the current problem
-                  siblings (-> edges
-                               (get upstream-id)
-                               (get ::to))
-                  open-siblings (->> siblings
-                                     (map #(get problem-index %))
-                                     (filter #(= (::status %) ::open)))]
-              (if (seq open-siblings)
-                (assoc result
-                       ::current-problem (-> open-siblings
-                                             first
-                                             (get ::id))
-                       ::problems
-                       (assoc problem-index
-                              upstream-id new-upstream))
-                (let [closed-upstream (assoc new-upstream
-                                             ::status ::closed)]
-                  (recur  (assoc result
-                                 ::current-problem upstream-id
-                                 ::problems (assoc
-                                             problem-index
-                                             upstream-id
-                                             closed-upstream))))))
+
+            (if (= ::assert (get (get problem-index current-problem) ::type))
+              (close-assertion-problem result)
+              (let [upstream-problem (-> result
+                                         (get ::problems)
+                                         (get upstream-id))
+                    assertions (filter-premises-by-problem-and-status
+                                result current-problem ::assertion)
+                    new-upstream (assoc upstream-problem
+                                        ::premises
+                                        (concat
+                                         (get upstream-problem ::premises)
+                                         assertions))
+                    ;; Check for open siblings to make
+                    ;; the current problem
+                    siblings (-> edges
+                                 (get upstream-id)
+                                 (get ::to))
+                    open-siblings (->> siblings
+                                       (map #(get problem-index %))
+                                       (filter #(= (::status %) ::open)))]
+                (if (seq open-siblings)
+                  (assoc result
+                         ::current-problem (-> open-siblings
+                                               first
+                                               (get ::id))
+                         ::problems
+                         (assoc problem-index
+                                upstream-id new-upstream))
+                  (let [closed-upstream (assoc new-upstream
+                                               ::status ::closed)]
+                    (recur  (assoc result
+                                   ::current-problem upstream-id
+                                   ::problems (assoc
+                                               problem-index
+                                               upstream-id
+                                               closed-upstream)))))))
             ;; There are no upstream problems
             (assoc result ::current-problem nil)))))))
 
