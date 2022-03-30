@@ -83,7 +83,8 @@ CLOSED: [2022-03-27 Sun 00:17]
 :PROPERTIES:
 :ID:       F999DB06-AA05-4D2C-BAE8-0BF885BC83F7
 :END:
-** TODO We should call format on premises and goals before we send them back to the front end
+** DONE We should call format on premises and goals before we send them back to the front end
+CLOSED: [2022-03-29 Tue 22:53]
 :PROPERTIES:
 :ID:       3FEC10EC-1326-405B-BD3E-79EEAC3B687E
 :END:

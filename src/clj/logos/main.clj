@@ -1,10 +1,11 @@
 (ns logos.main
-  (:require [logos.formula :as f]
-            [logos.proof.proof :as proof]
+  (:require [clojure.pprint :as pp]
+            [clojure.string :as string]
+            [logos.formula :as f]
             [logos.proof.goal :as goal]
             [logos.proof.premise :as premise]
-            [logos.proof.show :refer [show-proof]]
-            [clojure.string :as string])
+            [logos.proof.proof :as proof]
+            [logos.proof.show :refer [show-proof]])
   (:import java.util.Base64))
 
 (defn encode [to-encode]
@@ -12,6 +13,15 @@
 
 (defn decode [to-decode]
   (String. (.decode (Base64/getDecoder) to-decode)))
+
+(defn format-formula [formula]
+  (if-not (string? formula)
+    formula
+    (binding [pp/*print-pretty* true
+              pp/*print-miser-width* nil
+              pp/*print-right-margin* 60]
+      (with-out-str
+        (pp/pprint (read-string formula))))))
 
 (defn serialize-proof-formulas
   [proof]
@@ -24,7 +34,8 @@
                       {:idx idx
                        :formula (-> premise
                                     (get ::proof/formula)
-                                    f/to-string)
+                                    f/to-string
+                                    format-formula)
                        :justification
                        (get premise ::proof/justification)}))
                   relevant-premise-idxs)
@@ -35,7 +46,8 @@
                   (get (get
                         proof ::proof/current-problem))
                   (get ::proof/goal)
-                  f/to-string)
+                  f/to-string
+                  format-formula)
               :justification ""}]
     (conj premises goal)))
 

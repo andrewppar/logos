@@ -461,8 +461,10 @@
 (defn get-unique-constant
   [seed-constant used-constants]
   (loop [last-constant seed-constant]
-    (let [new-constant (next-constant last-constant)]
-      (if (some #{new-constant} used-constants)
+    (let [new-constant (next-constant last-constant)
+          new-pred     (format "!%s" new-constant)]
+      (if (or (some #{new-constant} used-constants)
+              (some #{new-pred} used-constants))
         (recur new-constant)
         new-constant))))
 
@@ -487,13 +489,16 @@
         ;; This feels like an abstraction
         ;; violation
         (if (term? formula)
-          (if-let [new (constant-map formula)]
-            new
-            formula)
-          (mapv (fn [item]
-                  (if-let [new (constant-map item)]
-                    new
-                    item)) formula))
+          (if-let [new (constant-map formula)] new formula)
+          (let [pred (predicate formula)
+                new-terms (mapv (fn [term]
+                                  (if-let [new (constant-map term)]
+                                    new
+                                    term))
+                               (terms formula))]
+            (if-let [new-pred (constant-map pred)]
+              (apply atom (format "!%s" new-pred) new-terms)
+              (apply atom pred new-terms))))
         (negation? formula)
         (-> formula
             negatum
@@ -544,7 +549,11 @@
               {:caused-by formula})))
   (let [vars          (bound-variables formula)
         old-constants (concat used-constants
-                              (formula-gather formula #'constant?))
+                              (formula-gather
+                               formula
+                               (fn [obj]
+                                 (or (constant? obj)
+                                     (atomic-predicate? obj)))))
         new-constant-map (generate-new-constant-map
                           old-constants vars)]
     (substitute-free-variables (quantified-subformula
@@ -696,6 +705,10 @@
                 (= operator 'exists)
                 (= operator 'lambda))
             (read-quantified-formula operator args)
+            (predicate? raw-operator)
+            (apply
+             logos.formula/atom raw-operator
+             (map read-formula-sexp args))
             (predicate? (str raw-operator))
             (apply
              logos.formula/atom (str raw-operator)

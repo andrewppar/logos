@@ -49,6 +49,8 @@
 (rf/reg-event-db
  ::update-proof
  (fn [db [_ proof-map]]
+
+   (println proof-map)
    (assoc db
           :proof-string (:proof-string proof-map)
           :proof  (:proof proof-map)

@@ -265,7 +265,11 @@
                                  (mapcat
                                   (fn [formula]
                                     (formula/formula-gather
-                                     formula #'formula/constant?))))
+                                     formula
+                                     (fn [obj]
+                                       (or
+                                        (formula/constant? obj)
+                                        (formula/atomic-predicate? obj)))))))
             new-formula     (formula/instantiate-new-variables
                              formula used-constants)
             new-premise     (proof/new-premise
