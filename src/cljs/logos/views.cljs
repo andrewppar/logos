@@ -14,7 +14,7 @@
   [proof-formulas proof-string with-checkboxes? show-goal?]
   (let [premises (filter #(number? (:idx %)) proof-formulas)
         goals    (filter #(string? (:idx %)) proof-formulas)
-        sorted-formulas (concat (sort-by < :idx premises) goals)]
+        sorted-formulas (concat (sort-by :idx < premises) goals)]
     (if (= proof-string "QED")
       [:div proof-string]
       (loop [proof-formula (first sorted-formulas)
@@ -33,7 +33,9 @@
                                     {:type "checkbox"
                                      :on-change
                                      #(toggle-check-box id)}]])])
-                             [:td (get proof-formula :formula)]
+                             [:td [:div
+                                   {:style {:white-space "pre"}}
+                                   (get proof-formula :formula)]]
                              [:td (if (= justification "")
                                     "λogos"
                                     (if (string? justification)
