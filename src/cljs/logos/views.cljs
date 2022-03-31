@@ -19,7 +19,11 @@
       [:div proof-string]
       (loop [proof-formula (first sorted-formulas)
              todo          (rest sorted-formulas)
-             result        [:table {:class "table is-bordered"}]]
+             result        [:table {:class "table is-bordered"}
+                            [:tr
+                             [:td "Number"]
+                             [:td "Formula"]
+                             [:td "Justification"]]]]
         (let [justification (get proof-formula :justification)
               id            (get proof-formula :idx)
               new-item      [:tr
@@ -155,19 +159,26 @@
     [:footer.modal-card-foot footer]]])
 
 (defn modal-button
-  [id title body footer]
+  [id title tooltip body footer]
+  (let [base-attr {:on-click #(rf/dispatch [::events/show-modal id])}
+        class-str (if (= tooltip "")
+                    "button is-info is-outlined is-rounded"
+                    "button is-info is-outlined is-rounded has-tooltip-left has-tooltip-multiline")
+        class-attr (assoc base-attr :class class-str)
+        attr (if (= tooltip "")
+               class-attr
+               (assoc class-attr :data-tooltip tooltip))]
   [:div
    [:button
-    {:class "button is-info is-outlined is-rounded"
-     :on-click #(rf/dispatch [::events/show-modal id])}
+    attr
     title]
-   [modal-card id title body footer]])
+   [modal-card id title body footer]]))
 
 (defn proof-step-input-button
-  [label id command input-atom with-premises? with-vars? proof-formulas proof-string]
+  [label id command input-atom with-premises? with-vars? proof-formulas proof-string tooltip]
   (let [input-id (str id "-input")]
     [modal-button
-     id label
+     id label tooltip
      [:div.container
       (when with-premises?
         [print-proof-formulas proof-formulas proof-string true false])
@@ -228,44 +239,86 @@
        [:div
         {:class "tile is-vertical is-child box"}
         [:h3 {:class "title is-h3"} "Goal Operations"]
-        (map (fn [[command label]]
+        (map (fn [[command label tooltip]]
                [:div
                 [:button
                  {:class
-                  "button is-info is-outlined is-rounded"
+                  "button is-info is-outlined is-rounded has-tooltip-left has-tooltip-multiline"
+                  :data-tooltip tooltip
                   :on-click
                   #(next-proof command proof)}
                  label]])
-             [["DD"  "Direct Proof"]
-              ["->P" "Conditional Proof"]
-              ["&P"  "Conjunctive Proof"]
-              ["VP"  "Disjunctive Proof"]
-              ["~P"  "Negative Proof"]
-              ["UP"  "Universal Proof"]])
+             [["DD"  "Direct Proof"
+               "Finish the current proof because one of the premises
+                matches the goal or bottom is in the premises."]
+              ["->P" "Conditional Proof"
+               "Prove a conditional formula by hypothesizing the
+                antecedent and proving the consequent with a subproof."]
+              ["&P"  "Conjunctive Proof"
+               "Prove a conjunction by creating a subproof for each of
+                the conjuncts."]
+              ["VP"  "Disjunctive Proof"
+               "Prove a disjunction because on of the disjuncts is in
+                the premises."]
+              ["~P"  "Negative Proof"
+               "Prove a negation by hypothesizing the negatum
+                and proving bottom with a subproof."]
+              ["UP"  "Universal Proof"
+               "Prove a universal formula by proving the quantified
+                subformula with new constants substituted for all
+                bound variables"]])
         [proof-step-input-button
-         "Assert" "assert" "ASSERT" assert-atom false true]
+         "Assert" "assert" "ASSERT" assert-atom false true
+         proof-formulas proof-string
+         "Open a dialog box for a formula. This formula becomes the goal
+         of a new subproof. Once proved the formula is available in the
+         current proof as a premise."]
         [proof-step-input-button
-         "Existential Proof" "ep" "EP" ep-atom false true]]]
+         "Existential Proof" "ep" "EP" ep-atom false true
+         proof-formulas proof-string
+         "Open a dialog box that prompts for constants to substitute
+         for variables. The quantified subformula with the specified
+         substitutions is the next subproof. When it is closed the
+         current proof is closed."]]]
       [:div
        {:class "column is-one-quarter"}
        [:div
         {:class "tile is-vertical is-child box"}
         [:h3 {:class "title is-h3"} "Premise Operations"]
-        (map (fn [[label id command atom with-vars?]]
+        (map (fn [[label id command atom with-vars? tooltip]]
                [proof-step-input-button
-                label id command atom true with-vars? proof-formulas proof-string])
+                label id command atom true with-vars? proof-formulas proof-string tooltip])
              [["Conditional Elimination" "conditional-elim" "->E"
-               conditional-elimination-atom false]
+               conditional-elimination-atom false
+               "Open a dialog to select a conditional premise
+                and its antecedent. The consequent of the conditional
+                will be added to the premises of the proof."]
               ["Conjunction Elimination" "conjunction-elim" "&E"
-               conjunction-elimination-atom false]
+               conjunction-elimination-atom false
+               "Open a dialog to select a conjunction from the
+                premises. The conjuncts of this premise will
+                be added to the proof as premises."]
               ["Disjunction Elimination" "disjunction-elim" "VE"
-               disjunction-elimination-atom false]
+               disjunction-elimination-atom false
+               "Open a dialog to select a premise that is a
+                disjunction from the premises. Each disjunct generates
+                a new subproof, with the same goal as the current goal.
+                If all subproofs are proved the current subproof closes."]
               ["Bottom Introduction"  "bottom-intro" "BI"
-               bottom-introduction-atom false]
+               bottom-introduction-atom false
+               "Open a dialog box to select a premise and its negation.
+               Bottom is added to the premises as a result."]
               ["Existential Elimination" "existential-elim" "EE"
-               existential-elimination-atom false]
+               existential-elimination-atom false
+               "Select an existential premise. The quantified subformula
+               will be added to the premises with all variables in the
+               scope of the existential substituted for new constants."]
               ["Universal Elimination" "universal-elim" "UE"
-               universal-elimination-atom true]
+               universal-elimination-atom true
+               "Open a dialog box to select a universal premise and
+                specify values for the variables. The quantified
+                subformula with the specified substitutions will be
+                added to the premises."]
               ])
         ]]]
      [clear-proof-button clear-type]]))
