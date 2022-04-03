@@ -74,7 +74,7 @@ CLOSED: [2022-03-25 Fri 08:37]
 :PROPERTIES:
 :ID:       F616D54A-BA0D-48E0-BAE2-269A4113D0AC
 :END:
-** TODO Check for wrong number of premises when doing premise operation
+** TODO Check for wrong number of premises when doing premise operation. This has to be done in main.clj too so we can properly read the arguments to be substituted.
 :PROPERTIES:
 :ID:       DB61BAE3-60D9-46AA-8AC8-33540BE98631
 :END:
@@ -87,6 +87,10 @@ CLOSED: [2022-03-27 Sun 00:17]
 CLOSED: [2022-03-29 Tue 22:53]
 :PROPERTIES:
 :ID:       3FEC10EC-1326-405B-BD3E-79EEAC3B687E
+:END:
+** TODO Support identity
+:PROPERTIES:
+:ID:       013A20CF-E0DC-47DA-9198-F146E37A0F49
 :END:
 * Version 2                                                              :v2:
 ** TODO Support Lambdas

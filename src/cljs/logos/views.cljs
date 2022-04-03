@@ -27,16 +27,20 @@
         (let [justification (get proof-formula :justification)
               id            (get proof-formula :idx)
               new-item      [:tr
-                             [:td id]
-                             (when with-checkboxes?
-                               [:td
+                             [:td id
+
+                              ;; TODO This is a little too close
+                              ;; figure out how to get things spaced
+                              ;; better
+                              (when with-checkboxes?
                                 (if (= justification "")
                                   ""
                                   [:label.checkbox
                                    [:input
                                     {:type "checkbox"
                                      :on-change
-                                     #(toggle-check-box id)}]])])
+                                     #(toggle-check-box id)}]])
+                                )]
                              [:td [:div
                                    {:style {:white-space "pre"}}
                                    (get proof-formula :formula)]]
@@ -110,9 +114,14 @@
 
 (defn start-proof-section
   []
-  [:div.container
+  [:div
+   {:class "container has-tooltip-multiline has-tooltip-bottom"
+    :data-tooltip
+      "Name your theorem and enter a formula to prove, e.g. \"(implies p p)\" or \"(not (and p (not p)))\""}
    [:table.table
-    [:th] [:th]
+    [:th]
+
+    [:th]
     [:tr
      [:td
       "Theorem Name: "]
@@ -130,6 +139,7 @@
        {:id "theorem-formula"
         :type "text"
         :cols "100"
+        :rows "10"
         :value @formula
         :on-change #(reset! formula (.-value (.-target %)))}]]]]
    [:br]
@@ -330,7 +340,7 @@
         proof          (rf/subscribe [::subs/proof])]
     [:div
      [:br]
-     [:h3
+     #_[:h5
       {:class "title is-3 is-spaced"}
       "Proof"]
      [:div
@@ -342,11 +352,26 @@
   (let [error (rf/subscribe [::subs/error])]
     (when @error
       (rf/dispatch [::events/show-modal "error"]))
-  [:div.container
-   [:section
-    {:class "hero is-info"}
-    [:div.hero-body
-     [:p.title "λogos"]]]
-   [proof-section]
-   [modal-card "error" "Error"
-    [:div (str @error)]]]))
+    [:div.container
+     [:nav
+      {:class "navbar is-info"
+       :role "navigation"
+       :aria-label "main navigation"}
+      [:div.navbar-brand
+       [:a.navbar-item {:href "http://10.0.0.130:3000"} "λogos"]
+       [:a
+        {:role "button" :class "navbar-burger"
+         :aria-label "menu" :aria-expanded "false"
+         :data-target "mainNavbar"}
+        [:span {:aria-hidden "true"}]
+        [:span {:aria-hidden "true"}]
+        [:span {:aria-hidden "true"}]]]
+      [:div.navbar-center
+       {:id "mainNavbar" :class "navbar-menu"}
+       [:div.navbar-start
+        [:a.navbar-item "Tutorial"]]]]
+     [:section
+      {:class "hero is-info"}]
+     [proof-section]
+     [modal-card "error" "Error"
+      [:div (str @error)]]]))
