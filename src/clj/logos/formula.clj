@@ -603,7 +603,7 @@
               (str "(" pred " "
                    (->> formula
                         rest
-                        (map to-tring)
+                        (map to-string)
                         (clojure.string/join " "))
                    ")")
               (str pred))))

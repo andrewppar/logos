@@ -64,19 +64,19 @@
     (are [proof idxs result]
         (= (premise/conditional-elimination proof idxs)
            result)
-        pf [1 0]  {::proof/current-problem 0
+        pf ["1" "0"]  {::proof/current-problem 0
                    ::proof/premises {0 (proof/new-premise p)
                                      1 (proof/new-premise p->q)
-                                     2 (proof/new-premise q [1 0])}
+                                     2 (proof/new-premise q ["1" "0"])}
                    ::proof/problems {0 (proof/new-problem [0 1 2] q 0)}
                    ::proof/edges {}}
-        pf [0 1]  {::proof/current-problem 0
+        pf ["0" "1"]  {::proof/current-problem 0
                    ::proof/premises {0 (proof/new-premise p)
                                      1 (proof/new-premise p->q)
-                                     2 (proof/new-premise q [0 1])}
+                                     2 (proof/new-premise q ["0" "1"])}
                    ::proof/problems {0 (proof/new-problem [0 1 2] q 0)}
                    ::proof/edges {}}
-        pf [1 2] pf)))
+        pf ["1" "2"] pf)))
 
 (deftest test-conjunction-elimination
   (are [proof idxs result]
@@ -87,12 +87,12 @@
                             (formula/conj p q))}
 
        ::proof/problems {0 (proof/new-problem [0] q 0)}
-       ::proof/edges {}} [0]
+       ::proof/edges {}} ["0"]
 
       {::proof/current-problem 0
        ::proof/premises {0 (proof/new-premise (formula/conj p q))
-                         1 (proof/new-premise p [0])
-                         2 (proof/new-premise q [0])}
+                         1 (proof/new-premise p ["0"])
+                         2 (proof/new-premise q ["0"])}
        ::proof/problems {0 (proof/new-problem [0 1 2] q 0)}
        ::proof/edges {}}))
 
@@ -105,7 +105,7 @@
                             (formula/disj p q))}
 
        ::proof/problems {0 (proof/new-problem [0] q 0)}
-       ::proof/edges {}} [0]
+       ::proof/edges {}} ["0"]
       {::proof/current-problem 1
        ::proof/premises {0 (proof/new-premise
                             (formula/disj p q))
@@ -126,12 +126,12 @@
        ::proof/premises {0 (proof/new-premise p)
                          1 (proof/new-premise [:not p])}
        ::proof/problems {0 (proof/new-problem [0 1] q 0)}
-       ::proof/edges {}} [0 1]
+       ::proof/edges {}} ["0" "1"]
 
       {::proof/current-problem 0
        ::proof/premises {0 (proof/new-premise p)
                          1 (proof/new-premise [:not p])
-                         2 (proof/new-premise ::formula/bottom [0 1])}
+                         2 (proof/new-premise ::formula/bottom ["0" "1"])}
        ::proof/problems {0 (proof/new-problem [0 1 2] q 0)}
        ::proof/edges {}}))
 
@@ -143,12 +143,12 @@
        ::proof/premises {0 (proof/new-premise
                             '[:forall [?x] ["!P" ?x]])}
        ::proof/problems {0 (proof/new-problem [0] ["!Q"] 0)}
-       ::proof/edges {}} [0 "a"]
+       ::proof/edges {}} ["0" "a"]
       {::proof/current-problem 0
        ::proof/premises {0 (proof/new-premise
                             '[:forall [?x] ["!P" ?x]])
                          1 (proof/new-premise
-                            ["!P" "a"] [0 "a"])}
+                            ["!P" "a"] ["0" "a"])}
        ::proof/problems {0 (proof/new-problem [0 1] ["!Q"] 0)}
        ::proof/edges {}}))
 
@@ -161,11 +161,11 @@
                                               ["!P" ?x ?y "a"]])}
      ::proof/problems {0
                        (proof/new-problem [0] ["!Q"] 0)}
-     ::proof/edges {}} [0]
+     ::proof/edges {}} ["0"]
     {::proof/current-problem 0
      ::proof/premises {0 (proof/new-premise '[:exists [?x ?y]
                                               ["!P" ?x ?y "a"]])
-                       1 (proof/new-premise '["!P" "b" "c" "a"] [0])}
+                       1 (proof/new-premise '["!P" "b" "c" "a"] ["0"])}
      ::proof/problems {0
                        (proof/new-problem [0 1] ["!Q"] 0)}
      ::proof/edges {}}))
