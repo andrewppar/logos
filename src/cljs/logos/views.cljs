@@ -1,10 +1,35 @@
 (ns logos.views
   (:require
-   [logos.subs      :as subs]
-   [logos.events    :as events]
-   [reagent.core    :as r]
-   [re-frame.core   :as rf]
-   [clojure.string  :as string]))
+   [clojure.string       :as string]
+   [logos.events         :as events]
+   [logos.subs           :as subs]
+   [markdown.core        :as md]
+   [reagent.core         :as r]
+
+   [re-frame.core        :as rf]))
+
+(defn nav-link [uri title page]
+  [:a.navbar-item
+   {:href   uri
+    :class (when (= page @(rf/subscribe [:common/page-id])) :is-active)}
+   title])
+
+(defn navbar []
+  (r/with-let [expanded? (r/atom false)]
+              [:nav.navbar.is-info>div.container
+               [:div.navbar-brand
+                [:a.navbar-item {:href "/" :style {:font-weight :bold}} "λogos"]
+                [:span.navbar-burger.burger
+                 {:data-target :nav-menu
+                  :on-click #(swap! expanded? not)
+                  :class (when @expanded? :is-active)}
+                 [:span][:span][:span]]]
+               [:div#nav-menu.navbar-menu
+                {:class (when @expanded? :is-active)}
+                [:div.navbar-start
+                 [nav-link "#/tutorial" "Tutorial" :about]
+                 [nav-link "#/formulas" "Formulas" :formulas]
+                 ]]]))
 
 (defn toggle-check-box
   [id]
@@ -36,6 +61,8 @@
                                 (if (= justification "")
                                   ""
                                   [:label.checkbox
+                                   {:style
+                                     {:margin-left "0.5rem"}}
                                    [:input
                                     {:type "checkbox"
                                      :on-change
@@ -114,40 +141,41 @@
 
 (defn start-proof-section
   []
-  [:div
-   {:class "container has-tooltip-multiline has-tooltip-bottom"
-    :data-tooltip
-      "Name your theorem and enter a formula to prove, e.g. \"(implies p p)\" or \"(not (and p (not p)))\""}
-   [:table.table
-    [:th]
+  [:section.section
+   [:div
+    {:class "container has-tooltip-multiline has-tooltip-bottom"
+     :data-tooltip
+     "Name your theorem and enter a formula to prove, e.g. \"(implies p p)\" or \"(not (and p (not p)))\""}
+    [:table.table
+     [:th]
 
-    [:th]
-    [:tr
-     [:td
-      "Theorem Name: "]
-     [:td
-      [:input.input
-       {:id "theorem-name"
-        :type "text"
-        :value @theorem-name
-        :on-change #(reset! theorem-name (.-value (.-target %)))}]]]
-    [:tr
-     [:td
-      "Formula: "]
-     [:td
-      [:textarea.textarea
-       {:id "theorem-formula"
-        :type "text"
-        :cols "100"
-        :rows "10"
-        :value @formula
-        :on-change #(reset! formula (.-value (.-target %)))}]]]]
-   [:br]
-   [:div.buttons
-    [:button {:class "button is-info"
-              :on-click #(start-proof @theorem-name @formula)}
-     "Start Proof"]
-    [clear-proof-button :clear]]])
+     [:th]
+     [:tr
+      [:td
+       "Theorem Name: "]
+      [:td
+       [:input.input
+        {:id "theorem-name"
+         :type "text"
+         :value @theorem-name
+         :on-change #(reset! theorem-name (.-value (.-target %)))}]]]
+     [:tr
+      [:td
+       "Formula: "]
+      [:td
+       [:textarea.textarea
+        {:id "theorem-formula"
+         :type "text"
+         :cols "100"
+         :rows "10"
+         :value @formula
+         :on-change #(reset! formula (.-value (.-target %)))}]]]]
+    [:br]
+    [:div.buttons
+     [:button {:class "button is-info"
+               :on-click #(start-proof @theorem-name @formula)}
+      "Start Proof"]
+     [clear-proof-button :clear]]]])
 
 ;;;;;;;;;;
 ;;; TODO:
@@ -278,18 +306,18 @@
                 subformula with new constants substituted for all
                 bound variables"]])
         [proof-step-input-button
-         "Assert" "assert" "ASSERT" assert-atom false true
-         proof-formulas proof-string
-         "Open a dialog box for a formula. This formula becomes the goal
-         of a new subproof. Once proved the formula is available in the
-         current proof as a premise."]
-        [proof-step-input-button
          "Existential Proof" "ep" "EP" ep-atom false true
          proof-formulas proof-string
          "Open a dialog box that prompts for constants to substitute
          for variables. The quantified subformula with the specified
          substitutions is the next subproof. When it is closed the
-         current proof is closed."]]]
+         current proof is closed."]
+        [proof-step-input-button
+         "Assert" "assert" "ASSERT" assert-atom false true
+         proof-formulas proof-string
+         "Open a dialog box for a formula. This formula becomes the goal
+         of a new subproof. Once proved the formula is available in the
+         current proof as a premise."]]]
       [:div
        {:class "column is-one-quarter"}
        [:div
@@ -318,17 +346,17 @@
                bottom-introduction-atom false
                "Open a dialog box to select a premise and its negation.
                Bottom is added to the premises as a result."]
-              ["Existential Elimination" "existential-elim" "EE"
-               existential-elimination-atom false
-               "Select an existential premise. The quantified subformula
-               will be added to the premises with all variables in the
-               scope of the existential substituted for new constants."]
               ["Universal Elimination" "universal-elim" "UE"
                universal-elimination-atom true
                "Open a dialog box to select a universal premise and
                 specify values for the variables. The quantified
                 subformula with the specified substitutions will be
                 added to the premises."]
+              ["Existential Elimination" "existential-elim" "EE"
+               existential-elimination-atom false
+               "Select an existential premise. The quantified subformula
+               will be added to the premises with all variables in the
+               scope of the existential substituted for new constants."]
               ])
         ]]]
      [clear-proof-button clear-type]]))
@@ -340,38 +368,29 @@
         proof          (rf/subscribe [::subs/proof])]
     [:div
      [:br]
-     #_[:h5
-      {:class "title is-3 is-spaced"}
-      "Proof"]
      [:div
     (if (nil? @proof-formulas)
       [start-proof-section]
       [next-command-section @proof-formulas @proof-string @proof])]]))
 
-(defn main-panel []
-  (let [error (rf/subscribe [::subs/error])]
-    (when @error
-      (rf/dispatch [::events/show-modal "error"]))
-    [:div.container
-     [:nav
-      {:class "navbar is-info"
-       :role "navigation"
-       :aria-label "main navigation"}
-      [:div.navbar-brand
-       [:a.navbar-item {:href "http://10.0.0.130:3000"} "λogos"]
-       [:a
-        {:role "button" :class "navbar-burger"
-         :aria-label "menu" :aria-expanded "false"
-         :data-target "mainNavbar"}
-        [:span {:aria-hidden "true"}]
-        [:span {:aria-hidden "true"}]
-        [:span {:aria-hidden "true"}]]]
-      [:div.navbar-center
-       {:id "mainNavbar" :class "navbar-menu"}
-       [:div.navbar-start
-        [:a.navbar-item "Tutorial"]]]]
-     [:section
-      {:class "hero is-info"}]
-     [proof-section]
-     [modal-card "error" "Error"
-      [:div (str @error)]]]))
+(defn tutorial-page
+  []
+  [:section.section>div.container>dev.content
+   (when-let [tutorial @(rf/subscribe [::events/tutorial-page])]
+     [:div {:dangerouslySetInnerHTML {:__html (md/md->html tutorial)}}])])
+
+(defn formulas-page
+  []
+  [:section.section>div.container>dev.content
+   (when-let [formulas @(rf/subscribe [::events/formulas-page])]
+     [:div {:dangerouslySetInnerHTML {:__html (md/md->html formulas)}}])])
+
+(defn page []
+  (when-let [page @(rf/subscribe [:common/page])]
+    [:div
+     [navbar]
+     [:div.section
+      [page]]]))
+
+(defn navigate! [match _]
+  (rf/dispatch [:common/navigate match]))

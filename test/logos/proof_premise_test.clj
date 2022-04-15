@@ -100,6 +100,7 @@
   (are [proof premise-numbers result]
       (= (premise/disjunction-elimination proof premise-numbers)
          result)
+    ;; Case 1
       {::proof/current-problem 0
        ::proof/premises {0 (proof/new-premise
                             (formula/disj p q))}
@@ -116,7 +117,141 @@
                          2 (proof/new-problem [2] q 2)}
        ::proof/edges {0 {::proof/to [1 2]}
                       1 {::proof/from [0]}
-                      2 {::proof/from [0]}}}))
+                      2 {::proof/from [0]}}}
+      ;; Case 2
+      {::proof/current-problem 2,
+       ::proof/premises {0
+                         {::proof/formula [:or [:and p q] r],
+                          ::proof/justification ::proof/hypothesis},
+                         1 {::proof/formula [:and p q],
+                            ::proof/justification ::proof/hypothesis},
+                         2 {::proof/formula r,
+                            ::proof/justification ::proof/hypothesis},
+                         3 {::proof/formula p,
+                            ::proof/justification [1]},
+                         4 {::proof/formula q,
+                            ::proof/justification [1]}},
+       ::proof/problems {0 {::proof/premises nil,
+                            ::proof/goal [:implies
+                                          [:or [:and p q] r]
+                                          [:and
+                                           [:or p r]
+                                           [:or q r]]],
+                            ::proof/id 0,
+                            ::proof/status
+                            ::proof/open,
+                            ::proof/type
+                            ::proof/proof},
+                         1 {::proof/premises [0],
+                            ::proof/goal [:and [:or p r] [:or q r]],
+                            ::proof/id 1,
+                            ::proof/status ::proof/open,
+                            ::proof/type ::proof/proof},
+                         2 {::proof/premises [],
+                            ::proof/goal [:or p r],
+                            ::proof/id 2,
+                            ::proof/status ::proof/open,
+                            ::proof/type ::proof/proof},
+                         3 {::proof/premises [],
+                            ::proof/goal [:or q r],
+                            ::proof/id 3,
+                            ::proof/status
+                            ::proof/closed,
+                            ::proof/type
+                            ::proof/proof},
+                         4 {::proof/premises [1 3 4],
+                            ::proof/goal [:or q r],
+                            ::proof/id 4,
+                            ::proof/status ::proof/closed,
+                            ::proof/type ::proof/proof},
+                         5 {::proof/premises [2],
+                            ::proof/goal [:or q r],
+                            ::proof/id 5,
+                            ::proof/status ::proof/closed,
+                            ::proof/type ::proof/proof}},
+       ::proof/theorem-name "case 2",
+       ::proof/edges {0 {::proof/to [1]},
+                      1 {::proof/from [0], ::proof/to [2 3]},
+                      2 {::proof/from [1]},
+                      3 {::proof/from [1], ::proof/to [4 5]},
+                      4 {::proof/from [3]},
+                      5 {::proof/from [3]}}} ["0"]
+      {::proof/current-problem 6,
+       ::proof/premises {0 {::proof/formula [:or [:and p q] r],
+                            ::proof/justification ::proof/hypothesis},
+                         1 {::proof/formula [:and p q],
+                            ::proof/justification ::proof/hypothesis},
+                         2 {::proof/formula r,
+                            ::proof/justification ::proof/hypothesis},
+                         3 {::proof/formula p,
+                            ::proof/justification [1]},
+                         4 {::proof/formula q,
+                            ::proof/justification [1]}
+                         5 {::proof/formula [:and p q]
+                            ::proof/justification ::proof/hypothesis}
+                         6 {::proof/formula r,
+                            ::proof/justification ::proof/hypothesis}},
+       ::proof/problems {0
+                         {::proof/premises nil,
+                          ::proof/goal [:implies
+                                        [:or [:and p q] r]
+                                        [:and
+                                         [:or p r]
+                                         [:or q r]]],
+                          ::proof/id 0,
+                          ::proof/status
+                          ::proof/open,
+                          ::proof/type
+                          ::proof/proof},
+                         1 {::proof/premises [0],
+                            ::proof/goal [:and [:or p r] [:or q r]],
+                            ::proof/id 1,
+                            ::proof/status ::proof/open,
+                            ::proof/type ::proof/proof},
+                         2 {::proof/premises [],
+                            ::proof/goal [:or p r],
+                            ::proof/id 2,
+                            ::proof/status ::proof/open,
+                            ::proof/type ::proof/proof},
+                         3 {::proof/premises [],
+                            ::proof/goal [:or q r],
+                            ::proof/id 3,
+                            ::proof/status
+                            ::proof/closed,
+                            ::proof/type
+                            ::proof/proof},
+                         4 {::proof/premises [1 3 4],
+                            ::proof/goal [:or q r],
+                            ::proof/id 4,
+                            ::proof/status ::proof/closed,
+                            ::proof/type ::proof/proof},
+                         5 {::proof/premises [2],
+                            ::proof/goal [:or q r],
+                            ::proof/id 5,
+                            ::proof/status ::proof/closed,
+                            ::proof/type ::proof/proof}
+                         6 {::proof/premises [5],
+                            ::proof/goal [:or p r],
+                            ::proof/id 6,
+                            ::proof/type ::proof/proof
+                            ::proof/status ::proof/open}
+                         7 {::proof/premises [6]
+                            ::proof/goal [:or p r]
+                            ::proof/type ::proof/proof
+                            ::proof/id 7
+                            ::proof/status ::proof/open}},
+       ::proof/theorem-name "case 2",
+       ::proof/edges {0 {::proof/to [1]},
+                      1 {::proof/from [0], ::proof/to [2 3]},
+                      2 {::proof/from [1], ::proof/to [6 7]},
+                      3 {::proof/from [1], ::proof/to [4 5]},
+                      4 {::proof/from [3]},
+                      5 {::proof/from [3]},
+                      6 {::proof/from [2]},
+                      7 {::proof/from [2]}}}
+
+
+      ))
 
 (deftest bottom-elimination-test
   (are [proof premise-idxs result]

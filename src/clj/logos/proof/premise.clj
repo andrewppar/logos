@@ -167,7 +167,7 @@
             (assoc ::proof/current-problem (inc last-problem-id))
             (assoc ::proof/premises new-premise-index)
             (proof/add-new-problems-to-proof
-             new-problems last-problem-id)))
+             new-problems current-problem-idx)))
       proof)))
 
 (defn bottom-introduction
