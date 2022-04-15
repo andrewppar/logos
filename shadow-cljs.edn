@@ -13,6 +13,7 @@
   [day8.re-frame/http-fx "0.2.4"]
   [kibu/pushy            "0.3.8"]
   [metosin/reitit        "0.5.16"]
+  [markdown-clj          "1.10.6"]
   [reagent               "1.1.0"]
   [re-frame              "0.10.7"]]
 

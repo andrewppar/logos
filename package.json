@@ -6,6 +6,7 @@
     "build-report": "npx shadow-cljs run shadow.cljs.build-report client target/build-report.html"
   },
   "devDependencies": {
+    "@creativebulma/bulma-tooltip": "^1.2.0",
     "karma": "6.3.7",
     "karma-chrome-launcher": "3.1.0",
     "karma-cljs-test": "0.1.0",
@@ -14,6 +15,8 @@
     "shadow-cljs": "2.15.12"
   },
   "dependencies": {
+    "bulma-extensions": "^6.2.7",
+    "bulma-tooltip": "^3.0.2",
     "react": "^17.0.2",
     "react-dom": "17.0.2"
   }

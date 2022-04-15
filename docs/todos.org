@@ -7,7 +7,8 @@
 :PROPERTIES:
 :ID:       90C8E427-95D6-43BB-9559-3FA6424E089C
 :END:
-** TODO If quantified args are not quoted or formulas they are treated as vars this should error (or make a good interpretation of intention)
+** DONE If quantified args are not quoted or formulas they are treated as vars this should error (or make a good interpretation of intention)
+CLOSED: [2022-04-04 Mon 08:01]
 :PROPERTIES:
 :ID:       3A2C430B-2675-48B4-B214-DD0F9BF8D1FC
 :END:
@@ -16,7 +17,8 @@ CLOSED: [2022-03-29 Tue 00:04]
 :PROPERTIES:
 :ID:       CB509F0E-E0C6-462B-973D-14404D244F86
 :END:
-** TODO We get caught in a loop trying to prove (implies (or (and p q) r) (and (or p r) (or q r))) unless we start by getting rid of as many premises as possible
+** DONE We get caught in a loop trying to prove (implies (or (and p q) r) (and (or p r) (or q r))) unless we start by getting rid of as many premises as possible
+CLOSED: [2022-04-15 Fri 07:19]
 :PROPERTIES:
 :ID:       E57D10DC-D223-4BA5-8333-CACA7099E820
 :END:
@@ -61,7 +63,8 @@ CLOSED: [2022-03-23 Wed 21:46]
 :PROPERTIES:
 :ID:       70777A4F-DB7C-47CD-9804-F0CB7785337D
 :END:
-** TODO Documentation in the UI
+** DONE Documentation in the UI
+CLOSED: [2022-04-15 Fri 07:19]
 :PROPERTIES:
 :ID:       5012FF0F-92F4-4989-91F9-E7D53DA8B788
 :END:
@@ -74,7 +77,7 @@ CLOSED: [2022-03-25 Fri 08:37]
 :PROPERTIES:
 :ID:       F616D54A-BA0D-48E0-BAE2-269A4113D0AC
 :END:
-** TODO Check for wrong number of premises when doing premise operation
+** TODO Check for wrong number of premises when doing premise operation. This has to be done in main.clj too so we can properly read the arguments to be substituted.
 :PROPERTIES:
 :ID:       DB61BAE3-60D9-46AA-8AC8-33540BE98631
 :END:
@@ -87,6 +90,10 @@ CLOSED: [2022-03-27 Sun 00:17]
 CLOSED: [2022-03-29 Tue 22:53]
 :PROPERTIES:
 :ID:       3FEC10EC-1326-405B-BD3E-79EEAC3B687E
+:END:
+** TODO Support identity
+:PROPERTIES:
+:ID:       013A20CF-E0DC-47DA-9198-F146E37A0F49
 :END:
 * Version 2                                                              :v2:
 ** TODO Support Lambdas

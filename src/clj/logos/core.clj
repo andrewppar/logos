@@ -32,8 +32,6 @@
          :headers {"Content-Type" "text/json"}
          :body body})
       (catch Exception e
-        (println e)
-        (println (ex-data e))
         {:status 400
          :heades {"Content-Type" "text/json"}
          :body (ex-data e)}))))
@@ -90,6 +88,32 @@
    :headers {"Content-Type"  "text/json"}
    :body (json/write-str (format-formula-internal req))})
 
+(defn formulas-internal
+  []
+  (slurp "resources/formula.md"))
+
+(defn formulas
+  [_]
+  {:status 200
+   :headers {"Content-Type" "text/json"
+             "Access-Control-Allow-Origin" "*"
+             "Access-Control-Allow-Headers" "x-requested-with"
+             "Access-Control-Allow-Methods" "*"}
+   :body (json/write-str (formulas-internal))})
+
+(defn tutorial-internal
+  []
+  (slurp "resources/tutorial.md"))
+
+(defn tutorial
+  [_]
+  {:status 200
+   :headers {"Content-Type" "text/json"
+             "Access-Control-Allow-Origin" "*"
+             "Access-Control-Allow-Headers" "x-requested-with"
+             "Access-Control-Allow-Methods" "*"}
+   :body (json/write-str (tutorial-internal))})
+
 (compojure/defroutes app
   (compojure/GET "/" req (str req))
   (compojure/GET "/health-check" [] health-check)
@@ -98,6 +122,8 @@
   (compojure/GET  "/start-proof"  [] start-proof)
   (compojure/POST "/run-steps" [] run-steps)
   (compojure/POST "/format" [] format-formula)
+  (compojure/GET  "/tutorial" [] tutorial)
+  (compojure/GET "/formulas"  [] formulas)
   (route/not-found "<h1>Page not found</h1>"))
 
 (defn -main [& args]

@@ -15,7 +15,7 @@ You will need [Leiningen][1] 2.0 or above installed.
 Install:
 
 1. `npm install react`
-
+2. `npm i -D @creativebulma/bulma-tooltip`
 ## Running
 
 To start a web server for the application, run:

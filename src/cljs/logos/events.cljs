@@ -4,7 +4,30 @@
    [day8.re-frame.http-fx]
    [goog.string   :as gstring]
    [logos.db      :as db]
-   [re-frame.core :as rf]))
+   [re-frame.core :as rf]
+   [reitit.frontend.easy :as rfe]
+   [reitit.frontend.controllers :as rfc]
+   ))
+
+
+;; dispatchers
+(rf/reg-event-db
+  :common/navigate
+  (fn [db [_ match]]
+    (let [old-match (:common/route db)
+          new-match (assoc match :controllers
+                                 (rfc/apply-controllers (:controllers old-match) match))]
+      (assoc db :common/route new-match))))
+
+(rf/reg-fx
+  :common/navigate-fx!
+  (fn [[k & [params query]]]
+    (rfe/push-state k params query)))
+
+(rf/reg-event-fx
+  :common/navigate!
+  (fn [_ [_ url-key params query]]
+    {:common/navigate-fx! [url-key params query]}))
 
 (rf/reg-event-db
  ::initialize-db
@@ -49,8 +72,6 @@
 (rf/reg-event-db
  ::update-proof
  (fn [db [_ proof-map]]
-
-   (println proof-map)
    (assoc db
           :proof-string (:proof-string proof-map)
           :proof  (:proof proof-map)
@@ -59,7 +80,6 @@
 (rf/reg-event-fx
  ::proof-init
  (fn [db [_ theorem-name formula]]
-   (println db)
    {:dispatch [::fetch-proof-start theorem-name formula]}))
 
 
@@ -154,4 +174,97 @@
    (update db
            :theorems
            (fn [theorem-map]
-                (assoc theorem-map name formula)))))
+             (assoc theorem-map name formula)))))
+
+(rf/reg-event-db
+ :set-proof-section
+ (fn [db _]
+   (assoc db :proof-section "")))
+
+(rf/reg-event-fx
+ ::init-proof-section
+ (fn [_ _]
+   {:dispatch [:fetch-proof-section]}))
+
+(rf/reg-event-fx
+ :fetch-proof-section
+ (fn [_ _]
+   {:http-xhrio {:method :get
+                 :uri    "http://10.0.0.130:4000/health-check"
+                 :response-format
+                 (ajax/raw-response-format)
+                 :on-success [:set-proof-section]}}))
+
+(rf/reg-event-fx
+ ::tutorial-internal
+ (fn [_ _]
+   {:http-xhrio {:uri "http://10.0.0.130:4000/tutorial"
+                 :method :get
+                 :format (ajax/transit-request-format)
+                 :response-format (ajax/json-response-format
+                                   {:keywords? true})
+                 :on-success [::store-tutorial]
+                 :on-failure [::set-error]}}))
+
+(rf/reg-event-fx
+ ::init-tutorial-section
+ (fn [_ _]
+   {:dispatch [::tutorial-internal]}))
+
+(rf/reg-event-db
+ ::store-tutorial
+ (fn [db [_ tutorial-md]]
+   (assoc db :tutorial tutorial-md)))
+
+(rf/reg-sub
+ ::tutorial-page
+ (fn [db _]
+   (-> db :tutorial)))
+
+(rf/reg-event-fx
+ ::formulas-internal
+ (fn [_ _]
+   {:http-xhrio {:uri "http://10.0.0.130:4000/formulas"
+                 :method :get
+                 :format (ajax/transit-request-format)
+                 :response-format (ajax/json-response-format
+                                   {:keywords? true})
+                 :on-success [::store-formulas]
+                 :on-failure [::set-error]}}))
+
+(rf/reg-event-fx
+ ::init-formulas-section
+ (fn [_ _]
+   {:dispatch [::formulas-internal]}))
+
+(rf/reg-event-db
+ ::store-formulas
+ (fn [db [_ formulas-md]]
+   (assoc db :formulas formulas-md)))
+
+(rf/reg-sub
+ ::formulas-page
+ (fn [db _]
+   (-> db :formulas)))
+
+(rf/reg-sub
+  :common/route
+  (fn [db _]
+    (-> db :common/route)))
+
+(rf/reg-sub
+  :common/page-id
+  :<- [:common/route]
+  (fn [route _]
+    (-> route :data :name)))
+
+(rf/reg-sub
+  :common/page
+  :<- [:common/route]
+  (fn [route _]
+    (-> route :data :view)))
+
+(rf/reg-event-db
+ ::home
+ (fn [db _]
+   (assoc db :home "")))

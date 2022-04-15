@@ -1,5 +1,6 @@
 (ns logos.main
-  (:require [clojure.pprint :as pp]
+  (:require [clojure.edn :as edn]
+            [clojure.pprint :as pp]
             [clojure.string :as string]
             [logos.formula :as f]
             [logos.proof.goal :as goal]
@@ -135,7 +136,7 @@
   [proof command]
   (let [raw-operation (first command)
         operation (string/upper-case raw-operation)
-        premise-idxs (mapv #'read-string (rest command))
+        premise-idxs (map str (edn/read-string (format "[%s]" (clojure.string/join " " (rest command)))))
         function  (fn [fnct]
                     (one-step
                      proof
