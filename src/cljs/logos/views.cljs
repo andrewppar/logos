@@ -16,20 +16,22 @@
 
 (defn navbar []
   (r/with-let [expanded? (r/atom false)]
-              [:nav.navbar.is-info>div.container
-               [:div.navbar-brand
-                [:a.navbar-item {:href "/" :style {:font-weight :bold}} "λogos"]
-                [:span.navbar-burger.burger
-                 {:data-target :nav-menu
-                  :on-click #(swap! expanded? not)
-                  :class (when @expanded? :is-active)}
-                 [:span][:span][:span]]]
-               [:div#nav-menu.navbar-menu
-                {:class (when @expanded? :is-active)}
-                [:div.navbar-start
-                 [nav-link "#/tutorial" "Tutorial" :about]
-                 [nav-link "#/formulas" "Formulas" :formulas]
-                 ]]]))
+    [:nav.navbar.is-info
+     {:class "navbar is-info is-fixed-top"}
+     [:div.container
+      [:div.navbar-brand
+       [:a.navbar-item {:href "/" :style {:font-weight :bold}} "λogos"]
+       [:span.navbar-burger.burger
+        {:data-target :nav-menu
+         :on-click #(swap! expanded? not)
+         :class (when @expanded? :is-active)}
+        [:span][:span][:span]]]
+      [:div#nav-menu.navbar-menu
+       {:class (when @expanded? :is-active)}
+       [:div.navbar-start
+        [nav-link "#/tutorial" "Tutorial" :about]
+        [nav-link "#/formulas" "Formulas" :formulas]
+        ]]]]))
 
 (defn toggle-check-box
   [id]
@@ -388,6 +390,7 @@
 (defn page []
   (when-let [page @(rf/subscribe [:common/page])]
     [:div
+     {:class "has-navbar-fixed-top"}
      [navbar]
      [:div.section
       [page]]]))
