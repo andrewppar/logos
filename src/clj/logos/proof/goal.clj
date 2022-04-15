@@ -149,7 +149,9 @@
     (if (formula/existential? current-goal)
       (let [open-formula (formula/quantified-subformula current-goal)
             vars         (formula/bound-variables current-goal)
-            constant-map (zipmap vars constants)
+            constant-map (->> constants
+                              (map formula/read-formula)
+                              (zipmap vars))
             new-goal     (formula/substitute-free-variables
                           open-formula constant-map)]
         (when (seq (formula/free-variables new-goal))

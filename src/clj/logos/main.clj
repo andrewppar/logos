@@ -161,7 +161,10 @@
     (one-step proof #'goal/assert :args formula)))
 
 (defn execute-existential-proof [proof substituent-string]
-  (let [substituents (read-string (format "[%s]" substituent-string))]
+  (let [substituents (->> substituent-string
+                          (format "[%s]")
+                          edn/read-string
+                          (map str))]
     (one-step
      proof #'goal/existential-proof :args substituents)))
 
