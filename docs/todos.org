@@ -28,7 +28,8 @@ CLOSED: [2022-03-28 Mon 23:56]
 :ID:       24F7DEFA-436F-47BB-A6E4-478B14077952
 :END:
 * Version 1                                                              :v1:
-** TODO Add a way (probably this can just live in the UI) to track the steps done for each proof
+** DONE Add a way (probably this can just live in the UI) to track the steps done for each proof
+CLOSED: [2022-04-18 Mon 19:29]
 ** TODO Add a custom function to parse formulas to s-expressions, read-string is dangerous
 :PROPERTIES:
 :ID:       F114BD39-B6D9-4E7E-9AA7-3513D0637583
