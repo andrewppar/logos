@@ -1,7 +1,6 @@
 (ns logos.subs
   (:require [re-frame.core :as rf]
-            [reagent.ratom :as r :refer-macros [reaction]]
-            ))
+            [reagent.ratom :as r :refer-macros [reaction]]))
 
 (rf/reg-sub
  ::name
@@ -53,3 +52,13 @@
  ::formatted-formula
  (fn [db _]
    (r/reaction (:formatted-formula @db))))
+
+(rf/reg-sub
+ ::theorems
+ (fn [db _]
+   (get db :theorems)))
+
+(rf/reg-sub
+ ::justification
+ (fn [db _]
+   (get db :proof-commands)))
