@@ -341,11 +341,11 @@
                            (conjunction? current-item)
                            (->> current-item
                                 conjuncts
-                                (apply concat todos))
+                                (concat todos))
                            (disjunction? current-item)
                            (->> current-item
                                 disjuncts
-                                (apply concat todos))
+                                (concat todos))
                            (implication? current-item)
                            (-> todos
                                (clojure.core/conj (antecedent current-item))

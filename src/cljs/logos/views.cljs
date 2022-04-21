@@ -128,13 +128,15 @@
                 :done   "button is-success")
         text  (case clear-type
                 :clear "Clear Proof"
-                :done  "Next Proof")]
+                :done  "Next Proof")
+        justification (rf/subscribe [::subs/justification])]
     [:button
      {:class style
       :on-click
       (fn []
         (when (= clear-type :done)
-          (rf/dispatch [::events/store-theorem @theorem-name @formula]))
+          (rf/dispatch [::events/store-theorem
+                        @theorem-name @formula @justification]))
         (reset! theorem-name "")
         (reset! formula "")
         (clear-all-checkboxes)
@@ -178,10 +180,6 @@
                :on-click #(start-proof @theorem-name @formula)}
       "Start Proof"]
      [clear-proof-button :clear]]]])
-
-;;;;;;;;;;
-;;; TODO:
-;;  Add Theorems Section
 
 (defn modal-card
   [id title body footer]
@@ -363,17 +361,45 @@
         ]]]
      [clear-proof-button clear-type]]))
 
+(defn theorems-section
+  [theorems]
+  (r/with-let [theorems-hidden? (r/atom true)]
+    [:section.section
+     [:span {:class "arrow"
+             :on-click #(swap! theorems-hidden? not)}
+      [:font {:size "+2"} "Theorems "]
+      [:font {:color "#209CEE"} (if @theorems-hidden? "show" "hide")]]
+     (let [start [:table
+                  {:class (str "table" " " (when @theorems-hidden?
+                                             "is-hidden"))}
+                  [:tr
+                   [:td "Theorem Name"] [:td "Formula"] [:td "Justification"]]]
+           names (keys theorems)]
+       (loop [name (first names)
+              todo (rest names)
+              result start]
+         (let [formula       (first  (get theorems name))
+               justification (second (get theorems name))
+               row [:tr [:td name] [:td [:div
+                                         {:style {:white-space "pre"}}
+                                         formula]] [:td justification]]
+               updated-result (conj result row)]
+           (if (seq todo)
+             (recur (first todo) (rest todo) updated-result)
+             updated-result))))
+     ]))
+
 (defn proof-section
   []
   (let [proof-formulas (rf/subscribe [::subs/proof-formulas])
         proof-string   (rf/subscribe [::subs/proof-string])
-        proof          (rf/subscribe [::subs/proof])]
-    [:div
-     [:br]
-     [:div
-    (if (nil? @proof-formulas)
-      [start-proof-section]
-      [next-command-section @proof-formulas @proof-string @proof])]]))
+        proof          (rf/subscribe [::subs/proof])
+        theorems       (rf/subscribe [::subs/theorems])]
+    [:section.section
+     (if (nil? @proof-formulas)
+       [start-proof-section]
+       [next-command-section @proof-formulas @proof-string @proof])
+     [theorems-section @theorems]]))
 
 (defn tutorial-page
   []

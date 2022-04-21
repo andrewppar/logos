@@ -3,6 +3,10 @@
 #+author: Andrew Parisi
 
 * Bugs                                                                 :bugs:
+** TODO Theorem names with spaces break things
+:PROPERTIES:
+:ID:       98EDDD2D-56B3-4280-A00F-94C42A56B3C0
+:END:
 ** TODO make the host for events.clj to use into an environment variable
 :PROPERTIES:
 :ID:       90C8E427-95D6-43BB-9559-3FA6424E089C
@@ -28,6 +32,14 @@ CLOSED: [2022-03-28 Mon 23:56]
 :ID:       24F7DEFA-436F-47BB-A6E4-478B14077952
 :END:
 * Version 1                                                              :v1:
+** TODO Add a format button to the theorem input textarea
+:PROPERTIES:
+:ID:       3A6163AC-CEDF-4E5E-A6CD-DCE5FF1424F9
+:END:
+** TODO Add logging to track who has visited the site
+:PROPERTIES:
+:ID:       D959DCB7-B4B4-4C17-82C3-7BCA4A3C2E0F
+:END:
 ** DONE Add a way (probably this can just live in the UI) to track the steps done for each proof
 CLOSED: [2022-04-18 Mon 19:29]
 ** TODO Add a custom function to parse formulas to s-expressions, read-string is dangerous
@@ -74,7 +86,8 @@ CLOSED: [2022-04-15 Fri 07:19]
 :PROPERTIES:
 :ID:       5012FF0F-92F4-4989-91F9-E7D53DA8B788
 :END:
-** TODO Add a theorems pane to the UI
+** DONE Add a theorems pane to the UI
+CLOSED: [2022-04-21 Thu 07:04]
 :PROPERTIES:
 :ID:       0DBDB8EE-7742-4237-B9DA-D52E7F9E042D
 :END:

@@ -2,8 +2,7 @@
   (:require
    [ajax.core     :as ajax]
    [day8.re-frame.http-fx]
-   [goog.string   :as gstring]
-   [logos.db      :as db]
+   [goog.string   :as gstring] [logos.db      :as db]
    [re-frame.core :as rf]
    [reitit.frontend.easy :as rfe]
    [reitit.frontend.controllers :as rfc]
@@ -170,11 +169,11 @@
 
 (rf/reg-event-db
  ::store-theorem
- (fn [db [_ name formula]]
+ (fn [db [_ name formula justification]]
    (update db
            :theorems
            (fn [theorem-map]
-             (assoc theorem-map name formula)))))
+             (assoc theorem-map name [formula justification])))))
 
 (rf/reg-event-db
  :set-proof-section
