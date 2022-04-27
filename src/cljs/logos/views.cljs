@@ -148,14 +148,15 @@
 
 (defn format-formula
   [old-formula]
-    (go 
-      (let [encoded-formula (gstring/urlEncode old-formula "UTF-8")
-            base-url        "http://10.0.0.130:4000/format?formula="
-            result (:body (<! (http/post (str base-url encoded-formula))))]
-        (reset! formula (string/replace (->> 1
-                                             (- (count result))
-                                             (subs result 1))
-                                        #"\\n" "\r\n")))))
+  (go 
+    (let [encoded-formula (gstring/urlEncode old-formula "UTF-8")
+          base-url        "http://10.0.0.130:4000/format?formula="
+          result (:body (<! (http/post (str base-url encoded-formula))))]
+      (if (= "" result)
+        (rf/dispatch [::events/set-error "Cannot format a non well-formed formula"])
+        (reset! formula (-> result
+                            (subs 1 (- (count result) 1))
+                            (string/replace #"\\n" "\r\n")))))))
 
 (defn start-proof-section
   []
@@ -198,17 +199,24 @@
      [clear-proof-button :clear]]]])
 
 (defn modal-card
-  [id title body footer]
+  ;;todo make button a function to be passed in
+  [id title body footer button?]
   [:div.modal
    {:class (when @(rf/subscribe [::subs/modal-showing? id])
              "is-active")}
    [:div.modal-background
-    {:on-click #(rf/dispatch [::events/hide-modal id])}]
+    {:on-click #(do
+                  (rf/dispatch [::events/hide-modal id])
+                  (when-not button?
+                    (rf/dispatch [::events/clear-error])))}]
    [:div.modal-card
     [:header.modal-card-head
      [:p.modal-card-title title]
      [:button.delete
-      {:on-click #(rf/dispatch [::events/hide-modal id])}]]
+      {:on-click #(do
+                  (rf/dispatch [::events/hide-modal id])
+                  (when-not button?
+                    (rf/dispatch [::events/clear-error])))}]]
     [:section.modal-card-body body]
     [:footer.modal-card-foot footer]]])
 
@@ -223,10 +231,8 @@
                class-attr
                (assoc class-attr :data-tooltip tooltip))]
   [:div
-   [:button
-    attr
-    title]
-   [modal-card id title body footer]]))
+   [:button attr title]
+   [modal-card id title body footer true]]))
 
 (defn proof-step-input-button
   [label id command input-atom with-premises? with-vars? proof-formulas proof-string tooltip]
@@ -430,12 +436,17 @@
      [:div {:dangerouslySetInnerHTML {:__html (md/md->html formulas)}}])])
 
 (defn page []
-  (when-let [page @(rf/subscribe [:common/page])]
-    [:div
-     {:class "has-navbar-fixed-top"}
-     [navbar]
-     [:div.section
-      [page]]]))
+  (let [error (rf/subscribe [::subs/error])]
+    (when @error
+      (rf/dispatch [::events/show-modal "error"]))
+    (when-let [page @(rf/subscribe [:common/page])]
+      [:div
+       {:class "has-navbar-fixed-top"}
+       [navbar]
+       [:div.section
+        [page]]
+       [modal-card "error" "Error"
+        [:div (str @error) false]]])))
 
 (defn navigate! [match _]
   (rf/dispatch [:common/navigate match]))

@@ -121,6 +121,11 @@
    (assoc db :error error)))
 
 (rf/reg-event-db
+ ::clear-error
+ (fn [db _]
+   (dissoc db :error)))
+
+(rf/reg-event-db
  ::toggle-check-box
  (fn [db [_ id]]
    (let [checked-boxes (get db :checked-boxes)]
