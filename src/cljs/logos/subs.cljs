@@ -51,7 +51,7 @@
 (rf/register-sub
  ::formatted-formula
  (fn [db _]
-   (r/reaction (:formatted-formula @db))))
+   (get db :formatted-formula)))
 
 (rf/reg-sub
  ::theorems

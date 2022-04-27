@@ -32,7 +32,8 @@ CLOSED: [2022-03-28 Mon 23:56]
 :ID:       24F7DEFA-436F-47BB-A6E4-478B14077952
 :END:
 * Version 1                                                              :v1:
-** TODO Add a format button to the theorem input textarea
+** DONE Add a format button to the theorem input textarea
+CLOSED: [2022-04-26 Tue 22:36]
 :PROPERTIES:
 :ID:       3A6163AC-CEDF-4E5E-A6CD-DCE5FF1424F9
 :END:

@@ -9,6 +9,7 @@
  :dependencies
  [[bidi                  "2.1.5"]
   [bulma-cljs            "0.1.4"]
+  [cljs-http             "0.1.46"]
   [cljs-ajax             "0.7.5"]
   [day8.re-frame/http-fx "0.2.4"]
   [kibu/pushy            "0.3.8"]

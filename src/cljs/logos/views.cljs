@@ -1,12 +1,15 @@
 (ns logos.views
   (:require
    [clojure.string       :as string]
+   [cljs-http.client     :as http]
+   [cljs.core.async      :refer [<!]]
+   [goog.string          :as gstring]
    [logos.events         :as events]
    [logos.subs           :as subs]
    [markdown.core        :as md]
    [reagent.core         :as r]
-
-   [re-frame.core        :as rf]))
+   [re-frame.core        :as rf])
+  (:require-macros [cljs.core.async.macros :refer [go]]))
 
 (defn nav-link [uri title page]
   [:a.navbar-item
@@ -143,6 +146,17 @@
         (rf/dispatch [::events/clear-proof]))}
      text]))
 
+(defn format-formula
+  [old-formula]
+    (go 
+      (let [encoded-formula (gstring/urlEncode old-formula "UTF-8")
+            base-url        "http://10.0.0.130:4000/format?formula="
+            result (:body (<! (http/post (str base-url encoded-formula))))]
+        (reset! formula (string/replace (->> 1
+                                             (- (count result))
+                                             (subs result 1))
+                                        #"\\n" "\r\n")))))
+
 (defn start-proof-section
   []
   [:section.section
@@ -152,7 +166,6 @@
      "Name your theorem and enter a formula to prove, e.g. \"(implies p p)\" or \"(not (and p (not p)))\""}
     [:table.table
      [:th]
-
      [:th]
      [:tr
       [:td
@@ -179,6 +192,9 @@
      [:button {:class "button is-info"
                :on-click #(start-proof @theorem-name @formula)}
       "Start Proof"]
+     [:button {:class "button is-info"
+               :on-click (fn [] (format-formula @formula))}
+      "Format Formula"]
      [clear-proof-button :clear]]]])
 
 (defn modal-card
