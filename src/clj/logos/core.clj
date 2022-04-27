@@ -77,7 +77,7 @@
   (let [formula (-> req (get :query-params) (get "formula"))
         result  (binding [pp/*print-pretty* true
                           pp/*print-miser-width* nil
-                          pp/*print-right-margin* 50]
+                          pp/*print-right-margin* 60]
                   (with-out-str
                     (pp/pprint (read-string formula))))]
     result))
@@ -85,7 +85,12 @@
 (defn format-formula
   [req]
   {:status 200
-   :headers {"Content-Type"  "text/json"}
+   :headers {"Content-Type"  "text/json"
+             "Access-Control-Allow-Credentials" "true"
+             "Access-Control-Allow-Origin" "*"
+             "Access-Control-Allow-Headers" "x-requested-with"
+             "Access-Control-Allow-Methods" "*"
+             }
    :body (json/write-str (format-formula-internal req))})
 
 (defn formulas-internal

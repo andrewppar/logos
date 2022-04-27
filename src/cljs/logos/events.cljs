@@ -2,7 +2,8 @@
   (:require
    [ajax.core     :as ajax]
    [day8.re-frame.http-fx]
-   [goog.string   :as gstring] [logos.db      :as db]
+   [goog.string   :as gstring]
+   [logos.db      :as db]
    [re-frame.core :as rf]
    [reitit.frontend.easy :as rfe]
    [reitit.frontend.controllers :as rfc]
@@ -120,6 +121,11 @@
    (assoc db :error error)))
 
 (rf/reg-event-db
+ ::clear-error
+ (fn [db _]
+   (dissoc db :error)))
+
+(rf/reg-event-db
  ::toggle-check-box
  (fn [db [_ id]]
    (let [checked-boxes (get db :checked-boxes)]
@@ -147,11 +153,6 @@
 
 
 (rf/reg-event-fx
- ::format-formula
- (fn [_ [_ formula]]
-   {:dispatch [::format-formula-internal formula]}))
-
-(rf/reg-event-fx
  ::format-formula-internal
  (fn [_ [_ formula]]
    {:http-xhrio {:uri (str "http://10.0.0.130:4000/format?formula="
@@ -161,6 +162,11 @@
                  :response-format (ajax/json-response-format {:keywords? true})
                  :on-success [::add-format-formula]
                  :on-failure [::set-error]}}))
+
+(rf/reg-event-fx
+ ::format-formula
+ (fn [_ [_ formula]]
+   {:dispatch [::format-formula-internal formula]}))
 
 (rf/reg-event-db
  ::add-format-formula
