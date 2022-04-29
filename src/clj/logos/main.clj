@@ -22,7 +22,7 @@
               pp/*print-miser-width* nil
               pp/*print-right-margin* 60]
       (with-out-str
-        (pp/pprint (read-string formula))))))
+        (pp/pprint (f/read-formula-string formula))))))
 
 (defn serialize-proof-formulas
   [proof]
@@ -108,7 +108,7 @@
   exception of the case of existential proof. In that case
   it is a list of substituents."
   [raw-proof function & {:keys [args]}]
-  (let [proof (read-string (decode raw-proof))
+  (let [proof (edn/read-string (decode raw-proof))
         new-proof (if (nil? args)
                     (function proof)
                     (function proof args))]

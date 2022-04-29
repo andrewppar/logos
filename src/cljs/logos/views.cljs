@@ -273,7 +273,7 @@
             (clear-all-checkboxes)
             (reset! input-atom "")
             (next-proof command proof)))}
-       "Submit Command"]
+       "Submit"]
       ]]))
 
 (def ep-atom (r/atom ""))
@@ -387,10 +387,11 @@
   [theorems]
   (r/with-let [theorems-hidden? (r/atom true)]
     [:section.section
-     [:span {:class "arrow"
-             :on-click #(swap! theorems-hidden? not)}
+     [:span {:class "arrow"}
       [:font {:size "+2"} "Theorems "]
-      [:font {:color "#209CEE"} (if @theorems-hidden? "show" "hide")]]
+      [:button {:class "button is-info is-inverted is-small"
+                :on-click #(swap! theorems-hidden? not)}
+       (if @theorems-hidden? "show" "hide")]]
      (let [start [:table
                   {:class (str "table" " " (when @theorems-hidden?
                                              "is-hidden"))}

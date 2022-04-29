@@ -1,6 +1,5 @@
 (ns logos.formula
-  (:require
-            [clojure.set :as s]
+  (:require [clojure.set :as s]
             [clojure.string :as string]))
 
 (defmacro defs [& bindings]
@@ -665,16 +664,20 @@
 
 (defn read-quantified-formula
   [operator args]
-    (let [vars        (into [] (butlast args))
-          subformula  (read-formula-sexp (last args))]
-      (if (every? variable? vars)
-        (cond (= operator 'forall)
-              (forall vars subformula)
-              (= operator 'exists)
-              (exists vars subformula)
-              (= operator 'lambda)
-              (lambda vars subformula))
-        (read-formula-error (list operator args)))))
+  (let [raw-vars    (butlast args)
+        vars        (if (and (= (count raw-vars) 1)
+                             (coll? (first raw-vars)))
+                      (first raw-vars)
+                      (into [] (butlast args)))
+        subformula  (read-formula-sexp (last args))]
+    (if (every? variable? vars)
+      (cond (= operator 'forall)
+            (forall vars subformula)
+            (= operator 'exists)
+            (exists vars subformula)
+            (= operator 'lambda)
+            (lambda vars subformula))
+      (read-formula-error (list operator args)))))
 
 (defn read-formula-sexp
   [s-expression]
@@ -719,11 +722,106 @@
         :else
         (str s-expression)))
 
+(defn open-paren? [char]
+  (or (= char \()
+      (= char \[)))
+
+(defn close-paren? [char]
+  (or (= char \))
+      (= char \])))
+
+(defn get-matching-paren-idx
+  [string idx]
+  (let [substring (subs string idx)]
+    (when (open-paren? (first substring))
+      (loop [current-idx  (inc idx)
+             depth        0
+             todo         (rest (rest substring))
+             current-char (first (rest substring))]
+        (cond
+          (not (seq todo))
+          (when (and (= depth 0)
+                     (close-paren? current-char))
+            (inc current-idx))
+          (open-paren? current-char)
+          (recur (inc current-idx) (inc depth) (rest todo) (first todo))
+          (and (= depth 0)
+               (close-paren? current-char))
+          (inc current-idx)
+          (close-paren? current-char)
+          (recur (inc current-idx) (dec depth) (rest todo) (first todo))
+          :else
+          (recur (inc current-idx) depth (rest todo) (first todo)))))))
+
+(defn whitespace-char? [ch]
+  (->> [\newline \space \tab \formfeed \backspace \return]
+       (some #{ch})
+       boolean))
+
+(defn chunk-string [string]
+  (loop [char         (first string)
+         todo         (rest string)
+         current-item nil
+         result       []]
+    (if (not (seq todo))
+      (cond (whitespace-char? char)
+            (clojure.core/conj result (apply str current-item))
+            (nil? char)
+            result
+            :else
+            (->> (cons char current-item)
+                 reverse
+                 (apply str)
+                 (clojure.core/conj result)))
+      (cond (whitespace-char? char)
+            (if (nil? current-item)
+              (recur (first todo) (rest todo) current-item result)
+              (let [new-item (string/reverse (apply str current-item))
+                    new-result (clojure.core/conj result new-item)]
+                (recur (first todo) (rest todo) nil new-result)))
+            (open-paren? char)
+            (let [current-string  (apply str (cons \( todo))
+                  close-paren-idx (get-matching-paren-idx
+                                   current-string 0)
+                  next-item       (subs
+                                   current-string 0 close-paren-idx)
+                  new-result      (if (nil? current-item)
+                                    (clojure.core/conj result next-item)
+                                    (-> result
+                                        (clojure.core/conj current-item)
+                                        (clojure.core/conj next-item)))
+                  new-string      (subs current-string close-paren-idx)]
+              (recur (first new-string) (rest new-string) nil new-result))
+            :else
+            (let [new-item (cons char current-item)]
+              (recur (first todo) (rest todo) new-item result))))))
+
+(defn read-formula-string
+  "Recursively convert a `string` into an s-expression."
+  [raw-string]
+  (let [string (string/trim raw-string)]
+    (if (open-paren? (first string))
+      (let [matched-paren-idx (get-matching-paren-idx string 0)
+            substring         (subs string 1 (dec matched-paren-idx))]
+        (->> substring
+             chunk-string
+             (mapv read-formula-string)
+             (into ())
+             reverse))
+      (let [first-string (first (string/split string #"\s+"))]
+        (cond (string/starts-with? first-string ":")
+              (keyword (subs first-string 1))
+              (and (string/starts-with? first-string "\"")
+                   (string/ends-with? first-string "\""))
+              (subs first-string 1 (dec (count first-string)))
+              :else
+              (symbol first-string))))))
+
 (defn read-formula
   "Convert a string to a formula
   object"
   [string]
-  (let [to-parse (read-string string)]
+  (let [to-parse (read-formula-string string)]
     (if (formula? to-parse)
       to-parse
       (read-formula-sexp to-parse))))
