@@ -1,9 +1,11 @@
 (ns logos.core
   (:require [org.httpkit.server       :as server]
+            [clojure.edn              :as edn]
             [clojure.data.json        :as json]
             [clojure.pprint           :as pp]
             [compojure.core           :as compojure]
             [compojure.route          :as route]
+            [logos.formula            :as f]
             [logos.main               :as main]
             [ring.middleware.cors     :as cors]
             [ring.middleware.defaults :as middleware]
@@ -21,7 +23,7 @@
                   slurp
                   json/read-str
                   second
-                  read-string
+                  edn/read-string
                   :body)                ; I have no idea why all this
                                         ; is necessary
         command (get body :command)
@@ -33,7 +35,7 @@
          :body body})
       (catch Exception e
         {:status 400
-         :heades {"Content-Type" "text/json"}
+         :headers {"Content-Type" "text/json"}
          :body (ex-data e)}))))
 
 (defn ^:private start-proof-internal
@@ -79,7 +81,7 @@
                           pp/*print-miser-width* nil
                           pp/*print-right-margin* 60]
                   (with-out-str
-                    (pp/pprint (read-string formula))))]
+                    (pp/pprint (f/read-formula-string formula))))]
     result))
 
 (defn format-formula

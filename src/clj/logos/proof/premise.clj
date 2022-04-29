@@ -70,10 +70,10 @@
   (ensure-premises-relevant proof premise-numbers)
   (let [premise-index (get proof ::proof/premises)
         premise-one   (-> premise-index
-                          (get (read-string (first premise-numbers)))
+                          (get (Integer/parseInt (first premise-numbers)))
                           (get ::proof/formula))
         premise-two   (-> premise-index
-                          (get (read-string (second premise-numbers)))
+                          (get (Integer/parseInt (second premise-numbers)))
                           (get ::proof/formula))]
     (cond (and (formula/implication? premise-one)
                (= (formula/antecedent premise-one) premise-two))
@@ -108,7 +108,7 @@
   (ensure-premises-relevant proof premise-numbers)
   (let [premise-index (get proof ::proof/premises)
         formula       (-> premise-index
-                          (get (read-string (first premise-numbers)))
+                          (get (Integer/parseInt (first premise-numbers)))
                           (get ::proof/formula))]
     (if (formula/conjunction? formula)
       (let [conjuncts (formula/conjuncts formula)
@@ -140,7 +140,7 @@
                           (get ::proof/goal))
         target-premise      (->> premise-numbers
                                  first
-                                 read-string
+                                 Integer/parseInt 
                                  (get premise-index)
                                  ::proof/formula)]
     (if (formula/disjunction? target-premise)
@@ -178,8 +178,8 @@
         problem-index     (get proof ::proof/problems)
         problem           (get problem-index current-prblm-idx)
         premise-index     (get proof ::proof/premises)
-        premise-one-idx   (read-string (first premise-numbers))
-        premise-two-idx   (read-string (second premise-numbers))
+        premise-one-idx   (Integer/parseInt (first premise-numbers))
+        premise-two-idx   (Integer/parseInt (second premise-numbers))
         premise-one       (-> premise-index
                               (get premise-one-idx)
                               (get ::proof/formula))
@@ -218,7 +218,7 @@
   (ensure-premises-relevant proof [(first args)])
   (let [premise-index (get proof ::proof/premises)
         formula       (-> premise-index
-                          (get (read-string (first args)))
+                          (get (Integer/parseInt (first args)))
                           (get ::proof/formula))
         new-constants (map formula/read-formula (rest args))]
     (if (formula/universal? formula)
@@ -254,7 +254,7 @@
   (let [premises (get proof ::proof/premises)
         premise  (->> premise-numbers
                       first
-                      read-string
+                      Integer/parseInt
                       (get premises))
         formula  (get premise ::proof/formula)]
     (if (formula/existential? formula)

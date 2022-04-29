@@ -114,3 +114,14 @@
     "[:forall [?x] [\"!P\" ?x]]" '[:forall [?x]
                                    ["!P" ?x]]
     ))
+
+(deftest get-matching-paren-idx
+  (are [string idx result]
+      (= (formula/get-matching-paren-idx string idx) result)
+    "(a b c d e f (g ) (h (i (j))) l m) a b d c e" 0 34
+    ")" 0 nil
+    "(a b c" 0 nil
+    "a b c (1 2 3)" 0 nil
+    "a b c (1 2 3)" 6 13
+    "a b c (1 2 3) a b c" 6 13
+    "a b c (1 2 3) a b c" 7 nil))
