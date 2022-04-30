@@ -36,7 +36,7 @@
       (catch Exception e
         {:status 400
          :headers {"Content-Type" "text/json"}
-         :body (ex-data e)}))))
+         :body (json/write-str (ex-data e))}))))
 
 (defn ^:private start-proof-internal
   [req]

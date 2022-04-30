@@ -19,3 +19,4 @@ Capstanfile
 /.clj-kondo
 /.shadow-cljs
 /public/js
+.envrc

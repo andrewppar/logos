@@ -21,11 +21,12 @@
             ::proof/problems new-problem-index))))
 
 (defmacro ^:private ensure-premise-count
-  [premise-vector number]
+  [rule-name premise-vector number]
   `(when (not (= (count ~premise-vector) ~number))
      (throw (ex-info
              "Incorrect number of premises passed to rule"
-             {:caused-by ~premise-vector}))))
+             {:caused-by (format "%s requires %s premises but given %s"
+                                 ~rule-name ~number (count ~premise-vector))}))))
 
 (defn ^:private ensure-premises-relevant
   [proof premise-numbers]
@@ -66,7 +67,7 @@
 
 (defn conditional-elimination
   [proof premise-numbers]
-  (ensure-premise-count premise-numbers 2)
+  (ensure-premise-count "Conditional elimination" premise-numbers 2)
   (ensure-premises-relevant proof premise-numbers)
   (let [premise-index (get proof ::proof/premises)
         premise-one   (-> premise-index
@@ -104,7 +105,7 @@
 
 (defn conjunction-elimination
   [proof premise-numbers]
-  (ensure-premise-count premise-numbers 1)
+  (ensure-premise-count "Conjunction elimination" premise-numbers 1)
   (ensure-premises-relevant proof premise-numbers)
   (let [premise-index (get proof ::proof/premises)
         formula       (-> premise-index
@@ -130,7 +131,7 @@
 
 (defn disjunction-elimination
   [proof premise-numbers]
-  (ensure-premise-count premise-numbers 1)
+  (ensure-premise-count "Disjunction elimination" premise-numbers 1)
   (ensure-premises-relevant proof premise-numbers)
   (let [problem-index (get proof ::proof/problems)
         premise-index (get proof ::proof/premises)
@@ -172,7 +173,7 @@
 
 (defn bottom-introduction
   [proof premise-numbers]
-  (ensure-premise-count premise-numbers 2)
+  (ensure-premise-count "Bottom introduction" premise-numbers 2)
   (ensure-premises-relevant proof premise-numbers)
   (let [current-prblm-idx (get proof ::proof/current-problem)
         problem-index     (get proof ::proof/problems)
@@ -249,7 +250,7 @@
 
 (defn existential-elimination
   [proof premise-numbers]
-  (ensure-premise-count premise-numbers 1)
+  (ensure-premise-count "Existential elimination" premise-numbers 1)
   (ensure-premises-relevant proof premise-numbers)
   (let [premises (get proof ::proof/premises)
         premise  (->> premise-numbers

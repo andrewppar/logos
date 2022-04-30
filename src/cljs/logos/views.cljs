@@ -97,8 +97,8 @@
 
 (defn next-proof
   [command proof]
-  (rf/dispatch [::events/store-command command])
-  (rf/dispatch [::events/next-command command proof]))
+  (rf/dispatch [::events/next-command command proof])
+  (rf/dispatch [::events/store-command command]))
 
 (defn clear-all-checkboxes
   []
@@ -150,10 +150,14 @@
   [old-formula]
   (go 
     (let [encoded-formula (gstring/urlEncode old-formula "UTF-8")
-          base-url        "http://10.0.0.130:4000/format?formula="
-          result (:body (<! (http/post (str base-url encoded-formula))))]
+          base-url        (str "http://"
+                               events/HOSTNAME
+                               ":4000/format?formula=")
+          result (:body (<! (http/post
+                             (str base-url encoded-formula))))]
       (if (= "" result)
-        (rf/dispatch [::events/set-error "Cannot format a non well-formed formula"])
+        (rf/dispatch [::events/set-error
+                      "Cannot format a non well-formed formula"])
         (reset! formula (-> result
                             (subs 1 (- (count result) 1))
                             (string/replace #"\\n" "\r\n")))))))
@@ -439,6 +443,7 @@
 (defn page []
   (let [error (rf/subscribe [::subs/error])]
     (when @error
+      (rf/dispatch [::events/clear-last-proof-command])
       (rf/dispatch [::events/show-modal "error"]))
     (when-let [page @(rf/subscribe [:common/page])]
       [:div
