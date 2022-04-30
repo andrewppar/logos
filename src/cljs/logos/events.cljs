@@ -1,14 +1,16 @@
 (ns logos.events
   (:require
-   [ajax.core     :as ajax]
+   [ajax.core                   :as ajax]
+   [clojure.string              :as string]
    [day8.re-frame.http-fx]
-   [goog.string   :as gstring]
-   [logos.db      :as db]
-   [re-frame.core :as rf]
-   [reitit.frontend.easy :as rfe]
-   [reitit.frontend.controllers :as rfc]
-   ))
+   [goog.string                 :as gstring]
+   [logos.db                    :as db]
+   [re-frame.core               :as rf]
+   [reitit.frontend.easy        :as rfe]
+   [reitit.frontend.controllers :as rfc])
+  (:require-macros [adzerk.env  :as env]))
 
+(env/def HOSTNAME "127.0.0.1")
 
 ;; dispatchers
 (rf/reg-event-db
@@ -47,7 +49,8 @@
                              (str theorem-name " " formula)
                              (gstring/urlEncode "UTF-8"))]
      {:http-xhrio {:uri (str
-                         "http://10.0.0.130:4000/start-proof?theorem="
+                         "http://" HOSTNAME
+                         ":4000/start-proof?theorem="
                          encoded-command)
                    :method :get
                    :format (ajax/transit-request-format)
@@ -60,7 +63,7 @@
  ::fetch-next-command
  (fn [_ [_ command proof]]
    (let [params (str {:body {:command command :proof proof}})]
-     {:http-xhrio {:uri "http://10.0.0.130:4000/one-step"
+     {:http-xhrio {:uri (str "http://" HOSTNAME ":4000/one-step")
                    :method :post
                    :params params
                    :format (ajax/transit-request-format)
@@ -95,6 +98,21 @@
            :proof-commands
            (fn [previous] (str previous command ". ")))))
 
+(rf/reg-event-db
+ ::clear-last-proof-command
+ (fn [db _]
+   (update db
+           :proof-commands
+           (fn [previous]
+             (let [commands  (string/split previous #"\.")]
+               (str 
+                (->> commands
+                     reverse
+                     (drop 2)
+                     reverse
+                     (string/join "."))
+                ". "))))))
+
 (rf/reg-event-fx
  ::store-command
  (fn [_ [_ command]]
@@ -118,7 +136,7 @@
 (rf/reg-event-db
  ::set-error
  (fn [db [_ error]]
-   (assoc db :error error)))
+   (assoc db :error (get-in error [:response :caused-by]))))
 
 (rf/reg-event-db
  ::clear-error
@@ -155,7 +173,7 @@
 (rf/reg-event-fx
  ::format-formula-internal
  (fn [_ [_ formula]]
-   {:http-xhrio {:uri (str "http://10.0.0.130:4000/format?formula="
+   {:http-xhrio {:uri (str "http://" HOSTNAME ":4000/format?formula="
                            (gstring/urlEncode formula "UTF-8"))
                  :method :post
                  :format (ajax/transit-request-format)
@@ -195,7 +213,7 @@
  :fetch-proof-section
  (fn [_ _]
    {:http-xhrio {:method :get
-                 :uri    "http://10.0.0.130:4000/health-check"
+                 :uri    (str "http://" HOSTNAME ":4000/health-check")
                  :response-format
                  (ajax/raw-response-format)
                  :on-success [:set-proof-section]}}))
@@ -203,7 +221,7 @@
 (rf/reg-event-fx
  ::tutorial-internal
  (fn [_ _]
-   {:http-xhrio {:uri "http://10.0.0.130:4000/tutorial"
+   {:http-xhrio {:uri (str "http://" HOSTNAME ":4000/tutorial")
                  :method :get
                  :format (ajax/transit-request-format)
                  :response-format (ajax/json-response-format
@@ -229,7 +247,7 @@
 (rf/reg-event-fx
  ::formulas-internal
  (fn [_ _]
-   {:http-xhrio {:uri "http://10.0.0.130:4000/formulas"
+   {:http-xhrio {:uri (str "http://" HOSTNAME ":4000/formulas")
                  :method :get
                  :format (ajax/transit-request-format)
                  :response-format (ajax/json-response-format

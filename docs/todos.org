@@ -7,7 +7,8 @@
 :PROPERTIES:
 :ID:       98EDDD2D-56B3-4280-A00F-94C42A56B3C0
 :END:
-** TODO make the host for events.clj to use into an environment variable
+** DONE make the host for events.clj to use into an environment variable
+CLOSED: [2022-04-30 Sat 16:35]
 :PROPERTIES:
 :ID:       90C8E427-95D6-43BB-9559-3FA6424E089C
 :END:
@@ -37,7 +38,8 @@ CLOSED: [2022-04-29 Fri 00:57]
 :PROPERTIES:
 :ID:       F114BD39-B6D9-4E7E-9AA7-3513D0637583
 :END:
-** TODO Check for wrong number of premises when doing premise operation. This has to be done in main.clj too so we can properly read the arguments to be substituted.
+** DONE Check for wrong number of premises when doing premise operation. This has to be done in main.clj too so we can properly read the arguments to be substituted.
+CLOSED: [2022-04-30 Sat 16:35]
 :PROPERTIES:
 :ID:       DB61BAE3-60D9-46AA-8AC8-33540BE98631
 :END:
