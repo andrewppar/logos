@@ -148,10 +148,10 @@
 
 (defn format-formula
   [old-formula]
-  (go 
+  (go
     (let [encoded-formula (gstring/urlEncode old-formula "UTF-8")
           base-url        (str "http://"
-                               events/HOSTNAME
+                               events/LOGOS_SERVER
                                ":4000/format?formula=")
           result (:body (<! (http/post
                              (str base-url encoded-formula))))]

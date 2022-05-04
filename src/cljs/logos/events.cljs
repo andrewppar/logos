@@ -10,7 +10,7 @@
    [reitit.frontend.controllers :as rfc])
   (:require-macros [adzerk.env  :as env]))
 
-(env/def HOSTNAME "127.0.0.1")
+(env/def LOGOS_SERVER "127.0.0.1")
 
 ;; dispatchers
 (rf/reg-event-db
@@ -18,7 +18,8 @@
   (fn [db [_ match]]
     (let [old-match (:common/route db)
           new-match (assoc match :controllers
-                                 (rfc/apply-controllers (:controllers old-match) match))]
+                           (rfc/apply-controllers
+                            (:controllers old-match) match))]
       (assoc db :common/route new-match))))
 
 (rf/reg-fx
@@ -49,7 +50,7 @@
                              (str theorem-name " " formula)
                              (gstring/urlEncode "UTF-8"))]
      {:http-xhrio {:uri (str
-                         "http://" HOSTNAME
+                         "http://" LOGOS_SERVER
                          ":4000/start-proof?theorem="
                          encoded-command)
                    :method :get
@@ -63,7 +64,7 @@
  ::fetch-next-command
  (fn [_ [_ command proof]]
    (let [params (str {:body {:command command :proof proof}})]
-     {:http-xhrio {:uri (str "http://" HOSTNAME ":4000/one-step")
+     {:http-xhrio {:uri (str "http://" LOGOS_SERVER ":4000/one-step")
                    :method :post
                    :params params
                    :format (ajax/transit-request-format)
@@ -105,7 +106,7 @@
            :proof-commands
            (fn [previous]
              (let [commands  (string/split previous #"\.")]
-               (str 
+               (str
                 (->> commands
                      reverse
                      (drop 2)
@@ -173,7 +174,7 @@
 (rf/reg-event-fx
  ::format-formula-internal
  (fn [_ [_ formula]]
-   {:http-xhrio {:uri (str "http://" HOSTNAME ":4000/format?formula="
+   {:http-xhrio {:uri (str "http://" LOGOS_SERVER ":4000/format?formula="
                            (gstring/urlEncode formula "UTF-8"))
                  :method :post
                  :format (ajax/transit-request-format)
@@ -213,7 +214,7 @@
  :fetch-proof-section
  (fn [_ _]
    {:http-xhrio {:method :get
-                 :uri    (str "http://" HOSTNAME ":4000/health-check")
+                 :uri    (str "http://" LOGOS_SERVER ":4000/health-check")
                  :response-format
                  (ajax/raw-response-format)
                  :on-success [:set-proof-section]}}))
@@ -221,7 +222,7 @@
 (rf/reg-event-fx
  ::tutorial-internal
  (fn [_ _]
-   {:http-xhrio {:uri (str "http://" HOSTNAME ":4000/tutorial")
+   {:http-xhrio {:uri (str "http://" LOGOS_SERVER ":4000/tutorial")
                  :method :get
                  :format (ajax/transit-request-format)
                  :response-format (ajax/json-response-format
@@ -247,7 +248,7 @@
 (rf/reg-event-fx
  ::formulas-internal
  (fn [_ _]
-   {:http-xhrio {:uri (str "http://" HOSTNAME ":4000/formulas")
+   {:http-xhrio {:uri (str "http://" LOGOS_SERVER ":4000/formulas")
                  :method :get
                  :format (ajax/transit-request-format)
                  :response-format (ajax/json-response-format
