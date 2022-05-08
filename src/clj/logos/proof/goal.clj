@@ -24,6 +24,13 @@
                                          (set/intersection (set premises))
                                          seq))
                                 true
+                                (and (formula/equality? current-goal)
+                                     (-> current-goal
+                                         formula/terms
+                                         set
+                                         count
+                                         (= 1)))
+                                true
                                 :else
                                 false)]
     (if proved?
@@ -187,9 +194,5 @@
         (assoc ::proof/current-problem new-idx
                ::proof/edges new-edges))))
 
-
-
-
-(defn id-reflexivity [proof] nil)
 
 (defn modal-proof [proof] nil)

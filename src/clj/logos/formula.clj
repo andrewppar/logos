@@ -132,6 +132,15 @@
               {:caused-by `(not (atom? ~atom))}))
     (rest atom)))
 
+;;;;;;;;;;;;
+;;; Equality
+
+(defn equality?
+  [object]
+  (and (atom? object)
+       (= (predicate object) "!equals")
+       (= (count (terms object)) 2)))
+
 ;;;;;;;;;;;
 ;; Negation
 

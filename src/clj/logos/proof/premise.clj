@@ -216,6 +216,7 @@
           new-result)))))
 
 (defn universal-elimination [proof args]
+  (ensure-premise-count "Universal Elimination" [(first args)] 1)
   (ensure-premises-relevant proof [(first args)])
   (let [premise-index (get proof ::proof/premises)
         formula       (-> premise-index
@@ -291,8 +292,89 @@
                ::proof/premises new-premises))
       proof)))
 
+(defn substitute-equality-internal
+  [proof equality-id atomic-id init-substitution-positions]
+  (let [premises               (get proof ::proof/premises)
+        substitution-positions (map (fn [pos]
+                                      (Integer/parseInt pos))
+                                    init-substitution-positions)
+        equality-premise       (-> premises
+                                   (get equality-id)
+                                   (get ::proof/formula))
+        atomic-premise         (-> premises
+                                   (get atomic-id)
+                                   (get ::proof/formula))
+        substitution-terms     (map
+                                (fn [arg-id]
+                                  (get atomic-premise arg-id))
+                                substitution-positions)]
+    (when-not (= (count (set substitution-terms)) 1)
+      (throw
+       (ex-info "Cannot substitute different terms with \"!equals\""
+                {:caused-by (str "Cannot substitute different terms"
+                                 (format " with \"!equals\": %s"
+                                         (set substitution-terms)))})))
+    (let [substituted (first substitution-terms)
+          substituent (first
+                       (filter (fn [arg] (not= substituted arg))
+                               (formula/terms equality-premise)))
+          new-formula (loop [arg (first atomic-premise)
+                             idx 0
+                             todo (rest atomic-premise)
+                             result []]
+                        (let [new-result (if (some
+                                              #{idx}
+                                              substitution-positions)
+                                           (conj result substituent)
+                                           (conj result arg))]
+                          (if (seq todo)
+                            (recur (first todo) (inc idx) (rest todo) new-result)
+                            new-result)))
+          new-premise (proof/new-premise new-formula
+                                         [atomic-id equality-id])
+          new-premise-idx (proof/get-new-premise-idx proof)
+          premises    (get proof ::proof/premises)
+          new-premises (assoc premises new-premise-idx new-premise)
+          problems        (get proof ::proof/problems)
+          current-problem-idx (get proof ::proof/current-problem)
+          current-problem (get problems current-problem-idx)
+          new-problem     (update current-problem ::proof/premises
+                                  conj new-premise-idx)
+          new-problems    (assoc problems current-problem-idx new-problem)]
+      (-> proof
+          (assoc ::proof/premises
+                 new-premises) 
+          (assoc ::proof/problems
+                 new-problems)))))
 
-(defn id-substitute [proof premise-numbers] nil)
+(defn substitute-equality [proof args]
+  (ensure-premise-count "Substitution" (take 2 args) 2)
+  (ensure-premises-relevant proof (take 2 args))
+  (let [premises         (-> proof
+                             (get ::proof/premises))
+        first-premise-id (->> args
+                              first
+                              Integer/parseInt)
+        first-premise     (-> premises
+                              (get first-premise-id)
+                              (get ::proof/formula))
+        second-premise-id (->> args
+                               second
+                               Integer/parseInt)
+        second-premise    (-> premises
+                              (get second-premise-id)
+                              (get ::proof/formula))
+        positions      (rest (rest args))]
+    (cond (and (formula/equality? first-premise)
+               (formula/atom? second-premise))
+          (substitute-equality-internal
+           proof first-premise-id second-premise-id positions)
+          (and (formula/equality? second-premise)
+               (formula/atom? first-premise))
+          (substitute-equality-internal
+           proof second-premise first-premise positions)
+          :else
+          proof)))
 
 (defn beta-reduction [proof premise-numbers] nil)
 
