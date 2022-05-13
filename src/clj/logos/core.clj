@@ -7,6 +7,7 @@
             [compojure.route          :as route]
             [logos.formula            :as f]
             [logos.main               :as main]
+            [logos.log                :refer [log] :as log]
             [ring.middleware.cors     :as cors]
             [ring.middleware.defaults :as middleware]
             [clojure.java.io :as io]))
@@ -47,6 +48,7 @@
 
 (defn start-proof
   [req]
+  (log :info {:event "Proof started" :info (get req :query-params)})
   (let [body (json/write-str (start-proof-internal req))]
     {:status 200
      :headers {"Content-Type" "text/json"}
@@ -134,13 +136,14 @@
   (route/not-found "<h1>Page not found</h1>"))
 
 (defn -main [& args]
+  (log/init (keyword (System/getenv "LOG_LEVEL")))
   (server/run-server
-    (cors/wrap-cors
-     (middleware/wrap-defaults
-      #'app middleware/api-defaults)
-     :access-control-allow-origin [#".*"]
-     :access-control-allow-methods [:get :put :post :delete]
-     :access-control-allow-headers ["Origin" "X-Requested-With"
-                                    "Content-Type" "Accept"])
+   (cors/wrap-cors
+    (middleware/wrap-defaults
+     #'app middleware/api-defaults)
+    :access-control-allow-origin [#".*"]
+    :access-control-allow-methods [:get :put :post :delete]
+    :access-control-allow-headers ["Origin" "X-Requested-With"
+                                   "Content-Type" "Accept"])
    {:port 4000})
-  (println "Server started on port 4000"))
+  (log :info {:event "Server started on port 4000"}))
