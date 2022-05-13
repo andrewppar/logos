@@ -143,7 +143,7 @@
 (deftest test-direct-proof
   (are [proof result]
       (= (goal/direct-proof proof)
-         result)
+        result)
     ;; Case 1
       assertion-hypothesis-proof
       {::proof/current-problem nil
@@ -380,6 +380,20 @@
        ::proof/edges {0 {::proof/to [1 2]}
                       1 {::proof/from [0]}
                       2 {::proof/from [0]}}}
+
+      ;; Case 8
+      {::proof/current-problem 0
+       ::proof/problems {0 (proof/new-problem [] ["!equals" "a" "a"] 0)}
+       ::proof/premises {}
+       ::proof/edges  {}}
+      {::proof/current-problem nil
+       ::proof/problems {0 {::proof/premises []
+                            ::proof/goal ["!equals" "a" "a"]
+                            ::proof/id 0
+                            ::proof/status ::proof/closed
+                            ::proof/type ::proof/proof}}
+       ::proof/premises {}
+       ::proof/edges  {}}
       ))
 
 (deftest test-conjunctive-proof

@@ -284,10 +284,11 @@
 (def conditional-elimination-atom (r/atom ""))
 (def conjunction-elimination-atom (r/atom ""))
 (def disjunction-elimination-atom (r/atom ""))
-(def bottom-introduction-atom (r/atom ""))
+(def bottom-introduction-atom     (r/atom ""))
 (def existential-elimination-atom (r/atom ""))
-(def assert-atom (r/atom ""))
-(def universal-elimination-atom (r/atom ""))
+(def substitute-equality-atom     (r/atom ""))
+(def assert-atom                  (r/atom ""))
+(def universal-elimination-atom   (r/atom ""))
 
 (defn next-command-section
   [proof-formulas proof-string proof]
@@ -372,6 +373,13 @@
                bottom-introduction-atom false
                "Open a dialog box to select a premise and its negation.
                Bottom is added to the premises as a result."]
+              ["Substitute Equality" "substitute-equality" "S"
+               substitute-equality-atom true
+               "Open a dialog box to select an equality,
+                an atomic formula to make a substitution in, and
+                specify the arguments (as numbers) to make the 
+                substitutions in. The result is a new premise that 
+                looks like the atom with substitutions made."]
               ["Universal Elimination" "universal-elim" "UE"
                universal-elimination-atom true
                "Open a dialog box to select a universal premise and

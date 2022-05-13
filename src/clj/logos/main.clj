@@ -154,7 +154,9 @@
       "UE"
       (function #'premise/universal-elimination)
       "EE"
-      (function #'premise/existential-elimination))))
+      (function #'premise/existential-elimination)
+      "S"
+      (function #'premise/substitute-equality))))
 
 (defn assert-formula-to-proof [proof formula-string]
   (let [formula (f/read-formula formula-string)]

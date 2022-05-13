@@ -304,3 +304,18 @@
      ::proof/problems {0
                        (proof/new-problem [0 1] ["!Q"] 0)}
      ::proof/edges {}}))
+
+(deftest test-equality-substitution
+  (are [proof args result]
+      (= (premise/substitute-equality proof args) result)
+    {::proof/current-problem 0
+     ::proof/premises {0 (proof/new-premise '["!equals" "a" "b"])
+                       1 (proof/new-premise '["!R" "a" "c"])}
+     ::proof/problems {0 (proof/new-problem [0 1] '["!R" "b" "c"] 0)}
+     ::proof/edges    {}} ["0" "1" "1"]
+    {::proof/current-problem 0
+     ::proof/premises {0 (proof/new-premise '["!equals" "a" "b"])
+                       1 (proof/new-premise '["!R" "a" "c"])
+                       2 (proof/new-premise '["!R" "b" "c"] [1 0])}
+     ::proof/problems {0 (proof/new-problem [0 1 2] '["!R" "b" "c"] 0)}
+     ::proof/edges    {}}))

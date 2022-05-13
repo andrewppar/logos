@@ -45,8 +45,11 @@
 
 (rf/reg-event-fx
  ::fetch-proof-start
- (fn [_ [_ theorem-name formula]]
-   (let [encoded-command (-> "Theorem "
+ (fn [_ [_ raw-theorem-name formula]]
+   (let [theorem-name (-> raw-theorem-name
+                          (string/replace #" " "-")
+                          string/lower-case)
+         encoded-command (-> "Theorem "
                              (str theorem-name " " formula)
                              (gstring/urlEncode "UTF-8"))]
      {:http-xhrio {:uri (str

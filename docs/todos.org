@@ -3,7 +3,8 @@
 #+author: Andrew Parisi
 
 * Bugs                                                                 :bugs:
-** TODO Theorem names with spaces break things
+** DONE Theorem names with spaces break things
+CLOSED: [2022-05-08 Sun 14:50]
 :PROPERTIES:
 :ID:       98EDDD2D-56B3-4280-A00F-94C42A56B3C0
 :END:
@@ -48,11 +49,13 @@ CLOSED: [2022-05-13 Fri 12:34]
 :PROPERTIES:
 :ID:       D959DCB7-B4B4-4C17-82C3-7BCA4A3C2E0F
 :END:
-** TODO Support identity
+** DONE Support identity
+CLOSED: [2022-05-08 Sun 14:44]
 :PROPERTIES:
 :ID:       013A20CF-E0DC-47DA-9198-F146E37A0F49
 :END:
-** TODO Fix everything in the [[Bugs]] section
+** DONE Fix everything in the [[Bugs]] section
+CLOSED: [2022-05-08 Sun 14:50]
 :PROPERTIES:
 :ID:       C8E34E31-2C6B-4549-BACA-6F674428AA12
 :END:
