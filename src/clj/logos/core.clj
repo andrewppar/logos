@@ -10,7 +10,8 @@
             [logos.log                :refer [log] :as log]
             [ring.middleware.cors     :as cors]
             [ring.middleware.defaults :as middleware]
-            [clojure.java.io :as io]))
+            [clojure.java.io :as io])
+  (:gen-class))
 
 (defn ^:private one-step-internal
   [command proof]

@@ -59,7 +59,7 @@ CLOSED: [2022-05-08 Sun 14:50]
 :PROPERTIES:
 :ID:       C8E34E31-2C6B-4549-BACA-6F674428AA12
 :END:
-** TODO Easy Deployment [/]
+** TODO Easy Deployment [2/3]
 :PROPERTIES:
 :ID:       2C2AE56C-D36F-43F8-A1F2-7E3AB49D0FBB
 :END:
@@ -67,15 +67,18 @@ CLOSED: [2022-05-08 Sun 14:50]
 :PROPERTIES:
 :ID:       9FBDB657-99F3-441B-A5F7-64A2BA780105
 :END:
-*** TODO Add a release process
+*** DONE Add a release process
+CLOSED: [2022-05-18 Wed 07:52]
 :PROPERTIES:
 :ID:       609270BF-E0A5-45B4-B6FC-45A38467D378
 :END:
-*** TODO Figure out how to launch anywhere with a single command (this should be easy -- it's on the jvm :))
+*** DONE Figure out how to launch anywhere with a single command (this should be easy -- it's on the jvm :))
+CLOSED: [2022-05-18 Wed 07:52]
 :PROPERTIES:
 :ID:       70777A4F-DB7C-47CD-9804-F0CB7785337D
 :END:
-** TODO README
+** DONE README
+CLOSED: [2022-05-18 Wed 07:52]
 :PROPERTIES:
 :ID:       C795903F-3E48-4760-8D7D-03D1A425F0AA
 :END:
