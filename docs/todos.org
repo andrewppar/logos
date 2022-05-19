@@ -1,0 +1,142 @@
+#+title: Logos: Tasks
+#+date: 03-17-2022
+#+author: Andrew Parisi
+
+* Bugs                                                                 :bugs:
+** DONE Theorem names with spaces break things
+CLOSED: [2022-05-08 Sun 14:50]
+:PROPERTIES:
+:ID:       98EDDD2D-56B3-4280-A00F-94C42A56B3C0
+:END:
+** DONE make the host for events.clj to use into an environment variable
+CLOSED: [2022-04-30 Sat 16:35]
+:PROPERTIES:
+:ID:       90C8E427-95D6-43BB-9559-3FA6424E089C
+:END:
+** DONE If quantified args are not quoted or formulas they are treated as vars this should error (or make a good interpretation of intention)
+CLOSED: [2022-04-04 Mon 08:01]
+:PROPERTIES:
+:ID:       3A2C430B-2675-48B4-B214-DD0F9BF8D1FC
+:END:
+** DONE We don't have the machinery in place to prove (implies (and (or p q) r) (or (and p r) (and q r))) -- probably disjunctive proof has to break out of the direct proof code and take an input specifying the disjunct to prove /somehow/
+CLOSED: [2022-03-29 Tue 00:04]
+:PROPERTIES:
+:ID:       CB509F0E-E0C6-462B-973D-14404D244F86
+:END:
+** DONE We get caught in a loop trying to prove (implies (or (and p q) r) (and (or p r) (or q r))) unless we start by getting rid of as many premises as possible
+CLOSED: [2022-04-15 Fri 07:19]
+:PROPERTIES:
+:ID:       E57D10DC-D223-4BA5-8333-CACA7099E820
+:END:
+** DONE No way to prove (implies (not (not (not p))) (not p)) without support for using other theorems or arbitrary established proofs
+CLOSED: [2022-03-28 Mon 23:56]
+:PROPERTIES:
+:ID:       24F7DEFA-436F-47BB-A6E4-478B14077952
+:END:
+* Version 1                                                              :v1:
+** DONE Add a custom function to parse formulas to s-expressions, read-string is dangerous
+CLOSED: [2022-04-29 Fri 00:57]
+:PROPERTIES:
+:ID:       F114BD39-B6D9-4E7E-9AA7-3513D0637583
+:END:
+** DONE Check for wrong number of premises when doing premise operation. This has to be done in main.clj too so we can properly read the arguments to be substituted.
+CLOSED: [2022-04-30 Sat 16:35]
+:PROPERTIES:
+:ID:       DB61BAE3-60D9-46AA-8AC8-33540BE98631
+:END:
+** DONE Add logging to track who has visited the site
+CLOSED: [2022-05-13 Fri 12:34]
+:PROPERTIES:
+:ID:       D959DCB7-B4B4-4C17-82C3-7BCA4A3C2E0F
+:END:
+** DONE Support identity
+CLOSED: [2022-05-08 Sun 14:44]
+:PROPERTIES:
+:ID:       013A20CF-E0DC-47DA-9198-F146E37A0F49
+:END:
+** DONE Fix everything in the [[Bugs]] section
+CLOSED: [2022-05-08 Sun 14:50]
+:PROPERTIES:
+:ID:       C8E34E31-2C6B-4549-BACA-6F674428AA12
+:END:
+** DONE Easy Deployment [3/3]
+CLOSED: [2022-05-18 Wed 21:39]
+:PROPERTIES:
+:ID:       2C2AE56C-D36F-43F8-A1F2-7E3AB49D0FBB
+:END:
+*** DONE Add git checks
+CLOSED: [2022-05-18 Wed 21:39]
+:PROPERTIES:
+:ID:       9FBDB657-99F3-441B-A5F7-64A2BA780105
+:END:
+*** DONE Add a release process
+CLOSED: [2022-05-18 Wed 07:52]
+:PROPERTIES:
+:ID:       609270BF-E0A5-45B4-B6FC-45A38467D378
+:END:
+*** DONE Figure out how to launch anywhere with a single command (this should be easy -- it's on the jvm :))
+CLOSED: [2022-05-18 Wed 07:52]
+:PROPERTIES:
+:ID:       70777A4F-DB7C-47CD-9804-F0CB7785337D
+:END:
+** DONE README
+CLOSED: [2022-05-18 Wed 07:52]
+:PROPERTIES:
+:ID:       C795903F-3E48-4760-8D7D-03D1A425F0AA
+:END:
+** DONE Add a format button to the theorem input textarea
+CLOSED: [2022-04-26 Tue 22:36]
+:PROPERTIES:
+:ID:       3A6163AC-CEDF-4E5E-A6CD-DCE5FF1424F9
+:END:
+** DONE Add a way (probably this can just live in the UI) to track the steps done for each proof
+CLOSED: [2022-04-18 Mon 19:29]
+** DONE support =assert= which allows the user to prove an arbitrary formula and add it based on current relevant premises
+CLOSED: [2022-03-28 Mon 23:56]
+:PROPERTIES:
+:ID:       D01BD36C-E447-4215-BB22-30C9857279D4
+:END:
+** DONE All the theorems in test.logos
+CLOSED: [2022-03-19 Sat 18:20]
+** DONE Read formulas as strings that look the same as how a formula is serialized
+CLOSED: [2022-03-19 Sat 22:05]
+** DONE Support reading formulas as clojure structs and as lispy serialized forms
+CLOSED: [2022-03-23 Wed 21:46]
+** DONE Documentation in the UI
+CLOSED: [2022-04-15 Fri 07:19]
+:PROPERTIES:
+:ID:       5012FF0F-92F4-4989-91F9-E7D53DA8B788
+:END:
+** DONE Add a theorems pane to the UI
+CLOSED: [2022-04-21 Thu 07:04]
+:PROPERTIES:
+:ID:       0DBDB8EE-7742-4237-B9DA-D52E7F9E042D
+:END:
+** DONE Remove the =theorems= and the =current-proof= atoms
+CLOSED: [2022-03-25 Fri 08:37]
+:PROPERTIES:
+:ID:       F616D54A-BA0D-48E0-BAE2-269A4113D0AC
+:END:
+** DONE All premise operations should happen inside a modal -- that is, we should select which premises to operate on in a modal and then submit the operation. Premise selection should still be a checkbox though
+CLOSED: [2022-03-27 Sun 00:17]
+:PROPERTIES:
+:ID:       F999DB06-AA05-4D2C-BAE8-0BF885BC83F7
+:END:
+** DONE We should call format on premises and goals before we send them back to the front end
+CLOSED: [2022-03-29 Tue 22:53]
+:PROPERTIES:
+:ID:       3FEC10EC-1326-405B-BD3E-79EEAC3B687E
+:END:
+* Version 2                                                              :v2:
+** TODO Support Modal formulas 
+** TODO Support Lambdas
+** TODO Formula builder
+** TODO See other goals, or goals coming down the line
+** DONE Support assertions in proofs and figure out what a proof with assertions means
+CLOSED: [2022-04-15 Fri 08:20]
+** TODO Support using other items in proofs
+*** TODO Support referring to other theorems
+*** TODO Support referring to definitions 
+
+* Future                                                             :future:
+** TODO Support model creation for failed proofs
