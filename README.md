@@ -1,5 +1,7 @@
 # Welcome to λogos
 
+![example workflow](https://github.com/andrewppar/logos/actions/workflows/clojure.yml/badge.svg)
+
 λogos is a proof assisstant designed to be used by philosophers. Once a theorem is entered to be proved λogos keeps track of the current goal and the premises that are relevant to showing that goal. This means that for complex or exploratory proofs there's much less cognitive overhead. 
 
 Because λogos is aimed at philosophers the focus was on developing a very expressive language. As such the language the λogos understands is a higher-order logic, allowing for quantification over any position in a formula and formulas that have other formulas as arguments. In this way it's possible to express that Alice believes everything the Hatter says
@@ -64,7 +66,7 @@ All of the following commands are intended to be performed in the terminal. How 
    
 3. Install java (openjdk). You can check whether java is already installed by calling `java --version`. If it is not installed directions for your platform can be found [1](https://openjdk.java.net/install/ "here") 
    
-4. Install leiningen. Directions can be found here. (https://leiningen.org/#install "here")
+4. Install leiningen. Directions can be found [here](https://leiningen.org/#install)
 
 ## Development 
 
