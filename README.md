@@ -64,7 +64,7 @@ All of the following commands are intended to be performed in the terminal. How 
    2. bulma - A CSS framework: `npm i bulma`
    3. bulma tooltip - An extension to the standard bulma: `npm i bulma-tooltip`
    
-3. Install java (openjdk). You can check whether java is already installed by calling `java --version`. If it is not installed directions for your platform can be found [1](https://openjdk.java.net/install/ "here") 
+3. Install java (openjdk). You can check whether java is already installed by calling `java --version`. If it is not installed directions for your platform can be found [here](https://openjdk.java.net/install/) 
    
 4. Install leiningen. Directions can be found [here](https://leiningen.org/#install)
 
