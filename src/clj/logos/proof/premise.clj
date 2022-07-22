@@ -20,6 +20,17 @@
             ::proof/premises new-premise-index
             ::proof/problems new-problem-index))))
 
+(defn add-premises
+  "Note: This functin assumes that formulas are strings representing
+   formulas
+  TODO: This parse-formula should be moved up to main so it can be
+  used more generally."
+  [proof formulas]
+  (reduce
+   (fn [result formula]
+     (add-premise result (formula/read-formula formula) ::proof/premise))
+   proof formulas))
+
 (defmacro ^:private ensure-premise-count
   [rule-name premise-vector number]
   `(when (not (= (count ~premise-vector) ~number))

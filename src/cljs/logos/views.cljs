@@ -92,8 +92,8 @@
             new-result))))))
 
 (defn start-proof
-  [theorem-name formula]
-  (rf/dispatch [::events/proof-init theorem-name formula]))
+  [formula-name formula]
+  (rf/dispatch [::events/proof-init formula-name formula]))
 
 (defn next-proof
   [command proof]
@@ -122,7 +122,7 @@
         (next-proof new-command proof)))}
    label])
 
-(def theorem-name (r/atom ""))
+(def formula-name (r/atom ""))
 (def formula      (r/atom ""))
 
 (defn clear-proof-button [clear-type]
@@ -139,8 +139,8 @@
       (fn []
         (when (= clear-type :done)
           (rf/dispatch [::events/store-theorem
-                        @theorem-name @formula @justification]))
-        (reset! theorem-name "")
+                        @formula-name @formula @justification]))
+        (reset! formula-name "")
         (reset! formula "")
         (clear-all-checkboxes)
         (rf/dispatch [::events/clear-proof]))}
@@ -177,10 +177,10 @@
        "Theorem Name: "]
       [:td
        [:input.input
-        {:id "theorem-name"
+        {:id "formula-name"
          :type "text"
-         :value @theorem-name
-         :on-change #(reset! theorem-name (.-value (.-target %)))}]]]
+         :value @formula-name
+         :on-change #(reset! formula-name (.-value (.-target %)))}]]]
      [:tr
       [:td
        "Formula: "]
@@ -195,8 +195,16 @@
     [:br]
     [:div.buttons
      [:button {:class "button is-info"
-               :on-click #(start-proof @theorem-name @formula)}
+               :on-click #(start-proof @formula-name @formula)}
       "Start Proof"]
+     [:button {:class "button is-info"
+               :on-click #(do
+                            (rf/dispatch
+                             [::events/store-theorem
+                              @formula-name @formula "Assertion"])
+                            (reset! formula nil)
+                            (reset! formula-name nil))}
+      "Add Premise"]
      [:button {:class "button is-info"
                :on-click (fn [] (format-formula @formula))}
       "Format Formula"]
@@ -239,7 +247,9 @@
    [modal-card id title body footer true]]))
 
 (defn proof-step-input-button
-  [label id command input-atom with-premises? with-vars? proof-formulas proof-string tooltip]
+  [label id command input-atom with-premises?
+   with-vars? proof-formulas proof-string
+   tooltip input-string]
   (let [input-id (str id "-input")]
     [modal-button
      id label tooltip
@@ -247,8 +257,7 @@
       (when with-premises?
         [print-proof-formulas proof-formulas proof-string true false])
       (when with-vars?
-        [:div
-         "Enter a list of values for variable"
+        [:div input-string 
          [:input.input
           {:id input-id
            :type "text"
@@ -266,9 +275,12 @@
                          command
                          " "
                          (when with-premises?
-                           (->> @(rf/subscribe
-                                  [::subs/checked-boxes])
-                                (string/join " ")))
+                           (let [args (if (= command "AP")
+                                        @(rf/subscribe
+                                          [::subs/checked-formulas])
+                                        @(rf/subscribe
+                                          [::subs/checked-boxes]))]
+                             (string/join " " args)))
                          " "
                          (when with-vars?
                            input))
@@ -286,12 +298,13 @@
 (def disjunction-elimination-atom (r/atom ""))
 (def bottom-introduction-atom     (r/atom ""))
 (def existential-elimination-atom (r/atom ""))
+(def add-premise-atom             (r/atom ""))
 (def substitute-equality-atom     (r/atom ""))
 (def assert-atom                  (r/atom ""))
 (def universal-elimination-atom   (r/atom ""))
 
 (defn next-command-section
-  [proof-formulas proof-string proof]
+  [proof-formulas proof-string proof theorems]
   (let [clear-type (if (= proof-string "QED") :done :clear)]
     [:div
      [:div.columns
@@ -338,61 +351,77 @@
          "Open a dialog box that prompts for constants to substitute
          for variables. The quantified subformula with the specified
          substitutions is the next subproof. When it is closed the
-         current proof is closed."]
+         current proof is closed."
+         "Enter a list of values for variable"]
         [proof-step-input-button
          "Assert" "assert" "ASSERT" assert-atom false true
          proof-formulas proof-string
          "Open a dialog box for a formula. This formula becomes the goal
          of a new subproof. Once proved the formula is available in the
-         current proof as a premise."]]]
+         current proof as a premise."
+         "Enter a formula or theorem name"]]]
+      
       [:div
        {:class "column is-one-quarter"}
        [:div
         {:class "tile is-vertical is-child box"}
         [:h3 {:class "title is-h3"} "Premise Operations"]
-        (map (fn [[label id command atom with-vars? tooltip]]
+        (map (fn [[label id command atom with-vars? tooltip input-string]]
                [proof-step-input-button
-                label id command atom true with-vars? proof-formulas proof-string tooltip])
+                label id command atom true with-vars? proof-formulas proof-string tooltip input-string])
              [["Conditional Elimination" "conditional-elim" "->E"
                conditional-elimination-atom false
                "Open a dialog to select a conditional premise
                 and its antecedent. The consequent of the conditional
-                will be added to the premises of the proof."]
+                will be added to the premises of the proof." nil]
               ["Conjunction Elimination" "conjunction-elim" "&E"
                conjunction-elimination-atom false
                "Open a dialog to select a conjunction from the
                 premises. The conjuncts of this premise will
-                be added to the proof as premises."]
+                be added to the proof as premises." nil]
               ["Disjunction Elimination" "disjunction-elim" "VE"
                disjunction-elimination-atom false
                "Open a dialog to select a premise that is a
                 disjunction from the premises. Each disjunct generates
                 a new subproof, with the same goal as the current goal.
-                If all subproofs are proved the current subproof closes."]
+                If all subproofs are proved the current subproof closes." nil]
               ["Bottom Introduction"  "bottom-intro" "BI"
                bottom-introduction-atom false
                "Open a dialog box to select a premise and its negation.
-               Bottom is added to the premises as a result."]
+               Bottom is added to the premises as a result." nil]
               ["Substitute Equality" "substitute-equality" "S"
                substitute-equality-atom true
                "Open a dialog box to select an equality,
                 an atomic formula to make a substitution in, and
                 specify the arguments (as numbers) to make the 
                 substitutions in. The result is a new premise that 
-                looks like the atom with substitutions made."]
+                looks like the atom with substitutions made."
+               "Positions to substitute."]
               ["Universal Elimination" "universal-elim" "UE"
                universal-elimination-atom true
                "Open a dialog box to select a universal premise and
                 specify values for the variables. The quantified
                 subformula with the specified substitutions will be
-                added to the premises."]
+                added to the premises."
+               "Enter a list of values for variables"
+               ]
               ["Existential Elimination" "existential-elim" "EE"
                existential-elimination-atom false
                "Select an existential premise. The quantified subformula
                will be added to the premises with all variables in the
                scope of the existential substituted for new constants."]
               ])
-        ]]]
+        (let [theorem-map (reduce-kv
+                           (fn [acc id [formula justification]]
+                             (conj acc {:idx id
+                                        :formula formula
+                                        :justification justification}))
+                           [] theorems)]
+        (proof-step-input-button 
+         "Add Premise" "add-premise" "AP"
+         add-premise-atom true false  theorem-map proof-string
+         "Select a theorem that has already been proven to be added
+          too the current context." nil))]]]
      [clear-proof-button clear-type]]))
 
 (defn theorems-section
@@ -433,7 +462,7 @@
     [:section.section
      (if (nil? @proof-formulas)
        [start-proof-section]
-       [next-command-section @proof-formulas @proof-string @proof])
+       [next-command-section @proof-formulas @proof-string @proof @theorems])
      [theorems-section @theorems]]))
 
 (defn tutorial-page

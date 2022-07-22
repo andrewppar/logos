@@ -48,6 +48,16 @@
  (fn [db]
    (get db :checked-boxes)))
 
+(rf/reg-sub
+ ::checked-formulas
+ (fn [db]
+   (let [checked-boxes  (get db :checked-boxes)
+         theorems       (get db :theorems)]
+     (map
+      (fn [idx]
+        (first (get theorems idx)))
+      checked-boxes))))
+
 (rf/register-sub
  ::formatted-formula
  (fn [db _]

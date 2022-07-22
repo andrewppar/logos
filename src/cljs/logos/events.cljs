@@ -89,7 +89,6 @@
  (fn [db [_ theorem-name formula]]
    {:dispatch [::fetch-proof-start theorem-name formula]}))
 
-
 (rf/reg-event-fx
  ::next-command
  (fn [_ [_ command proof]]
