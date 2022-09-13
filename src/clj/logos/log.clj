@@ -13,8 +13,9 @@
         json-messages (map #(json/write-str %) messages)]
     (clojure.string/join "\n" json-messages)))
 
-(defn init [level]
-  (let [log-path "logs/logos.log"
+(defn init [raw-level]
+  (let [level (or raw-level :info)
+        log-path "logs/logos.log"
         exists? (.exists (java.io.File. log-path))]
     (when-not exists?
       (.mkdir (java.io.File. log-path)))
