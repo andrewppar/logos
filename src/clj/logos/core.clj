@@ -69,6 +69,7 @@
 
 (defn health-check
   [req]
+  (log :info {:event "health-check"})
   {:status 200
    :headers {"Content-Type" "text/json"
              "Access-Control-Allow-Origin" "*"
@@ -137,18 +138,16 @@
   (route/not-found "<h1>Page not found</h1>"))
 
 (defn -main [& args]
-  (log/init (keyword (System/getenv "LOG_LEVEL")))
-  (server/run-server
-   (cors/wrap-cors
-    (middleware/wrap-defaults
-     #'app middleware/api-defaults)
-    :access-control-allow-origin [#".*"]
-    :access-control-allow-methods [:get :put :post :delete]
-    :access-control-allow-headers ["Origin" "X-Requested-With"
-                                   "Content-Type" "Accept"])
-   {:port 4000})
-  (log :info {:event "Server started on port 4000"}))
-
-
-
-
+  (let [port 4000]
+    (log/init (keyword (System/getenv "LOG_LEVEL")))
+    (server/run-server
+     (cors/wrap-cors
+      (middleware/wrap-defaults
+       #'app middleware/api-defaults)
+      :access-control-allow-origin [#".*"]
+      :access-control-allow-methods [:get :put :post :delete]
+      :access-control-allow-headers ["Origin" "X-Requested-With"
+                                     "Content-Type" "Accept"])
+     {:port port})
+    (log :info {:event
+                (format "Server started on port %s" port)})))

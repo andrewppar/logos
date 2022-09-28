@@ -53,8 +53,8 @@
                              (str theorem-name " " formula)
                              (gstring/urlEncode "UTF-8"))]
      {:http-xhrio {:uri (str
-                         "http://" LOGOS_SERVER
-                         ":4000/start-proof?theorem="
+                         "https://" LOGOS_SERVER
+                         "/prove/start-proof?theorem="
                          encoded-command)
                    :method :get
                    :format (ajax/transit-request-format)
@@ -67,7 +67,7 @@
  ::fetch-next-command
  (fn [_ [_ command proof]]
    (let [params (str {:body {:command command :proof proof}})]
-     {:http-xhrio {:uri (str "http://" LOGOS_SERVER ":4000/one-step")
+     {:http-xhrio {:uri (str "https://" LOGOS_SERVER "/prove/one-step")
                    :method :post
                    :params params
                    :format (ajax/transit-request-format)
@@ -176,7 +176,7 @@
 (rf/reg-event-fx
  ::format-formula-internal
  (fn [_ [_ formula]]
-   {:http-xhrio {:uri (str "http://" LOGOS_SERVER ":4000/format?formula="
+   {:http-xhrio {:uri (str "https://" LOGOS_SERVER "/prove/format?formula="
                            (gstring/urlEncode formula "UTF-8"))
                  :method :post
                  :format (ajax/transit-request-format)
@@ -216,7 +216,7 @@
  :fetch-proof-section
  (fn [_ _]
    {:http-xhrio {:method :get
-                 :uri    (str "http://" LOGOS_SERVER ":4000/health-check")
+                 :uri    (str "https://" LOGOS_SERVER "/prove/health-check")
                  :response-format
                  (ajax/raw-response-format)
                  :on-success [:set-proof-section]}}))
@@ -224,7 +224,7 @@
 (rf/reg-event-fx
  ::tutorial-internal
  (fn [_ _]
-   {:http-xhrio {:uri (str "http://" LOGOS_SERVER ":4000/tutorial")
+   {:http-xhrio {:uri (str "https://" LOGOS_SERVER "/prove/tutorial")
                  :method :get
                  :format (ajax/transit-request-format)
                  :response-format (ajax/json-response-format
@@ -250,7 +250,7 @@
 (rf/reg-event-fx
  ::formulas-internal
  (fn [_ _]
-   {:http-xhrio {:uri (str "http://" LOGOS_SERVER ":4000/formulas")
+   {:http-xhrio {:uri (str "https://" LOGOS_SERVER "/prove/formulas")
                  :method :get
                  :format (ajax/transit-request-format)
                  :response-format (ajax/json-response-format

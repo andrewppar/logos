@@ -23,7 +23,7 @@
      {:class "navbar is-info is-fixed-top"}
      [:div.container
       [:div.navbar-brand
-       [:a.navbar-item {:href "/" :style {:font-weight :bold}} "λogos"]
+       [:a.navbar-item {:href "/logos" :style {:font-weight :bold}} "λogos"]
        [:span.navbar-burger.burger
         {:data-target :nav-menu
          :on-click #(swap! expanded? not)
