@@ -12,7 +12,7 @@ COPY node_modules/ node_modules/
 COPY package.json package.json
 COPY project.clj project.clj
 
-ENV LOGOS_SERVER 0.0.0.0
+ENV LOGOS_SERVER localhost
 
 RUN npx shadow-cljs npm-deps
 RUN lein deps
