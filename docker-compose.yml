@@ -1,0 +1,50 @@
+version: "3.9"
+
+services:
+  backend:
+    image: clojure:lein
+    ports:
+      - "4000:4000"
+    volumes:
+      - ./:/tmp
+      - ./src:/tmp/src
+      - ./project.clj:/tmp/project.clj
+    command: lein run
+    networks:
+      - backend
+
+  frontend:
+    image: theasp/clojurescript-nodejs:latest
+    ports:
+      - "3000:3000"
+      - "9630:9630"
+    volumes:
+      - ./:/tmp
+      - ./shadow-cljs.edn:/tmp/shadow-cljs.edn
+      - ./public/:/tmp/public
+      - ./src:/tmp/src
+      - ./node_modules/:/tmp/node_modules
+      - ./package.json:/tmp/package.json
+    environment:
+      - LOGOS_SERVER=localhost:8080
+    command: npm run watch
+    networks:
+      - frontend
+      - backend
+  alb:
+    image: nginx
+    volumes:
+      - ./builds/nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
+      - frontend
+    networks: 
+      - frontend
+      - backend
+      - alb
+networks:
+  frontend:
+  backend:
+  alb:
