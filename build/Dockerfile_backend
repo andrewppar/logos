@@ -1,0 +1,8 @@
+FROM clojure:lein
+
+COPY ./src /tmp/src
+COPY ./resources /tmp/resources
+COPY ./project.clj /tmp/project.clj
+RUN lein deps
+
+CMD ["lein", "run"]

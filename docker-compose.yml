@@ -1,0 +1,39 @@
+version: "3.9"
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: ./build/Dockerfile_backend
+    ports:
+      - "4000:4000"
+    networks:
+      - backend
+
+  frontend:
+    build:
+      context: .
+      dockerfile: ./build/Dockerfile_frontend
+    ports:
+      - "3000:3000"
+      - "9630:9630"
+    networks:
+      - frontend
+      - backend
+  nginx:
+    build:
+      context: .
+      dockerfile: ./build/Dockerfile_nginx
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
+      - frontend
+    networks: 
+      - frontend
+      - backend
+      - nginx
+networks:
+  frontend:
+  backend:
+  nginx:
