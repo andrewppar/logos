@@ -129,6 +129,7 @@ CLOSED: [2022-03-29 Tue 22:53]
 :END:
 * Version 2                                                              :v2:
 ** TODO Give some instructions on the landing page (This is from Nate and Mike not knowing what to do when they saw the website)
+
 ** TODO Support Modal formulas 
 ** TODO Support Lambdas
 ** TODO Formula builder

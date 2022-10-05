@@ -299,6 +299,7 @@
 (def bottom-introduction-atom     (r/atom ""))
 (def existential-elimination-atom (r/atom ""))
 (def add-premise-atom             (r/atom ""))
+
 (def substitute-equality-atom     (r/atom ""))
 (def assert-atom                  (r/atom ""))
 (def universal-elimination-atom   (r/atom ""))
@@ -379,6 +380,7 @@
                "Open a dialog to select a conjunction from the
                 premises. The conjuncts of this premise will
                 be added to the proof as premises." nil]
+
               ["Disjunction Elimination" "disjunction-elim" "VE"
                disjunction-elimination-atom false
                "Open a dialog to select a premise that is a
@@ -389,6 +391,7 @@
                bottom-introduction-atom false
                "Open a dialog box to select a premise and its negation.
                Bottom is added to the premises as a result." nil]
+               
               ["Substitute Equality" "substitute-equality" "S"
                substitute-equality-atom true
                "Open a dialog box to select an equality,
@@ -397,6 +400,7 @@
                 substitutions in. The result is a new premise that 
                 looks like the atom with substitutions made."
                "Positions to substitute."]
+
               ["Universal Elimination" "universal-elim" "UE"
                universal-elimination-atom true
                "Open a dialog box to select a universal premise and
@@ -405,6 +409,7 @@
                 added to the premises."
                "Enter a list of values for variables"
                ]
+
               ["Existential Elimination" "existential-elim" "EE"
                existential-elimination-atom false
                "Select an existential premise. The quantified subformula

@@ -220,4 +220,3 @@
     {:proof-string (show-proof new-proof)
      :proof (encode (str new-proof))
      :proof-formula (serialize-proof-formulas new-proof)}))
-
