@@ -502,7 +502,10 @@
                 new-terms (mapv (fn [term]
                                   (if-let [new (constant-map term)]
                                     new
-                                    term))
+                                    (if (coll? term)
+                                      (substitute-free-variables term constant-map)
+                                      term)
+                                    ))
                                (terms formula))]
             (if-let [new-pred (constant-map pred)]
               (apply atom (format "!%s" new-pred) new-terms)

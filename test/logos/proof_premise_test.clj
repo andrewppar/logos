@@ -274,6 +274,7 @@
   (are [proof args result]
       (= (premise/universal-elimination proof args)
          result)
+    ;; Case 1
       {::proof/current-problem 0
        ::proof/premises {0 (proof/new-premise
                             '[:forall [?x] ["!P" ?x]])}
@@ -285,7 +286,28 @@
                          1 (proof/new-premise
                             ["!P" "a"] ["0" "a"])}
        ::proof/problems {0 (proof/new-problem [0 1] ["!Q"] 0)}
-       ::proof/edges {}}))
+       ::proof/edges {}}
+      ;; Case 2
+      {::proof/current-problem 0
+       ::proof/premises {0 (proof/new-premise
+                            '[:forall [?x]
+                              [:exists [?y]
+                               ["!equal" ?y ["!Successor" ?x]]]])}
+       ::proof/problems {0 (proof/new-problem [0] ["!Q"] 0)}
+       ::proof/edges {}} ["0" "a"]
+      {::proof/current-problem 0
+       ::proof/premises {0 (proof/new-premise
+                            '[:forall [?x]
+                              [:exists [?y]
+                               ["!equal" ?y ["!Successor" ?x]]]])
+                         1 (proof/new-premise 
+                            '[:exists [?y]
+                              ["!equal" ?y ["!Successor" "a"]]] 
+                            ["0" "a"])}
+       ::proof/problems {0 (proof/new-problem [0 1] ["!Q"] 0)}
+       ::proof/edges {}}
+                                            
+      ))
 
 (deftest test-existential-elimination
   (are [proof premise-idxs result]

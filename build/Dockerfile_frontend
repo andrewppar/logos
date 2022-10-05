@@ -1,0 +1,14 @@
+FROM theasp/clojurescript-nodejs:latest
+
+COPY ./shadow-cljs.edn /tmp/shadow-cljs.edn
+COPY ./public /tmp/public
+COPY ./src /tmp/src
+COPY ./node_modules /tmp/node_modules
+COPY ./package.json /tmp/package.json
+
+ARG SERVER
+ENV LOGOS_SERVER=$SERVER
+
+RUN npx shadow-cljs npm-deps
+
+CMD ["npm", "run", "watch"]

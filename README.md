@@ -29,30 +29,20 @@ If all of the [prerequisites](prerequisites) are installed on your system λogos
 
 then just visit [localhost:3000](http://localhost:3000) in your favorite browser. 
 
-### Docker Image
+### Docker Compose
 
 If you have [Docker Desktop](https://www.docker.com/get-started/) installed then there is no need to install any other prerequisites, Docker handles that for you. Go to the directory that this README is in in a terminal and build a docker image with 
 
 ```
-docker build -t logos .
+docker compose up
 ```
-The above command will have to download all the dependencies for the project so it could take a few minutes to complete.
-Once it's done, run that image with 
-
-```
-docker run --rm -it -p 3000:3000 -p 4000:4000 -p 9630:9630 logos
-```
-
-When your terminal says 
+The above command will have to download all the dependencies for the project so it could take a few minutes to complete. When your terminal says 
 ```
 [:client] Configuring build.
 [:client] Compiling ...
 [:client] Build completed. (243 files, 242 compiled, 0 warnings, 29.79s)
 ```
-or something similar visit [localhost:3000](http://localhost:3000) in your favorite browser. 
-
-NOTE: The docker image is not the most secure way to launch the app, so I don't recommend using it in a production setting.
-
+or something similar visit [localhost:8080](http://localhost:8080) in your favorite browser. 
 
 ## Prerequisites
 
