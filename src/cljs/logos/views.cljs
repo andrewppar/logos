@@ -1,4 +1,5 @@
 (ns logos.views
+  (:require-macros [adzerk.env :as env])
   (:require
    [clojure.string       :as string]
    [cljs-http.client     :as http]
@@ -10,6 +11,8 @@
    [reagent.core         :as r]
    [re-frame.core        :as rf])
   (:require-macros [cljs.core.async.macros :refer [go]]))
+
+(env/def STANDALONE "true")
 
 (defn nav-link [uri title page]
   [:a.navbar-item
@@ -34,7 +37,10 @@
        [:div.navbar-start
         [nav-link "#/tutorial" "Tutorial" :about]
         [nav-link "#/formulas" "Formulas" :formulas]
-        ]]]]))
+        (when (= STANDALONE "false")
+          [:a.navbar-item
+           {:href "http://localhost:8080/dummett/"}
+           "Dummett Library"])]]]]))
 
 (defn toggle-check-box
   [id]

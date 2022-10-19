@@ -27,8 +27,7 @@
                   :controllers
                   [{:start (fn [_]
                              (rf/dispatch
-                              [::events/init-formulas-section]))}]}]
-    ]))
+                              [::events/init-formulas-section]))}]}]]))
 
 (defn start-router! []
   (rfe/start!
