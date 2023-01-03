@@ -14,6 +14,8 @@ services:
     build:
       context: .
       dockerfile: ./build/Dockerfile_frontend
+      args:
+        SERVER: localhost:8080
     ports:
       - "3000:3000"
       - "9630:9630"
@@ -29,7 +31,7 @@ services:
     depends_on:
       - backend
       - frontend
-    networks: 
+    networks:
       - frontend
       - backend
       - nginx
