@@ -128,17 +128,29 @@ CLOSED: [2022-03-29 Tue 22:53]
 :ID:       3FEC10EC-1326-405B-BD3E-79EEAC3B687E
 :END:
 * Version 2                                                              :v2:
+** Tech Debt
+*** TODO There's a lot of repition in proof - maybe these can be abstracted out and fixed up.
+*** TODO Try to make =free-variables-internal= terser and easier to read
+*** TODO rewrite the formula functions with a defprotocol for formulas and defining functions like formula-gather and free-variables over that protocol
+*** TODO Try to rewrite =formula.constants= using =formula.formula-gather=
+*** TODO Write a test case for =formula.substitute-free-varialbes= for cases with variable shadowing, if it fails, fix that function.
+*** TODO Come up with better namespace names than =core= and =main=
+*** TODO Clean up the serialization of proofs, commands, and arguments between the frontend and the backend
 ** TODO Give some instructions on the landing page (This is from Nate and Mike not knowing what to do when they saw the website)
-
-** TODO Support Modal formulas 
+** TODO Support Modal formulas
+** TODO Add a remove premise button
+** TODO Support =!equals= to be used between formulas as definitional (or maybe just support a =!defines= predicate?
 ** TODO Support Lambdas
 ** TODO Formula builder
 ** TODO See other goals, or goals coming down the line
 ** DONE Support assertions in proofs and figure out what a proof with assertions means
 CLOSED: [2022-04-15 Fri 08:20]
-** TODO Support using other items in proofs
-*** TODO Support referring to other theorems
-*** TODO Support referring to definitions 
+** DONE Support using other items in proofs
+CLOSED: [2023-01-04 Wed 10:35]
+*** DONE Support referring to other theorems
+CLOSED: [2023-01-04 Wed 10:35]
+*** DONE Support referring to definitions
+CLOSED: [2023-01-04 Wed 10:35]
 
 * Future                                                             :future:
 ** TODO Support model creation for failed proofs

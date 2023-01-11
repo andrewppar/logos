@@ -3,6 +3,8 @@
             [logos.proof.proof :as proof]))
 
 (defn add-premise
+  "Add `formula` to `proof` as a new premise, optionally supply a
+  justification. The default justification is ::proof/assertion"
   ([proof formula]
    (add-premise proof formula ::proof/assertion))
   ([proof formula justification]
@@ -31,15 +33,19 @@
      (add-premise result (formula/read-formula formula) ::proof/premise))
    proof formulas))
 
-(defmacro ^:private ensure-premise-count
+(defn ^:private ensure-premise-count
+  "Ensure that the number of premises for the rule matches the expected
+   number of premises for that rule"
   [rule-name premise-vector number]
-  `(when (not (= (count ~premise-vector) ~number))
-     (throw (ex-info
-             "Incorrect number of premises passed to rule"
-             {:caused-by (format "%s requires %s premises but given %s"
-                                 ~rule-name ~number (count ~premise-vector))}))))
+  (when (not (= (count premise-vector) number))
+    (throw (ex-info
+            "Incorrect number of premises passed to rule"
+            {:caused-by (format "%s requires %s premises but given %s"
+                                rule-name number (count premise-vector))}))))
 
 (defn ^:private ensure-premises-relevant
+  "Ensure that the premise numbers supplied to a proof are actually
+   premises in that proof"
   [proof premise-numbers]
   (let [relevant-premises (proof/relevant-premise-idxs proof)]
     (map (fn [idx]
@@ -51,7 +57,9 @@
                        {:caused-by idx}))))
          premise-numbers)))
 
-(defn conditional-elimination-internal
+(defn ^:private conditional-elimination-internal
+  "Handle conditinal elimination having determined the major and minor
+  premises."
   [conditional proof premise-numbers premise-index]
    (let [consequent (formula/consequent conditional)
          problem-index   (get proof ::proof/problems)
@@ -77,6 +85,8 @@
 
 
 (defn conditional-elimination
+  "Given a conditional and it's antecedent as premises add the
+  consequent of the conditional as a new premise."
   [proof premise-numbers]
   (ensure-premise-count "Conditional elimination" premise-numbers 2)
   (ensure-premises-relevant proof premise-numbers)
@@ -99,6 +109,9 @@
           proof)))
 
 (defn ^:private add-formulas-to-premise-index
+  "Given a premise index, a list of formulas, a number to start from,
+  and a justification - add numbered premises to the premise index
+  starting from the start index"
   [premise-index formulas start-idx justification]
   (loop [formula (first formulas)
          todo    (rest formulas)
@@ -115,6 +128,8 @@
          (conj (second result) idx)]))))
 
 (defn conjunction-elimination
+  "Given a proof with a conjunction add the conjuncts of that conjunction
+  to the premises of the proof."
   [proof premise-numbers]
   (ensure-premise-count "Conjunction elimination" premise-numbers 1)
   (ensure-premises-relevant proof premise-numbers)
@@ -141,6 +156,9 @@
       proof)))
 
 (defn disjunction-elimination
+  "Given a proof with a disjunction, for each disjunct create a new
+  subproof that has that disjunct as a premise and the same goal as
+  the original proof"
   [proof premise-numbers]
   (ensure-premise-count "Disjunction elimination" premise-numbers 1)
   (ensure-premises-relevant proof premise-numbers)
@@ -152,7 +170,7 @@
                           (get ::proof/goal))
         target-premise      (->> premise-numbers
                                  first
-                                 Integer/parseInt 
+                                 Integer/parseInt
                                  (get premise-index)
                                  ::proof/formula)]
     (if (formula/disjunction? target-premise)
@@ -183,6 +201,8 @@
       proof)))
 
 (defn bottom-introduction
+  "Given a contradiction introduce the special formula ::formula/bottom
+  to a proof as a premise."
   [proof premise-numbers]
   (ensure-premise-count "Bottom introduction" premise-numbers 2)
   (ensure-premises-relevant proof premise-numbers)
@@ -203,7 +223,9 @@
       (add-premise proof ::formula/bottom premise-numbers)
       proof)))
 
-(defn create-variable-map
+(defn ^:private create-variable-map
+  "Given a list of variables and constants create a map whose keys are
+  variables and whose values are constants in the original order."
   [variables constants]
   (if (not= (count variables)
             (count constants))
@@ -212,6 +234,8 @@
       "Cannot  create variable map for different number of variables and constants"
       {:caused-by `(not= (count ~variables)
                          (count ~constants))}))
+    ;; TODO - Couldn't this just be zipmap - make sure we have test
+    ;; coverage before updating
     (loop [var            (first variables)
            todo-vars      (rest variables)
            constant       (first constants)
@@ -226,7 +250,11 @@
                  new-result)
           new-result)))))
 
-(defn universal-elimination [proof args]
+(defn universal-elimination
+  "Given a universal formula in a proof subsitute the constants
+  specified by `args` for the variables in that formula bound by the
+  universal quantifier."
+  [proof args]
   (ensure-premise-count "Universal Elimination" [(first args)] 1)
   (ensure-premises-relevant proof [(first args)])
   (let [premise-index (get proof ::proof/premises)
@@ -261,6 +289,9 @@
       proof)))
 
 (defn existential-elimination
+  "Given an existential premise, add as another premise the immediate
+  subformula of that premise with all the bound varables substituted
+  for new constants."
   [proof premise-numbers]
   (ensure-premise-count "Existential elimination" premise-numbers 1)
   (ensure-premises-relevant proof premise-numbers)
@@ -303,7 +334,11 @@
                ::proof/premises new-premises))
       proof)))
 
+;; TODO: Instead of positions consider using a premise number to identify
+;; the substitued and the equalities - then use formula-gather?
 (defn substitute-equality-internal
+  "Substitute one term in an atomic formula for another as definted
+  by an !equals statement."
   [proof equality-id atomic-id init-substitution-positions]
   (let [premises               (get proof ::proof/premises)
         substitution-positions (map (fn [pos]
@@ -315,9 +350,11 @@
         atomic-premise         (-> premises
                                    (get atomic-id)
                                    (get ::proof/formula))
-        substitution-terms     (map
-                                (fn [arg-id]
-                                  (get atomic-premise arg-id))
+        substitution-terms    (map
+                               (fn [arg-id]
+                                 (if (= arg-id 0)
+                                   atomic-premise
+                                   (get atomic-premise arg-id)))
                                 substitution-positions)]
     (when-not (= (count (set substitution-terms)) 1)
       (throw
@@ -329,18 +366,20 @@
           substituent (first
                        (filter (fn [arg] (not= substituted arg))
                                (formula/terms equality-premise)))
-          new-formula (loop [arg (first atomic-premise)
-                             idx 0
-                             todo (rest atomic-premise)
-                             result []]
-                        (let [new-result (if (some
-                                              #{idx}
-                                              substitution-positions)
-                                           (conj result substituent)
-                                           (conj result arg))]
-                          (if (seq todo)
-                            (recur (first todo) (inc idx) (rest todo) new-result)
-                            new-result)))
+          new-formula (if (= (set substitution-positions) #{0})
+                        substituent
+                        (loop [arg (first atomic-premise)
+                               idx 0
+                               todo (rest atomic-premise)
+                               result []]
+                          (let [new-result (if (some
+                                                #{idx}
+                                                substitution-positions)
+                                             (conj result substituent)
+                                             (conj result arg))]
+                            (if (seq todo)
+                              (recur (first todo) (inc idx) (rest todo) new-result)
+                              new-result))))
           new-premise (proof/new-premise new-formula
                                          [atomic-id equality-id])
           new-premise-idx (proof/get-new-premise-idx proof)
@@ -354,11 +393,14 @@
           new-problems    (assoc problems current-problem-idx new-problem)]
       (-> proof
           (assoc ::proof/premises
-                 new-premises) 
+                 new-premises)
           (assoc ::proof/problems
                  new-problems)))))
 
-(defn substitute-equality [proof args]
+(defn substitute-equality
+  "Substitute one term in an atomic formula for another as definted
+  by an !equals statement."
+  [proof args]
   (ensure-premise-count "Substitution" (take 2 args) 2)
   (ensure-premises-relevant proof (take 2 args))
   (let [premises         (-> proof
@@ -376,16 +418,17 @@
                               (get second-premise-id)
                               (get ::proof/formula))
         positions      (rest (rest args))]
-    (cond (and (formula/equality? first-premise)
-               (formula/atom? second-premise))
-          (substitute-equality-internal
-           proof first-premise-id second-premise-id positions)
-          (and (formula/equality? second-premise)
-               (formula/atom? first-premise))
-          (substitute-equality-internal
-           proof second-premise first-premise positions)
-          :else
-          proof)))
+    (cond
+      (and (formula/equality? first-premise)
+           (formula/atom? second-premise))
+      (substitute-equality-internal
+       proof first-premise-id second-premise-id positions)
+      (and (formula/equality? second-premise)
+           (formula/atom? first-premise))
+      (substitute-equality-internal
+       proof second-premise first-premise positions)
+      :else
+      proof)))
 
 (defn beta-reduction [proof premise-numbers] nil)
 

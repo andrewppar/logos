@@ -38,6 +38,8 @@
       proof)))
 
 (defn conditional-proof
+  "Prove the current problem by assuming the antecedent and proving the
+  consequent of the goal."
   [proof]
   (let [current-problem (get
                          (::proof/problems proof)
@@ -71,6 +73,8 @@
       proof)))
 
 (defn conjunctive-proof
+  "If the current goal is a conjunction, create subproblems for each
+  conjunct with them as a goal."
   [proof]
   (let [current-problem-idx (get proof ::proof/current-problem)
         current-goal        (-> proof
@@ -90,10 +94,13 @@
       proof)))
 
 (defn disjunctive-proof
+  "Show that one of the disjuncts is in the premise set."
   [proof]
   (direct-proof proof))
 
 (defn negative-proof
+  "When trying to prove a negation, create a subproof that assumes the
+  negatum and has a contradiction as a goal."
   [proof]
   (let [problem-index       (get proof ::proof/problems)
         current-problem-idx (get proof ::proof/current-problem)
@@ -115,7 +122,11 @@
                       current-problem)))
       proof)))
 
-(defn universal-proof [proof]
+(defn universal-proof
+  "Given a proof whose goal is a universal formula, generate a
+   subproblem whose goal is the quantified subformula of the original
+   but with the free variables replaced with fresh terms."
+  [proof]
   (let [current-problem-idx (get proof ::proof/current-problem)
         problem-index       (get proof ::proof/problems)
         current-goal        (-> problem-index
@@ -148,7 +159,12 @@
                 (::proof/edges proof) new-edges)))
       proof)))
 
-(defn existential-proof [proof constants]
+(defn existential-proof
+  "Given a proof whose goal is an existential sentence along with values
+  for it's bound variables, create a new subproof whose goal is the
+  formula that results from substituting those values for variables in
+  the quantified subformula."
+  [proof constants]
   (let [current-problem-idx (get proof ::proof/current-problem)
         current-problems    (get proof ::proof/problems)
         current-problem     (get current-problems current-problem-idx)
@@ -181,7 +197,9 @@
                   edge-index new-edges))))
       proof)))
 
-(defn assert [proof formula]
+(defn assert
+  "Given a proof and a formula, set the formula as a new goal."
+  [proof formula]
   (let [current-idx (get proof ::proof/current-problem)
         new-idx     (proof/get-new-problem-idx proof)
         new-problem (proof/new-problem

@@ -9,13 +9,19 @@
             [logos.proof.show :refer [show-proof]])
   (:import java.util.Base64))
 
-(defn encode [to-encode]
+(defn ^:private encode
+  "Create a base64 encoding of a string"
+  [to-encode]
   (.encodeToString (Base64/getEncoder) (.getBytes to-encode)))
 
-(defn decode [to-decode]
+(defn ^:private decode
+  "Decdode a base64 encoded string"
+  [to-decode]
   (String. (.decode (Base64/getDecoder) to-decode)))
 
-(defn format-formula [formula]
+(defn format-formula
+  "Nicely indent and space a string representing a formula."
+  [formula]
   (if-not (string? formula)
     formula
     (binding [pp/*print-pretty* true
@@ -25,6 +31,7 @@
         (pp/pprint (f/read-formula-string formula))))))
 
 (defn serialize-proof-formulas
+  "Given a proof make sure that it's formulas are formatted nicely."
   [proof]
   (let [relevant-premise-idxs (proof/relevant-premise-idxs proof)
         premises (mapv
@@ -56,6 +63,7 @@
 ;;; New Proof
 
 (defn start-proof-internal
+  "Given a goal, premises, and a theorem-name - set up a proof map"
   [goal & {:keys [premises theorem-name]}]
   (let [args (cond-> {}
                (some? premises)
@@ -65,7 +73,9 @@
         new-proof (apply proof/new-proof goal (-> args vec flatten))]
     new-proof))
 
-(defn parse-goal
+(defn ^:private parse-goal
+  "Parse a theorem name and a goal formula to create an initial proof
+  map."
   [string]
   (let [theorem-array   (-> string
                             string/trim
@@ -91,6 +101,8 @@
         (start-proof-internal formula :theorem-name title)))))
 
 (defn start-proof
+  "Given a string representing a theorem name and goal formula,
+   create the map that represents the start of a proof for that formula."
   [string]
   (let [proof (parse-goal string)]
       {:proof-string
@@ -114,7 +126,10 @@
                     (function proof args))]
     new-proof))
 
-(defn execute-goal-operation [proof operation-string]
+(defn ^:private execute-goal-operation
+  "Given a proof and a string representing a goal operation, perform
+  the corresponding operation on the proof."
+  [proof operation-string]
   (let [operation (-> operation-string
                       string/upper-case)
         function  (fn [fnct] (one-step proof fnct))]
@@ -132,7 +147,10 @@
       "UP"
       (function #'goal/universal-proof))))
 
-(defn execute-premise-operation
+(defn ^:private execute-premise-operation
+  "Given a proof and a command that holds a premise operation and the
+  premises to operate on, execute that operation on those premises in
+  the proof."
   [proof command]
   (let [raw-operation (first command)
         operation (string/upper-case raw-operation)
@@ -161,10 +179,13 @@
       (function #'premise/add-premises))))
 
 (defn assert-formula-to-proof [proof formula-string]
+  "Given a `formula-string`, add it as a premise to `proof`."
   (let [formula (f/read-formula formula-string)]
     (one-step proof #'goal/assert :args formula)))
 
 (defn execute-existential-proof [proof substituent-string]
+  "Given `proof` with an existential goal, try to solve that goal
+   by making the substitutions encoded in `substituent-string`."
   (let [substituents (->> substituent-string
                           (format "[%s]")
                           edn/read-string
@@ -173,6 +194,7 @@
      proof #'goal/existential-proof :args substituents)))
 
 (defn execute-command
+  "Execute the operation encoded in `command` on `proof`."
   [proof command]
   (let [remove-newlines (string/trim command)
         split-command   (->> #" "
@@ -196,7 +218,10 @@
             (format "Could not parse %s as a command" command)
             {:caused-by command})))))
 
-(defn next-step [string proof]
+(defn next-step
+  "Execute the next step in a proof."
+  [string proof]
+
   (let [new-proof (execute-command proof string)]
     {:proof-string
      (show-proof new-proof)

@@ -6,6 +6,8 @@
 (def proof-width 50)
 
 (defn generate-premise-string
+  "Generate a string that represents the premises that have
+  `premise-idxs` in the passed `premise-index`."
   [premise-index premise-idxs]
   (loop [premise-idx (first premise-idxs)
          todo    (rest premise-idxs)
@@ -34,6 +36,7 @@
         new-result))))
 
 (defn show-proof
+  "Generate a string representation of a proof."
   [proof]
   (let [premise-idxs (sort (proof/relevant-premise-idxs proof))
         premise-index (get proof ::proof/premises)
