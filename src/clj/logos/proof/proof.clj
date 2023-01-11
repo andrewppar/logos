@@ -1,21 +1,11 @@
 (ns logos.proof.proof
-  (:require [logos.formula :as formula]
-            [clojure.string :as string]
-            [clojure.set :as set]))
+  (:require [logos.formula :as formula]))
 
 ;;;;;;;;;;;
 ;;; Problem
 
-(defmacro dpf [form]
-  (let [function    (-> form first name)
-        args        (rest form)]
-    `(let [arg-vals#    (map str '~args)
-           arg-strings# (clojure.string/join " " arg-vals#)
-           result#       (eval ~form)]
-       (println (format "(%s %s) => %s" ~function arg-strings# result#))
-       result#)))
-
 (defn new-problem
+  "Create a new problem from premises, a goal, and an id."
   [premise-indexes goal id &
    {:keys [type] :or {type ::proof}}]
   {::premises premise-indexes
@@ -28,6 +18,7 @@
 ;;; Edges
 
 (defn ^:private add-from-edge-to-graph
+  "Add a new problem to a proof graph."
   [graph from to]
   (if-let [edges (get graph from)]
     (if-let [from-edges (get edges ::to)]
@@ -40,6 +31,7 @@
     (assoc graph from {::to [to]})))
 
 (defn ^:private add-to-edge-to-graph
+  "Add a new edge to the problem graph associated with a proof."
   [graph from to]
   (if-let [edges (get graph to)]
     (if-let [to-edges (get edges ::from)]
@@ -50,6 +42,8 @@
     (assoc graph to {::from [from]})))
 
 (defn add-edges-to-edge-index
+  "Given a list of edges and an edge index, add the edges to the
+  index."
   [index edges]
   (reduce
    (fn [acc [from to]]
@@ -75,6 +69,7 @@
     ::justification justification}))
 
 (defn ^:private add-premises-to-index-with-justification
+  "Add new premises to a proof with `justification`."
   [index premises justification]
   (if (seq premises)
     (let [old-indexes (keys index)
@@ -111,6 +106,8 @@
    index premises ::hypothesis))
 
 (defn add-new-problems-to-proof
+  "Given a proof and a problem id (`from-id`) add all the problems
+  to the proof as subproblems of `from-id`."
   [proof problems from-id]
   (let [[new-prblm-index new-edges]
         (reduce
@@ -130,6 +127,7 @@
 ;;; Proof
 
 (defn new-proof
+  "Create a new proof with `goal` and maye preises"
   [goal
    & {:keys [premises theorem-name],
       :or {premises []}}]
@@ -148,20 +146,25 @@
      ::edges           {}}))
 
 (defn ^:private get-new-idx-for-type
+  "Generate a new id for object of `type`."
   [proof type]
   (if-let [old-idxs (keys (type proof))]
     (inc (apply max old-idxs))
     0))
 
 (defn get-new-problem-idx
+  "Get a new id for a problem."
   [proof]
   (get-new-idx-for-type proof ::problems))
 
 (defn get-new-premise-idx
+  "Get a new id for a premise."
   [proof]
   (get-new-idx-for-type proof ::premises))
 
-(defn backward-gather-problem-idxs [proof idx]
+(defn backward-gather-problem-idxs
+  "Given a problem id get all the problems that depend on it."
+  [proof idx]
   (let [edges (get proof ::edges)]
     (loop [current-idx idx
            todo        []
@@ -189,7 +192,6 @@
   (let [current-idx           (get
                                proof ::current-problem)
         problem-index         (get proof ::problems)
-        premise-index         (get proof ::premises)
         relevant-problem-idxs (backward-gather-problem-idxs
                                proof current-idx)]
     (->> relevant-problem-idxs
@@ -197,6 +199,7 @@
          (mapcat ::premises))))
 
 (defn relevant-premises
+  "Get the premises that are relevant for the current problem"
   [proof]
   (let [premise-index (get proof ::premises)
         premise-idxs  (relevant-premise-idxs proof)]
@@ -224,6 +227,8 @@
          (map :idx))))
 
 (defn ^:private close-assertion-problem
+  "When an problem whose type is ::assert is solved, this ensures that
+  the right dependent problems are closed."
   [proof]
   (let [{::keys [current-problem problems premises edges]} proof
         focal-problem  (get problems current-problem)
@@ -273,6 +278,8 @@
       (assoc new-proof ::current-problem open-sibling))))
 
 (defn ^:private reset-current-problem
+  "Ensure that the current problem for the proof is the one that is
+  first open leaf, i.e. is not dependent on a problem that is also open."
   [proof]
   (let [edges (get proof ::edges)]
     (if (= ::open (-> proof
@@ -351,6 +358,7 @@
          reset-current-problem)))
 
 (defn get-proof-root-idx
+  "Get the root problem idx for a proof."
   [proof]
   ;; This assumes that there is a unique
   ;; root problem to which all other problems
@@ -369,6 +377,7 @@
           current-idx)))))
 
 (defn proof-done?
+  "Check if a proof is finished."
   [proof]
   (let [root-problem (-> proof
                          (get ::problems)

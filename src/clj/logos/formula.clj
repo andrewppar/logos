@@ -2,41 +2,27 @@
   (:require [clojure.set :as s]
             [clojure.string :as string]))
 
-(defmacro defs [& bindings]
-  (loop [name  (first bindings)
-         value (second bindings)
-         todo  (rest (rest bindings))
-         result '()]
-    (if (seq todo)
-      (recur (first todo)
-             (second todo)
-             (rest (rest todo))
-             (clojure.core/conj result `(def ~name ~value)))
-      (-> result
-          (clojure.core/conj `(def ~name ~value))
-          reverse
-          (clojure.core/conj 'do)))))
-
-
 (declare formula?)
 
-(defmacro formula-check?
-  "A macro to make writing formula predicates
+(defn formula-check?
+  "A function to make writing formula predicates
   simpler"
   [object formula-type]
-  `(if-not (coll? ~object)
-     false
-     (and
-      (seq ~object)
-      (= (first ~object) ~formula-type)
-      (->> ~object
-           rest
-           (every? formula?)))))
+  (if-not (coll? object)
+    false
+    (and
+     (seq object)
+     (= (first object) formula-type)
+     (->> object
+          rest
+          (every? formula?)))))
 
 ;;;;;;;;;;;;;;;;;;;;
 ;;; atomic predicate
 
 (defn atomic-predicate?
+  "Check whether a predicate is as basic as possible, i.e. not
+   a complex predicate like a lambda function or variable."
   [object]
   (and
    (string? object)
@@ -55,6 +41,7 @@
    (not (atomic-predicate? object))))
 
 (def next-char
+  "A map assigning the int for a char to the one that follows it"
   (zipmap
    (map char (range 97 123))
    (map char (range 98 124))))
@@ -104,7 +91,12 @@
 
 (declare predicate?)
 
-(defn atom? [object]
+(defn atom?
+  "Predicate determining whether a formula is atomic. Importantly,
+   this function determines that as long as the formula is a predicate
+   followed by a well-formed term (e.g. a function term or even another
+   formula) that formula is an atom?."
+  [object]
   (or (term? object)
       (= object ::bottom)
       (and
@@ -115,17 +107,24 @@
                      (formula? object)))
                (rest object)))))
 
-(defn atom [predicate & args]
+(defn atom
+  "Simple atom constructor"
+  [predicate & args]
   (apply vector predicate args))
 
-(defn predicate [atom]
+(defn predicate
+  "Get the predicate from an atom."
+  [atom]
   (if-not (atom? atom)
     (throw
      (ex-info "Cannot get predicate from non-atom"
               {:caused-by `(not (atom? ~atom))}))
     (first atom)))
 
-(defn terms [atom]
+(defn terms
+  "Get the terms from an atom, i.e. those things to which the predicate
+   applies."
+  [atom]
   (if-not (atom? atom)
     (throw
      (ex-info "Cannot get predicate from non-atom"
@@ -136,6 +135,7 @@
 ;;; Equality
 
 (defn equality?
+  "Check whether an object is the equality predicate for the language"
   [object]
   (and (atom? object)
        (= (predicate object) "!equals")
@@ -242,6 +242,8 @@
 (declare lambda?)
 
 (defn quantified-subformula
+  "The immediate subformula of a formula whose main operator is
+   a quantifier (i.e. exists, forall, or lambda)"
   [object]
   (if-not (or
            (universal? object)
@@ -259,6 +261,9 @@
     (nth object 2)))
 
 (defn bound-variables
+  "Any variables in a quantified formula that are bound by the main
+  quantifier (i.e. exists, forall, lambda), e.g. in (forall ?x (!isa ?x ?y))
+  they are [?x]"
   [object]
   (if-not (or
            (universal? object)
@@ -275,7 +280,12 @@
                           (existential? ~object)))}))
     (vec (set (second object)))))
 
-(defn free-variables-internal
+(defn ^:private free-variables-internal
+  "Return all the free variables in a formula, i.e. variables not
+  in the scope of some quantifier.
+
+  Note: This function is deeply recursive because it has to look at
+  subformulas keeping track of what is bound."
   [formula acc bound-vars]
   (cond (atom? formula)
         (->> formula
@@ -318,11 +328,15 @@
               bound-vars))))
 
 (defn free-variables
+  "Get all the variables of a formula (including subformulas) that
+  are not bound by some quantifier (i.e. exists, forall, lambda)."
   [formula]
   (free-variables-internal formula (set []) (set [])))
 
-
 (defn formula-gather
+  "Given a predicate `predicate-fn` gather any expression (or
+  subexpression) of `formula` that satisfies it. For example
+  `(formula-gather '[\"!isa\" ?x ?y] atomic-predicate?)` => `[\"!isa\"]`"
   [formula predicate-fn]
   (loop [current-item formula
          todos        []
@@ -335,49 +349,46 @@
                            (= current-item ::bottom))
                        todos
                        (atom? current-item)
-                           (concat (clojure.core/conj todos (predicate current-item))
-                                   (terms current-item))
-                           (or (lambda? current-item)
-                               (existential? current-item)
-                               (universal? current-item))
-                           (concat
-                            (clojure.core/conj todos
-                                  (quantified-subformula current-item))
-                            (bound-variables current-item))
-                           (negation? current-item)
-                           (clojure.core/conj todos (negatum current-item))
-                           (conjunction? current-item)
-                           (->> current-item
-                                conjuncts
-                                (concat todos))
-                           (disjunction? current-item)
-                           (->> current-item
-                                disjuncts
-                                (concat todos))
-                           (implication? current-item)
-                           (-> todos
-                               (clojure.core/conj (antecedent current-item))
-                               (clojure.core/conj (consequent current-item)))
-                           :else
-                           todos)]
+                       (concat (clojure.core/conj
+                                todos (predicate current-item))
+                               (terms current-item))
+                       (or (lambda? current-item)
+                           (existential? current-item)
+                           (universal? current-item))
+                       (concat
+                        (clojure.core/conj
+                         todos (quantified-subformula current-item))
+                        (bound-variables current-item))
+                       (negation? current-item)
+                       (clojure.core/conj todos (negatum current-item))
+                       (conjunction? current-item)
+                       (->> current-item
+                            conjuncts
+                            (concat todos))
+                       (disjunction? current-item)
+                       (->> current-item
+                            disjuncts
+                            (concat todos))
+                       (implication? current-item)
+                       (-> todos
+                           (clojure.core/conj (antecedent current-item))
+                           (clojure.core/conj (consequent current-item)))
+                       :else
+                       todos)]
       (if (seq new-todos)
         (recur (first new-todos)
                (rest new-todos)
                new-result)
         new-result))))
 
-
-
-
-
-
-
-
-
 ;;;;;;;;;;;;;
 ;;; universal
 
-(defn universal? [object]
+(defn universal?
+  "Predicate to determine whether an object is a universally quantified
+   formula, i.e. it is a formula prepended with `:forall` and sequence of
+   variables."
+  [object]
   (and
    (vector? object)
    (= (first object) :forall)
@@ -385,13 +396,19 @@
    (every? variable? (second object))
    (formula? (nth object 2))))
 
-(defn forall [variables formula]
+(defn forall
+  "Create a universally quantified formula."
+  [variables formula]
   [:forall variables formula])
 
 ;;;;;;;;;;;;;;;
 ;;; existential
 
-(defn existential? [object]
+(defn existential?
+  "Predicate to determine whether an object is an existentially quantified
+   formula, i.e. it is a formula prepended with `:exists` and sequence of
+   variables."
+  [object]
   (and
    (vector? object)
    (= (first object) :exists)
@@ -399,13 +416,17 @@
    (every? variable? (second object))
    (formula? (nth object 2))))
 
-(defn exists [variables formula]
+(defn exists
+  "Create an existentially quantified formula."
+  [variables formula]
   [:exists variables formula])
 
 ;;;;;;;;;;;;
 ;; predicate
 
 (defn lambda?
+  "Predicate to determine whether an object is a lambda expression,
+  i.e. if it is a term that can be used for lambda conversion."
   [object]
   (and
    (vector? object)
@@ -415,12 +436,17 @@
    (formula? (nth object 2))))
 
 (defn predicate?
+  "Predicate to determine whether or not something is a predicate of
+  the language. This includes atomic-predicates, variables, and lambda
+  expressions."
   [object]
   (or (atomic-predicate? object)
       (variable? object)
       (lambda? object)))
 
-(defn lambda [vars formula]
+(defn lambda
+  "Create a lambda expression from variables and formula."
+  [vars formula]
   (if-not (= (free-variables formula)
              (set vars))
     (throw
@@ -438,6 +464,8 @@
 ;; formula
 
 (defn formula?
+  "Predicate to determine whether an object is a valid formula of the
+  language."
   [object]
   (or
    (atom? object)
@@ -448,7 +476,9 @@
    (universal? object)
    (existential? object)))
 
-(defn constants [formula]
+(defn constants
+  "Function to get all the constans in a formula."
+  [formula]
   (cond (or
          (existential? formula)
          (universal? formula))
@@ -466,7 +496,9 @@
         (atom? formula)
         (filter constant? (terms formula))))
 
-(defn get-unique-constant
+(defn ^:private get-unique-constant
+  "Generate a new unique constant given a `seed-constant` and other
+  already `used-constants`."
   [seed-constant used-constants]
   (loop [last-constant seed-constant]
     (let [new-constant (next-constant last-constant)
@@ -476,7 +508,10 @@
         (recur new-constant)
         new-constant))))
 
-(defn generate-new-constant-map
+(defn ^:private generate-new-constant-map
+  "Given already used constants and variables that need to be assigned
+   to new constants, generate a map from those variables to the new
+   constants."
   [old-constants vars]
     (loop [last-constant "a"
            current-var   (first vars)
@@ -492,6 +527,9 @@
           (assoc result current-var match)))))
 
 (defn substitute-free-variables
+  "Given a formula and map from variables to constants, generate the
+  formula that results from replacing all free occurrences of variables
+  in `constant-map` by their mapped values."
   [formula constant-map]
   (cond (atom? formula)
         ;; This feels like an abstraction
@@ -506,7 +544,7 @@
                                       (substitute-free-variables term constant-map)
                                       term)
                                     ))
-                               (terms formula))]
+                                (terms formula))]
             (if-let [new-pred (constant-map pred)]
               (apply atom (format "!%s" new-pred) new-terms)
               (apply atom pred new-terms))))
@@ -548,6 +586,9 @@
             (exists new-bounds new-subformula)))))
 
 (defn instantiate-new-variables
+  "Given a quantified formula and a list of used constants, create a
+  completely new formula by instantiating all variables bound by the
+  main quantifier by a new constant."
   [formula used-constants]
   (when (not
          (or
@@ -573,13 +614,12 @@
 
 ;;;;;;;;;;;;;
 ;;; Serialize
-;;TODO These should be multimethods
-;; or formula should be a protocol
 
 (declare to-string)
 
 (defn serialize-predicate
-  [predicate ]
+  "Create a string representation of a predicate"
+  [predicate]
   (cond (or (atomic-predicate? predicate)
             (variable? predicate))
         (str predicate)
@@ -599,7 +639,9 @@
          (ex-info "Trying to serialize non-predicate."
                   {:caused-by predicate}))))
 
-(defn to-string [formula]
+(defn to-string
+  "Create a string representation of a formula."
+  [formula]
   (cond
     (atom? formula)
     (cond (term? formula)
@@ -670,11 +712,14 @@
 
 (declare read-formula-sexp)
 
-(defn read-formula-error [s-expression]
+(defn ^:private read-formula-error
+  "Error to throw if parsing a formula from a string fails."
+  [s-expression]
   (ex-info "Cannot parse to formula"
            {:caused-by s-expression}))
 
-(defn read-quantified-formula
+(defn ^:private read-quantified-formula
+  "Function for parsing a quantified formula an operator and args"
   [operator args]
   (let [raw-vars    (butlast args)
         vars        (if (and (= (count raw-vars) 1)
@@ -691,7 +736,8 @@
             (lambda vars subformula))
       (read-formula-error (list operator args)))))
 
-(defn read-formula-sexp
+(defn ^:private read-formula-sexp
+  "Read an s-expression representing a formula as a formula."
   [s-expression]
   (cond (coll? s-expression)
         (let [raw-operator (first s-expression)
@@ -734,15 +780,21 @@
         :else
         (str s-expression)))
 
-(defn open-paren? [char]
+(defn ^:private open-paren?
+  "Determine if the `char` is an open brace of some sort"
+  [char]
   (or (= char \()
       (= char \[)))
 
-(defn close-paren? [char]
+(defn close-paren?
+  "Determine if the `char` is a closed brace of some sort"
+  [char]
   (or (= char \))
       (= char \])))
 
 (defn get-matching-paren-idx
+  "Given a string containing braces and an index - get the index of
+  the matching brace."
   [string idx]
   (let [substring (subs string idx)]
     (when (open-paren? (first substring))
@@ -765,12 +817,17 @@
           :else
           (recur (inc current-idx) depth (rest todo) (first todo)))))))
 
-(defn whitespace-char? [ch]
+(defn ^:private whitespace-char?
+  "Determine if a character is a whitespace character"
+  [ch]
   (->> [\newline \space \tab \formfeed \backspace \return]
        (some #{ch})
        boolean))
 
-(defn chunk-string [string]
+(defn ^:private chunk-string
+  "Given a string representing a formula, break it into chunks
+  representing s-expressions"
+  [string]
   (loop [char         (first string)
          todo         (rest string)
          current-item nil
