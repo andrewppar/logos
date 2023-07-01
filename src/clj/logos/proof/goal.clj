@@ -213,4 +213,6 @@
                ::proof/edges new-edges))))
 
 
+
+
 (defn modal-proof [proof] nil)

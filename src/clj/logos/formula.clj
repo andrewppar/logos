@@ -17,6 +17,8 @@
           rest
           (every? formula?)))))
 
+
+
 ;;;;;;;;;;;;;;;;;;;;
 ;;; atomic predicate
 
@@ -27,6 +29,7 @@
   (and
    (string? object)
    (string/starts-with? object "!")))
+
 
 ;;;;;;;;;;;;
 ;;; constant
@@ -71,6 +74,7 @@
   (and
    (symbol? object)
    (= (subs (name object) 0 1) "?")))
+
 
 ;;;;;;;;
 ;;; term
@@ -150,6 +154,7 @@
   [formula]
   [:not formula])
 
+
 (defn negation?
   "Check whether an object
    is a negation"
@@ -171,6 +176,7 @@
   from formulas"
   [& formulas]
   `[:and ~@formulas])
+
 
 (defn conjunction?
   "Check whether or not an
@@ -233,6 +239,8 @@
   [formula]
   (when (implication? formula)
     (nth formula 2)))
+
+
 
 ;;;;;;;;;;;;;
 ;;; variables

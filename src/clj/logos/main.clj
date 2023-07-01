@@ -178,14 +178,16 @@
       "AP"
       (function #'premise/add-premises))))
 
-(defn assert-formula-to-proof [proof formula-string]
-  "Given a `formula-string`, add it as a premise to `proof`."
+(defn assert-formula-to-proof
+  "Given a `formula-string`, try to prove it in the current context."
+  [proof formula-string]
   (let [formula (f/read-formula formula-string)]
     (one-step proof #'goal/assert :args formula)))
 
-(defn execute-existential-proof [proof substituent-string]
+(defn execute-existential-proof
   "Given `proof` with an existential goal, try to solve that goal
    by making the substitutions encoded in `substituent-string`."
+  [proof substituent-string]
   (let [substituents (->> substituent-string
                           (format "[%s]")
                           edn/read-string
@@ -221,7 +223,6 @@
 (defn next-step
   "Execute the next step in a proof."
   [string proof]
-
   (let [new-proof (execute-command proof string)]
     {:proof-string
      (show-proof new-proof)

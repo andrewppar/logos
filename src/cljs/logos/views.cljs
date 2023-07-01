@@ -257,7 +257,7 @@
       (when with-premises?
         [print-proof-formulas proof-formulas proof-string true false])
       (when with-vars?
-        [:div input-string 
+        [:div input-string
          [:input.input
           {:id input-id
            :type "text"
@@ -330,24 +330,24 @@
              [["DD"  "Direct Proof"
                "Finish the current proof because one of the premises
                 matches the goal or bottom is in the premises."]
-              ["->P" "Conditional Proof"
+              ["->P" "Implies Proof"
                "Prove a conditional formula by hypothesizing the
                 antecedent and proving the consequent with a subproof."]
               ["&P"  "Conjunctive Proof"
                "Prove a conjunction by creating a subproof for each of
                 the conjuncts."]
-              ["VP"  "Disjunctive Proof"
+              ["VP"  "Or Proof"
                "Prove a disjunction because on of the disjuncts is in
                 the premises."]
-              ["~P"  "Negative Proof"
+              ["~P"  "Not Proof"
                "Prove a negation by hypothesizing the negatum
                 and proving bottom with a subproof."]
-              ["UP"  "Universal Proof"
+              ["UP"  "Forall Proof"
                "Prove a universal formula by proving the quantified
                 subformula with new constants substituted for all
                 bound variables"]])
         [proof-step-input-button
-         "Existential Proof" "ep" "EP" ep-atom false true
+         "Exists Proof" "ep" "EP" ep-atom false true
          proof-formulas proof-string
          "Open a dialog box that prompts for constants to substitute
          for variables. The quantified subformula with the specified
@@ -361,7 +361,7 @@
          of a new subproof. Once proved the formula is available in the
          current proof as a premise."
          "Enter a formula or theorem name"]]]
-      
+
       [:div
        {:class "column is-one-quarter"}
        [:div
@@ -370,18 +370,18 @@
         (map (fn [[label id command atom with-vars? tooltip input-string]]
                [proof-step-input-button
                 label id command atom true with-vars? proof-formulas proof-string tooltip input-string])
-             [["Conditional Elimination" "conditional-elim" "->E"
+             [["Implies Elimination" "conditional-elim" "->E"
                conditional-elimination-atom false
                "Open a dialog to select a conditional premise
                 and its antecedent. The consequent of the conditional
                 will be added to the premises of the proof." nil]
-              ["Conjunction Elimination" "conjunction-elim" "&E"
+              ["And Elimination" "conjunction-elim" "&E"
                conjunction-elimination-atom false
                "Open a dialog to select a conjunction from the
                 premises. The conjuncts of this premise will
                 be added to the proof as premises." nil]
 
-              ["Disjunction Elimination" "disjunction-elim" "VE"
+              ["Or Elimination" "disjunction-elim" "VE"
                disjunction-elimination-atom false
                "Open a dialog to select a premise that is a
                 disjunction from the premises. Each disjunct generates
@@ -391,17 +391,17 @@
                bottom-introduction-atom false
                "Open a dialog box to select a premise and its negation.
                Bottom is added to the premises as a result." nil]
-               
+
               ["Substitute Equality" "substitute-equality" "S"
                substitute-equality-atom true
                "Open a dialog box to select an equality,
                 an atomic formula to make a substitution in, and
-                specify the arguments (as numbers) to make the 
-                substitutions in. The result is a new premise that 
+                specify the arguments (as numbers) to make the
+                substitutions in. The result is a new premise that
                 looks like the atom with substitutions made."
                "Positions to substitute."]
 
-              ["Universal Elimination" "universal-elim" "UE"
+              ["Forall Elimination" "universal-elim" "UE"
                universal-elimination-atom true
                "Open a dialog box to select a universal premise and
                 specify values for the variables. The quantified
@@ -410,7 +410,7 @@
                "Enter a list of values for variables"
                ]
 
-              ["Existential Elimination" "existential-elim" "EE"
+              ["Exists Elimination" "existential-elim" "EE"
                existential-elimination-atom false
                "Select an existential premise. The quantified subformula
                will be added to the premises with all variables in the
@@ -422,7 +422,7 @@
                                         :formula formula
                                         :justification justification}))
                            [] theorems)]
-        (proof-step-input-button 
+        (proof-step-input-button
          "Add Premise" "add-premise" "AP"
          add-premise-atom true false  theorem-map proof-string
          "Select a theorem that has already been proven to be added
