@@ -1,0 +1,10 @@
+#kaocha/v1 {:tests [{:id :unit
+                     :test-paths ["test"]
+                     :src-paths  ["src/clj"]
+                     :ns-patterns [".*"]}]
+            :kaocha/plugins [:kaocha.plugin/profiling
+                             :kaocha.plugin/randomize]
+            :color? true
+            :kaocha.plugin.profiling/count 3
+            :kaocha.plugin.profiling/profiling? true
+            :capture-output? true}

@@ -1,0 +1,167 @@
+#+title: Playbook Configuration
+#+date: 06-24-2024
+#+author: anparisi
+
+Wouldn't it be cool if something like this worked...
+
+* Setup
+
+#+name: envrc
+#+begin_src shell :tangle .envrc
+nix-shell --pure
+#+end_src
+
+** Useful nix functions
+
+#+name: alias-fn
+#+begin_src nix
+alias = {name, command}: "alias " + name + ''="'' + command + ''" ;'' ;
+#+end_src
+
+#+name: bash-fn
+#+begin_src nix
+  make-body = {commands}: builtins.foldl'
+    (acc: elem: acc + " " + elem + "\n")
+    ""
+    commands ;
+
+  shell-fn = {name, body}:
+    "function " + name + "() {\n"
+    + (make-body {commands = body;})
+    + "\n};\n" ;
+#+end_src
+
+* Variables
+
+#+name: variables
+#+begin_src nix
+LOGOS_SERVER_PORT=4000 ;
+#+end_src
+
+* Functions
+
+#+name: functions
+#+begin_src nix
+  run = shell-fn
+    {
+      name = "run" ;
+      commands =
+        [
+          "clj -M:dev/repl & npm run watch & fg"
+        ] ;
+    }
+#+end_src
+
+* Aliases
+
+#+name: frontend-aliases
+#+begin_src nix
+  frontend-clean = alias {
+    name = "frontend-clean" ;
+    command = "rm -rf node_modules/" ;
+  } ;
+
+  frontend-install = alias {
+    name = "frontend-install";
+    command = "npm ci" ;
+  } ;
+
+  frontend-run = alias {
+    name = "frontend-run" ;
+    command = "npm run watch" ;
+  } ;
+#+end_src
+
+#+name: backend-aliases
+#+begin_src nix
+   backend-run-interactive = alias
+     {
+       name = "backend-run-interactive" ;
+       command = "clj -M:dev/repl-interactive" ;
+     } ;
+
+  backend-dev = alias
+     {
+       name = "backend-run" ;
+       command = "clj -X:prod/run" ;
+     } ;
+
+   backend-run = alias
+     {
+       name = "backend-prod" ;
+       command = "clj -X:prod/run" ;
+     } ;
+#+end_src
+
+#+name: system-aliases
+#+begin_src nix
+  test = alias
+    {
+      name = "test" ;
+      command = "clj -X:dev/test" ;
+    } ;
+
+  run = alias
+    {
+      name = "run" ;
+      command = "backend-run & frontend-run & fg" ;
+    } ;
+#+end_src
+
+#+name: aliases
+#+begin_src nix :noweb yes
+  <<frontend-aliases>>
+  <<backend-aliases>>
+  <<system-aliases>>
+  aliases =
+    frontend-clean
+    + frontend-install
+    + frontend-run
+    + backend-dev
+    + backend-run-interactive
+    + backend-run
+    + test
+  #    + run # this does not work ... yet
+  ;
+
+#+end_src
+
+* Packages
+
+#+name: packages
+#+begin_src nix
+  packages = with pkgs ; [
+    bat
+    clojure
+    nodejs_21
+    openjdk21
+  ] ;
+#+end_src
+
+* Shell
+
+#+name: shell-hook
+#+begin_src nix
+shellHook = aliases + ''echo "ready to begin proving..." ; '' ;
+#+end_src
+
+#+name: shell
+#+begin_src nix :noweb yes :tangle shell.nix
+  let
+    nixpkgs = fetchTarball "https://github.com/NixOS/nixpkgs/tarball/nixos-23.11";
+    pkgs = import nixpkgs { config = {}; overlays = []; };
+    <<alias-fn>>
+    <<bash-fn>>
+
+    # Functions
+    #<<functions>>
+    # Aliases
+    <<aliases>>
+  in
+  pkgs.mkShell {
+    <<packages>>
+    <<variables>>
+    <<shell-hook>>
+
+  }
+#+end_src

@@ -1,0 +1,31 @@
+{:paths ["src/clj"]
+ :deps {org.clojure/clojure {:mvn/version "1.11.2"}
+        org.clojure/data.json {:mvn/version "2.5.0"}
+        compojure/compojure {:mvn/version "1.7.1"}
+        http-kit/http-kit {:mvn/version "2.8.0"}
+        reagent/reagent {:mvn/version "1.2.0"}
+        re-frame/re-frame {:mvn/version "1.4.0"}
+        ring-cors/ring-cors {:mvn/version "0.1.13"}
+        ring/ring-defaults {:mvn/version "0.5.0"}
+        com.taoensso/timbre {:mvn/version "5.2.1"}}
+ :aliases
+ {:dev/repl
+  {:extra-deps {nrepl/nrepl {:mvn/version "1.2.0"}
+                cider/cider-nrepl {:mvn/version "0.49.0"}}
+   :extra-paths ["test"]
+   :main-opts ["-m" "nrepl.cmdline"
+               "--middleware" "[cider.nrepl/cider-middleware]"]}
+  :dev/interactive-repl
+  {:extra-deps {nrepl/nrepl {:mvn/version "1.2.0"}
+                cider/cider-nrepl {:mvn/version "0.49.0"}}
+   :extra-paths ["test"]
+   :main-opts ["-m" "nrepl.cmdline"
+               "--middleware" "[cider.nrepl/cider-middleware]" "-i"]}
+  :dev/test
+  {:extra-deps {lambdaisland/kaocha {:mvn/version "1.80.1274"}}
+   :exec-fn kaocha.runner/exec-fn
+   :jvm-opts ["-XX:-OmitStackTraceInFastThrow"]
+   :exec-args {}
+   :extra-paths ["test"]}
+  :prod/run
+  {:exec-fn logos.core/-main}}}

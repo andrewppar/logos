@@ -21,3 +21,6 @@ Capstanfile
 /.shadow-cljs
 /public/js
 .envrc
+shell.nix
+package-lock.json
+.cpcache
